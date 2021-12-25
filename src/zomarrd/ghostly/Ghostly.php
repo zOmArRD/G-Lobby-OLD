@@ -21,6 +21,7 @@ use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\mysql\queries\RegisterServerQuery;
 use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\skin\MojangAdapter;
+use zomarrd\ghostly\server\ServerManager;
 
 final class Ghostly extends PluginBase
 {
@@ -31,16 +32,15 @@ final class Ghostly extends PluginBase
 	{
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
-		SkinAdapterSingleton::set(new MojangAdapter());
 		new ConfigManager();
+		SkinAdapterSingleton::set(new MojangAdapter());
 		MySQL::createTables();
 	}
 
 	protected function onEnable(): void
 	{
 		$prefix = PREFIX;
-
-
+		new ServerManager();
 		self::$logger->notice('§c' . <<<INFO
 
 
