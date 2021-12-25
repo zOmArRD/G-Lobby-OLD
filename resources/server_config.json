@@ -1,0 +1,14 @@
+{
+	"version": 1.0,
+	"prefix": "§l§cGhostly §f» §r",
+	"current.server": {
+		"is.enabled": true,
+		"server.name": "Lobby-1"
+	},
+	"mysql.credentials": {
+		"user": "root",
+		"password": "omar",
+		"host": "localhost",
+		"database": "mc"
+	}
+}
