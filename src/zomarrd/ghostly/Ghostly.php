@@ -18,6 +18,8 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLogger;
 use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\mysql\MySQL;
+use zomarrd\ghostly\mysql\queries\RegisterServerQuery;
+use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\skin\MojangAdapter;
 
 final class Ghostly extends PluginBase
@@ -37,7 +39,6 @@ final class Ghostly extends PluginBase
 	protected function onEnable(): void
 	{
 		$prefix = PREFIX;
-
 
 
 		self::$logger->notice('§c' . <<<INFO
