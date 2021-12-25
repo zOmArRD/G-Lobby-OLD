@@ -17,6 +17,7 @@ use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLogger;
 use zomarrd\ghostly\config\ConfigManager;
+use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\player\skin\MojangAdapter;
 
 final class Ghostly extends PluginBase
@@ -28,9 +29,9 @@ final class Ghostly extends PluginBase
 	{
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
-
-		new ConfigManager();
 		SkinAdapterSingleton::set(new MojangAdapter());
+		new ConfigManager();
+		MySQL::createTables();
 	}
 
 	protected function onEnable(): void

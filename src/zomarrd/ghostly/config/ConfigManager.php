@@ -19,7 +19,7 @@ final class ConfigManager
 	public static ConfigManager $instance;
 	private static ?Config $server_config;
 	private array $files = [
-		'server_config.json' => 1.0
+		'server_config.json' => 1.5
 	];
 
 	public function __construct()
