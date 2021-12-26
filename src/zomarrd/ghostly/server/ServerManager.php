@@ -21,7 +21,7 @@ use zomarrd\ghostly\mysql\queries\SelectQuery;
 
 final class ServerManager
 {
-	private static ?ServerManager $instance;
+	private static ?ServerManager $instance = null;
 
 	private ?Server $current_server = null;
 
@@ -34,7 +34,7 @@ final class ServerManager
 		$this->init();
 	}
 
-	public static function getInstance(): ServerManager
+	public static function getInstance(): ?ServerManager
 	{
 		return self::$instance;
 	}

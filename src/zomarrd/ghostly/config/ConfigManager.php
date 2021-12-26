@@ -35,7 +35,9 @@ final class ConfigManager
 
 	public function init(): void
 	{
-		//@mkdir($this->getDataFolder());
+		/** This can be erased? */
+		@mkdir($this->getDataFolder());
+
 		foreach ($this->files as $file => $version) {
 			$this->saveResource($file);
 			$tempFile = self::getFile($file);

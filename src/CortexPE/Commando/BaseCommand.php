@@ -79,9 +79,6 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     /** @var Plugin */
     private $plugin;
 
-    /**
-     * @param string[] $aliases
-     */
     public function __construct(
         Plugin $plugin,
         string $name,
