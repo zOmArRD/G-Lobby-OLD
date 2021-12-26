@@ -1,0 +1,15 @@
+{
+	"language_data": {
+		"author": "zOmArRD",
+		"default": true,
+		"names": {
+			"en_US": "English (USA)"
+		}
+	},
+	"messages": {
+		"global.permission.message": "{PREFIX}{RED}Apparently you do not have permissions to execute this action."
+	},
+	"item_data": {
+		"hub.server-selector": "§r§cServer Selector §7(use)"
+	}
+}
