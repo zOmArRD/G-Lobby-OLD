@@ -16,6 +16,7 @@ use CortexPE\Commando\exception\HookAlreadyRegistered;
 use CortexPE\Commando\PacketHooker;
 use pocketmine\event\Listener;
 use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
+use pocketmine\network\mcpe\raklib\RakLibInterface;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLogger;
 use zomarrd\ghostly\config\ConfigManager;
@@ -57,6 +58,10 @@ final class Ghostly extends PluginBase
 		$this->registerEvents([
 			new PlayerEvents()
 		]);
+
+		foreach ($this->getServer()->getNetwork()->getInterfaces() as $interface) {
+			if ($interface instanceof RakLibInterface) $interface->setPacketLimit(PHP_INT_MAX);
+		}
 
 		self::$logger->notice('§c' . <<<INFO
 

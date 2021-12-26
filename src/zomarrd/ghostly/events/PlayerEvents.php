@@ -23,4 +23,11 @@ final class PlayerEvents implements Listener
 	{
 		$event->setPlayerClass(GhostlyPlayer::class);
 	}
+
+	public function onJoin(PlayerJoinEvent $event): void
+	{
+		$player = $event->getPlayer();
+		if (!$player instanceof GhostlyPlayer) return;
+		/*TODO: FINISH*/
+	}
 }

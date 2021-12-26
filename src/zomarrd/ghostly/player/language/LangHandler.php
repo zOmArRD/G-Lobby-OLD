@@ -18,6 +18,8 @@ use zomarrd\ghostly\Ghostly;
  */
 final class LangHandler
 {
+	private static LangHandler $instance;
+
 	/** @var Language[] */
 	private array $languages;
 
@@ -27,6 +29,7 @@ final class LangHandler
 
 	public function __construct()
 	{
+		self::$instance = $this;
 		$this->resourcesFolder = Ghostly::getInstance()->getResourcesFolder() . "lang";
 		$files = scandir($this->resourcesFolder);
 		foreach ($files as $file) {
@@ -49,6 +52,11 @@ final class LangHandler
 				}
 			}
 		}
+	}
+
+	public static function getInstance(): LangHandler
+	{
+		return self::$instance;
 	}
 
 	public function getLanguage(string $lang): ?Language
