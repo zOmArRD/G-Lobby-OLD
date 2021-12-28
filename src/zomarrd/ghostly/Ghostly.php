@@ -60,7 +60,9 @@ final class Ghostly extends PluginBase
 		]);
 
 		foreach ($this->getServer()->getNetwork()->getInterfaces() as $interface) {
-			if ($interface instanceof RakLibInterface) $interface->setPacketLimit(PHP_INT_MAX);
+			if ($interface instanceof RakLibInterface) {
+                $interface->setPacketLimit(PHP_INT_MAX);
+            }
 		}
 
 		self::$logger->notice('§c' . <<<INFO

@@ -58,7 +58,7 @@ class Language
 	 */
 	public function hasName(string $name, string $locale = ""): bool
 	{
-		if ($locale !== "" and isset($this->names[$locale])) {
+		if ($locale !== "" && isset($this->names[$locale])) {
 			$resultingName = $this->names[$locale];
 			return $resultingName === $name;
 		}

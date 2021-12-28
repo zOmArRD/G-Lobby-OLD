@@ -18,7 +18,7 @@ use zomarrd\ghostly\player\language\Language;
 
 class GhostlyPlayer extends Player
 {
-	private $currentLang = Language::ENGLISH_US;
+	private string $currentLang = Language::ENGLISH_US;
 
 	public function getLang(bool $fromLocale = false): ?Language
 	{
@@ -37,7 +37,7 @@ class GhostlyPlayer extends Player
 
 	public function hasDifferentLocale(): bool
 	{
-		return !$this->getLang(true)->equals($this->getLang());
+		return !$this->getLang(true)?->equals($this->getLang());
 	}
 
 	public function setLanguage(string $lang): void

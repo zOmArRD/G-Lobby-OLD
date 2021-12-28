@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\player\skin;
 
 use Exception;
+use JsonException;
 use pocketmine\entity\InvalidSkinException;
 use pocketmine\entity\Skin;
 use pocketmine\network\mcpe\convert\SkinAdapter;
@@ -22,7 +23,10 @@ final class MojangAdapter implements SkinAdapter
 {
 	private array $personaSkins = [];
 
-	public function toSkinData(Skin $skin): SkinData
+    /**
+     * @throws JsonException
+     */
+    public function toSkinData(Skin $skin): SkinData
 	{
 		if (isset($this->personaSkins[$skin->getSkinId()])) {
 			return $this->personaSkins[$skin->getSkinId()];
@@ -33,7 +37,7 @@ final class MojangAdapter implements SkinAdapter
 		if ($geometryName === "") {
 			$geometryName = "geometry.humanoid.custom";
 		}
-		$resourcePatch = json_encode(["geometry" => ["default" => $geometryName]]);
+		$resourcePatch = json_encode(["geometry" => ["default" => $geometryName]], JSON_THROW_ON_ERROR);
 		if ($resourcePatch === false) {
 			throw new \RuntimeException("json_encode() failed: " . json_last_error_msg());
 		}
@@ -59,7 +63,7 @@ final class MojangAdapter implements SkinAdapter
 			return new Skin($data->getSkinId(), str_repeat(random_bytes(3) . "\xff", 2048), $capeData);
 		}
 
-		$resourcePatch = json_decode($data->getResourcePatch(), true);
+		$resourcePatch = json_decode($data->getResourcePatch(), true, 512, JSON_THROW_ON_ERROR);
 		if (is_array($resourcePatch) && isset($resourcePatch["geometry"]["default"]) && is_string($resourcePatch["geometry"]["default"])) {
 			$geometryName = $resourcePatch["geometry"]["default"];
 		} else {

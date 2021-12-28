@@ -27,7 +27,9 @@ final class PlayerEvents implements Listener
 	public function onJoin(PlayerJoinEvent $event): void
 	{
 		$player = $event->getPlayer();
-		if (!$player instanceof GhostlyPlayer) return;
+		if (!$player instanceof GhostlyPlayer) {
+            return;
+        }
 		/*TODO: FINISH*/
 	}
 }

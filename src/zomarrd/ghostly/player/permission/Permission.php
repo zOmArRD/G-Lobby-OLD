@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\player\permission;
 
+/**
+ * @todo Generate this class automatically.
+ */
 class Permission
 {
 	public const COMMAND_SERVER = 'ghostly.command.server';

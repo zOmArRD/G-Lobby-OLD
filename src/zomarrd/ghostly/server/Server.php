@@ -79,12 +79,14 @@ final class Server
 	 */
 	public function getStatus(): string
 	{
-		if ($this->isOnline()) {
-			return '§7' . 'Players: §c' . $this->getPlayers() . '§7/§c' . $this->getMaxPlayers();
-		} elseif ($this->isWhitelist()) {
-			return '§d' . 'WHITELISTED';
-		}
-		return '§c' . 'OFFLINE';
+        if ($this->isOnline()) {
+            return '§7' . 'Players: §c' . $this->getPlayers() . '§7/§c' . $this->getMaxPlayers();
+        }
+
+        if ($this->isWhitelist()) {
+            return '§d' . 'WHITELISTED';
+        }
+        return '§c' . 'OFFLINE';
 	}
 
 	public function sync(bool $local = true): void

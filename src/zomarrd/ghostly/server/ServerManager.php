@@ -51,8 +51,10 @@ final class ServerManager
 
 	public function init(): void
 	{
-		if (!$this->getConfig()->get('current.server')['is.enabled']) return;
-		$cServerName = self::getConfig()->get('current.server')['server.name'];
+		if (!$this->getConfig()->get('current.server')['is.enabled']) {
+            return;
+        }
+		$cServerName = $this->getConfig()->get('current.server')['server.name'];
 		Ghostly::$logger->info(PREFIX . 'Registering the server in the database');
 		MySQL::runAsync(new RegisterServerQuery($cServerName));
 		sleep(1); //WHY YES ?
@@ -60,7 +62,9 @@ final class ServerManager
 
 		Ghostly::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
 			$this->getCurrentServer()?->sync();
-			foreach ($this->getServers() as $server) $server->sync(false);
+			foreach ($this->getServers() as $server) {
+                $server->sync(false);
+            }
 		}), 60);
 	}
 
@@ -72,7 +76,7 @@ final class ServerManager
 	public function reloadServers(): void
 	{
 		$this->servers = [];
-		$cServerName = self::getConfig()->get('current.server')['server.name'];
+		$cServerName = $this->getConfig()->get('current.server')['server.name'];
 		MySQL::runAsync(new SelectQuery('SELECT * FROM network_servers;'), 'network_servers', function ($rows) use ($cServerName) {
 			foreach ($rows as $row) {
 				$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist']);
@@ -100,7 +104,9 @@ final class ServerManager
 	public function getNetworkPlayers(): int
 	{
 		$players = 0;
-		foreach ($this->getServers() as $server) $players += $server->getPlayers();
+		foreach ($this->getServers() as $server) {
+            $players += $server->getPlayers();
+        }
 		$players += count(Ghostly::getInstance()->getServer()->getOnlinePlayers());
 		return $players;
 	}

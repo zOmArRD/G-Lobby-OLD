@@ -36,11 +36,13 @@ final class ConfigManager
 	public function init(): void
 	{
 		/** This can be erased? */
-		@mkdir($this->getDataFolder());
+        if (!mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        }
 
 		foreach ($this->files as $file => $version) {
 			$this->saveResource($file);
-			$tempFile = self::getFile($file);
+			$tempFile = $this->getFile($file);
 			if ($tempFile->get('version') !== $version) {
 				Ghostly::$logger->error("The {$file} aren't compatible with the current version, the old file are in " . $this->getDataFolder() . "{$file}.old");
 				rename($this->getDataFolder() . $file, $this->getDataFolder() . $file . '.old');
@@ -49,8 +51,8 @@ final class ConfigManager
 			unset($tempFile);
 		}
 		self::$server_config = $this->getFile('server_config.json');
-		define('PREFIX', self::getServerConfig()->get('prefix'));
-		define('MySQL', self::getServerConfig()->get('mysql.credentials'));
+		define('PREFIX', self::getServerConfig()?->get('prefix'));
+		define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
 	}
 
 	public function getDataFolder(): string
@@ -60,7 +62,7 @@ final class ConfigManager
 
 	public function getFile(string $file): Config
 	{
-		return new Config(self::getDataFolder() . $file);
+		return new Config($this->getDataFolder() . $file);
 	}
 
 	public static function getServerConfig(): ?Config

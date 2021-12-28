@@ -21,7 +21,9 @@ abstract class Query extends AsyncTask
 	public function onRun(): void
 	{
 		$this->query($mysqli = new mysqli($this->host, $this->user, $this->password, $this->database));
-		if ($mysqli->connect_errno) die(PREFIX . 'Could not connect to the database!');
+		if ($mysqli->connect_errno) {
+            die(PREFIX . 'Could not connect to the database!');
+        }
 		$mysqli->close();
 	}
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\player\language;
 
+use JsonException;
 use zomarrd\ghostly\Ghostly;
 
 /**
@@ -23,19 +24,20 @@ final class LangHandler
 	/** @var Language[] */
 	private array $languages;
 
-	private string $resourcesFolder;
-
 	private ?Language $defaultLanguage = null;
 
-	public function __construct()
+    /**
+     * @throws JsonException
+     */
+    public function __construct()
 	{
 		self::$instance = $this;
-		$this->resourcesFolder = Ghostly::getInstance()->getResourcesFolder() . "lang";
-		$files = scandir($this->resourcesFolder);
+		$resourcesFolder = Ghostly::getInstance()->getResourcesFolder() . "lang";
+		$files = scandir($resourcesFolder);
 		foreach ($files as $file) {
 			if (str_contains($file, '.json')) {
-				$path = $this->resourcesFolder . "/{$file}";
-				$data = json_decode(file_get_contents($path), true);
+				$path = $resourcesFolder . "/{$file}";
+				$data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
 				$languageData = $data["language_data"];
 				$default = $languageData["default"];
 				$locale = str_replace('.json', '', $file);
@@ -61,10 +63,8 @@ final class LangHandler
 
 	public function getLanguage(string $lang): ?Language
 	{
-		if (isset($this->languages[$lang]))
-			return $this->languages[$lang];
-		return $this->defaultLanguage;
-	}
+        return $this->languages[$lang] ?? $this->defaultLanguage;
+    }
 
 	public function getLanguages(): array
 	{

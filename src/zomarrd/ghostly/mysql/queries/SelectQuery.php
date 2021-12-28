@@ -27,7 +27,9 @@ class SelectQuery extends Query
 		$result = $mysqli->query($this->query);
 		$rows = [];
 		if ($result !== false) {
-			while ($row = $result->fetch_assoc()) $rows[] = $row;
+			while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
 			$this->rows = serialize($rows);
 		}
 	}

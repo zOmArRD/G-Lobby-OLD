@@ -31,10 +31,10 @@ final class RegisterServerQuery extends Query
 			if (!is_array($assco)) {
 				$mysqli->query("INSERT INTO network_servers(server_name, players, max_players, online, whitelist) VALUES ('$this->serverName', 0, 0, true, true);");
 				return;
-			} else {
-				$mysqli->query("UPDATE network_servers SET online = 1 WHERE server_name = '$this->serverName';");
 			}
-		} else {
+
+            $mysqli->query("UPDATE network_servers SET online = 1 WHERE server_name = '$this->serverName';");
+        } else {
 			MySQL::runAsync(new RegisterServerQuery($this->serverName));
 		}
 	}
