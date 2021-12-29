@@ -19,6 +19,7 @@ use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
 use pocketmine\network\mcpe\raklib\RakLibInterface;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLogger;
+use zomarrd\ghostly\commands\language\LangCmd;
 use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\events\PlayerEvents;
 use zomarrd\ghostly\mysql\MySQL;
@@ -57,6 +58,10 @@ final class Ghostly extends PluginBase
 
 		$this->registerEvents([
 			new PlayerEvents()
+		]);
+
+		$this->registerCommands("bukkit", [
+			new LangCmd($this, "lang")
 		]);
 
 		foreach ($this->getServer()->getNetwork()->getInterfaces() as $interface) {

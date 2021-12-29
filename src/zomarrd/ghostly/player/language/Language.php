@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\player\language;
 
 use pocketmine\utils\TextFormat;
+use zomarrd\ghostly\player\GhostlyPlayer;
 
 /**
  * @copyright GitHub Open Source lmao
@@ -79,19 +80,18 @@ class Language
 		return $this->locale;
 	}
 
-	public function getMessage(string $type, array $replaceable = [])
+	public function getMessage(string $type, array $replaceable = []): string
 	{
 		if (isset($this->messages[$type])) {
 			$message = $this->convertString($this->messages[$type]);
 			foreach ($replaceable as $key => $value) {
-				$search = "{{$key}}";
-				if (str_contains($message, $search)) {
-					$message = str_replace($search, $value, $message);
+				if (str_contains($message, $key)) {
+					$message = str_replace($key, $value, $message);
 				}
 			}
 			return $message;
 		}
-		return null;
+		return "";
 	}
 
 	public function convertString(string $string): string
@@ -140,5 +140,10 @@ class Language
 	public function getAuthors(): string
 	{
 		return $this->authors;
+	}
+
+	public static function openLangForm(GhostlyPlayer $player): LangForm
+	{
+		return new LangForm($player);
 	}
 }

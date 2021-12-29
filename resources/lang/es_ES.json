@@ -1,0 +1,23 @@
+{
+	"language_data": {
+		"author": "zOmArRD",
+		"default": false,
+		"names": {
+			"en_US": "Inglés (EE.UU)",
+			"es_ES": "Español (España)"
+		}
+	},
+	"messages": {
+		"global.permission.message": "{PREFIX}{RED}Aparentemente no tienes permisos para ejecutar esta acción.",
+
+		"global.form.button.close": "{RED}Cerrar",
+
+		"lang.form.title": "{WHITE}Cambiar idioma",
+		"lang.form.content": "Lista de idiomas disponibles:",
+		"lang.message.set": "{PREFIX}{GREEN}Ahora tu idioma es {NEW-LANG}",
+		"lang.message.set-fail": "{PREFIX}{RED}Ha ocurrido un error al cambiar tu idioma!"
+	},
+	"item_data": {
+		"server-selector": "§r§cSelector de servidor"
+	}
+}

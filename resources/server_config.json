@@ -1,9 +1,10 @@
 {
-	"version": 1.6,
+	"version": 2.0,
 	"prefix": "§l§cGhostly §f» §r",
 	"current.server": {
 		"is.enabled": true,
-		"server.name": "Lobby-1"
+		"server.name": "Lobby-1",
+		"current-version": "v1.18.x"
 	},
 	"mysql.credentials": {
 		"user": "root",
@@ -11,6 +12,35 @@
 		"host": "localhost",
 		"database": {
 			"network_servers": "mc"
+		}
+	},
+	"scoreboard": {
+		"display": "§c§lGhostly §fNetwork",
+		"lines": [
+			"§c\uE001",
+			" §7GhostlyMC.live",
+			"",
+			" §cRank: §7{get.player.rank}",
+			"",
+			"  §f{GET.NETWORK.PLAYERS}§c/§f{GET.NETWORK.MAX-PLAYERS}",
+			" §cNetwork:",
+			"",
+			" §7{date}",
+			"\uE001"
+		]
+	},
+	"player-spawn": {
+		"is_enabled": true,
+		"world": {
+			"name": "world",
+			"min-void": 20
+		},
+		"pos": {
+			"x": null,
+			"y": null,
+			"z": null,
+			"yaw": null,
+			"pitch": null
 		}
 	}
 }

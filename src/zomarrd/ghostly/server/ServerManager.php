@@ -52,8 +52,8 @@ final class ServerManager
 	public function init(): void
 	{
 		if (!$this->getConfig()->get('current.server')['is.enabled']) {
-            return;
-        }
+			return;
+		}
 		$cServerName = $this->getConfig()->get('current.server')['server.name'];
 		Ghostly::$logger->info(PREFIX . 'Registering the server in the database');
 		MySQL::runAsync(new RegisterServerQuery($cServerName));
@@ -63,8 +63,8 @@ final class ServerManager
 		Ghostly::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
 			$this->getCurrentServer()?->sync();
 			foreach ($this->getServers() as $server) {
-                $server->sync(false);
-            }
+				$server->sync(false);
+			}
 		}), 60);
 	}
 
@@ -90,7 +90,8 @@ final class ServerManager
 		});
 	}
 
-	public function getServerByName(string $name): ?Server {
+	public function getServerByName(string $name): ?Server
+	{
 		foreach ($this->getServers() as $server) {
 			return ($server->getServerName() === $name) ? $server : null;
 		}
@@ -99,15 +100,25 @@ final class ServerManager
 
 	/**
 	 * Function dedicated to the Scoreboard :)
+	 *
 	 * @return int
 	 */
 	public function getNetworkPlayers(): int
 	{
 		$players = 0;
 		foreach ($this->getServers() as $server) {
-            $players += $server->getPlayers();
-        }
+			$players += $server->getPlayers();
+		}
 		$players += count(Ghostly::getInstance()->getServer()->getOnlinePlayers());
 		return $players;
+	}
+
+	public function getNetworkMaxPlayers(): int
+	{
+		$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
+		foreach ($this->getServers() as $server) {
+			$maxPlayers += $server->getMaxPlayers();
+		}
+		return $maxPlayers;
 	}
 }

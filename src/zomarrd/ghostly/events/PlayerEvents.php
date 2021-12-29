@@ -13,6 +13,7 @@ namespace zomarrd\ghostly\events;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCreationEvent;
+use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerJumpEvent;
 use zomarrd\ghostly\player\GhostlyPlayer;
@@ -30,6 +31,11 @@ final class PlayerEvents implements Listener
 		if (!$player instanceof GhostlyPlayer) {
             return;
         }
-		/*TODO: FINISH*/
+		$player->onJoin();
+	}
+
+	public function onExhaust(PlayerExhaustEvent $event): void
+	{
+		$event->cancel();
 	}
 }

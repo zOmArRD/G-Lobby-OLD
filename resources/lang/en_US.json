@@ -3,13 +3,21 @@
 		"author": "zOmArRD",
 		"default": true,
 		"names": {
-			"en_US": "English (USA)"
+			"en_US": "English (USA)",
+			"es_ES": "Spanish (Spain)"
 		}
 	},
 	"messages": {
-		"global.permission.message": "{PREFIX}{RED}Apparently you do not have permissions to execute this action."
+		"global.permission.message": "{PREFIX}{RED}Apparently you do not have permissions to execute this action.",
+
+		"global.form.button.close": "{RED}Close",
+
+		"lang.form.title": "{WHITE}Change language",
+		"lang.form.content": "List of available languages:",
+		"lang.message.set": "{PREFIX}{GREEN}Now your language is {NEW-LANG}",
+		"lang.message.set-fail": "{PREFIX}{RED}An error has occurred changing your language!"
 	},
 	"item_data": {
-		"hub.server-selector": "§r§cServer Selector §7(use)"
+		"server-selector": "§r§cServer Selector"
 	}
 }

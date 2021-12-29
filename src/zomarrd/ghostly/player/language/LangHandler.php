@@ -24,12 +24,12 @@ final class LangHandler
 	/** @var Language[] */
 	private array $languages;
 
-	private ?Language $defaultLanguage = null;
+	private Language $defaultLanguage;
 
-    /**
-     * @throws JsonException
-     */
-    public function __construct()
+	/**
+	 * @throws JsonException
+	 */
+	public function __construct()
 	{
 		self::$instance = $this;
 		$resourcesFolder = Ghostly::getInstance()->getResourcesFolder() . "lang";
@@ -61,10 +61,10 @@ final class LangHandler
 		return self::$instance;
 	}
 
-	public function getLanguage(string $lang): ?Language
+	public function getLanguage(string $lang): Language
 	{
-        return $this->languages[$lang] ?? $this->defaultLanguage;
-    }
+		return $this->languages[$lang] ?? $this->defaultLanguage;
+	}
 
 	public function getLanguages(): array
 	{
