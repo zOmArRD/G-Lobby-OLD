@@ -36,7 +36,7 @@ final class ConfigManager
 	public function init(): void
 	{
 		/** This can be erased? */
-        if (!mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
+        if (!@mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
