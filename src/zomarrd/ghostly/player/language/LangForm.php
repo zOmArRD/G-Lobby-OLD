@@ -28,6 +28,12 @@ final class LangForm
 				if ($data === 'close') {
 					return;
 				}
+				if ($data === 'predetermined') {
+					$player->setLanguage($player->getLocale());
+					$player->sendTranslated('lang.message.set', ["{NEW-LANG}" => $player->getLocale()]);
+					return;
+				}
+
 				$lang = explode('-', $data);
 				if ($player->getLang()->getLocale() === $lang[0]) {
 					$player->sendTranslated('lang.message.set-fail');
@@ -42,6 +48,7 @@ final class LangForm
 		foreach($player->getLangHandler()->getLanguages() as $lang) {
 			$form->addButton('§9' . $lang->getName(), $form::IMAGE_TYPE_NULL, '', $lang->getLocale() . "-{$lang->getName()}");
 		}
+		$form->addButton($player->getTranslation('global.form.button.predetermined'), $form::IMAGE_TYPE_NULL, '', 'predetermined');
 		$form->addButton($player->getTranslation('global.form.button.close'), $form::IMAGE_TYPE_NULL, '', 'close');
 		$player->sendForm($form);
 	}

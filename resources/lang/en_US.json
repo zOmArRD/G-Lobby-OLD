@@ -11,6 +11,8 @@
 		"global.permission.message": "{PREFIX}{RED}Apparently you do not have permissions to execute this action.",
 
 		"global.form.button.close": "{RED}Close",
+		"global.form.button.predetermined": "{BLUE}Predetermined",
+
 
 		"lang.form.title": "{WHITE}Change language",
 		"lang.form.content": "List of available languages:",

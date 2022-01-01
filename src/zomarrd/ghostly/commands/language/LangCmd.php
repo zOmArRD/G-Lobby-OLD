@@ -29,15 +29,27 @@ final class LangCmd extends BaseCommand
 
 	protected function prepare(): void
 	{
+		$this->registerSubCommand(
+			new LangListCmd(
+				'list',
+				"List of available languages"
+			)
+		);
 
+		$this->registerSubCommand(
+			new LangSetCmd(
+				'set',
+				"Set your language, or someone else's"
+			)
+		);
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
-		if ($sender instanceof GhostlyPlayer) {
+		if (($sender instanceof GhostlyPlayer) && count($args) === 0) {
 			Language::openLangForm($sender);
-		} else {
-			$this->sendUsage();
+			return;
 		}
+		$this->sendUsage();
 	}
 }
