@@ -93,7 +93,9 @@ final class ServerManager
 	public function getServerByName(string $name): ?Server
 	{
 		foreach ($this->getServers() as $server) {
-			return ($server->getServerName() === $name) ? $server : null;
+			if (($server->getServerName() === $name)) {
+				return $server;
+			}
 		}
 		return null;
 	}

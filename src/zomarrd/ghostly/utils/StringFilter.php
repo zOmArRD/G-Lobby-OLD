@@ -18,6 +18,7 @@ class StringFilter
 {
 	public static function checkStrings(string $string): string
 	{
+		$msg = $string;
 		$toReplace = [
 			"{BLUE}" => TextFormat::BLUE,
 			"{GREEN}" => TextFormat::GREEN,
@@ -38,14 +39,14 @@ class StringFilter
 			"{BOLD}" => TextFormat::BOLD,
 			"{WHITE}" => TextFormat::WHITE,
 			"{date}" => date('d/m/y'),
-			"{GET.NETWORK.PLAYERS}" => ServerManager::getInstance()?->getNetworkPlayers(),
-			"{GET.NETWORK.MAX-PLAYERS}" => ServerManager::getInstance()?->getNetworkMaxPlayers()
+			"{NETWORK.GET-PLAYERS}" => ServerManager::getInstance()?->getNetworkPlayers(),
+			"{NETWORK.GET-MAX_PLAYERS}" => ServerManager::getInstance()?->getNetworkMaxPlayers()
 		];
 		$keys = array_keys($toReplace);
 		$values = array_values($toReplace);
 		for ($i = 0, $iMax = count($keys); $i < $iMax; $i++) {
-			$msg = str_replace($keys[$i], (string)$values[$i], $string);
+			$msg = str_replace($keys[$i], (string)$values[$i], $msg);
 		}
-		return $msg ?? $string;
+		return $msg;
 	}
 }
