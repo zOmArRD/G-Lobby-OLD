@@ -61,23 +61,23 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
 
     /** @var string[] */
     protected array $errorMessages = [
-        self::ERR_INVALID_ARG_VALUE => TextFormat::RED . "Invalid value '{value}' for argument #{position}",
-        self::ERR_TOO_MANY_ARGUMENTS => TextFormat::RED . 'Too many arguments given',
-        self::ERR_INSUFFICIENT_ARGUMENTS => TextFormat::RED . 'Insufficient number of arguments given',
-        self::ERR_NO_ARGUMENTS => TextFormat::RED . 'No arguments are required for this command',
+        self::ERR_INVALID_ARG_VALUE => PREFIX . TextFormat::RED . "Invalid value '{value}' for argument #{position}",
+        self::ERR_TOO_MANY_ARGUMENTS => PREFIX . TextFormat::RED . 'You have entered too many arguments for this command.',
+        self::ERR_INSUFFICIENT_ARGUMENTS => PREFIX . TextFormat::RED . 'The command you have entered needs more arguments, please try again!',
+        self::ERR_NO_ARGUMENTS => PREFIX . TextFormat::RED . 'You must not enter any arguments for this command!',
     ];
 
     /** @var CommandSender */
-    protected $currentSender;
+    protected CommandSender $currentSender;
 
     /** @var BaseSubCommand[] */
-    private $subCommands = [];
+    private array $subCommands = [];
 
     /** @var BaseConstraint[] */
-    private $constraints = [];
+    private array $constraints = [];
 
     /** @var Plugin */
-    private $plugin;
+    private Plugin $plugin;
 
     public function __construct(
         Plugin $plugin,
@@ -112,10 +112,10 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
      * @param string        $commandLabel
      * @param array         $args
      *
-     * @return mixed|void
+     * @return void
      */
-    final public function execute(CommandSender $sender, string $commandLabel, array $args)
-    {
+    final public function execute(CommandSender $sender, string $commandLabel, array $args): void
+	{
         $this->currentSender = $sender;
         if (!$this->testPermission($sender)) {
             return;
@@ -131,15 +131,10 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
                 if (!$cmd->testPermissionSilent($sender)) {
                     $msg = $this->getPermissionMessage();
                     if ($msg === null) {
-                        $sender->sendMessage(
-                            $sender->getServer()->getLanguage()->translateString(
-                                TextFormat::RED . '%commands.generic.permission'
-                            )
-                        );
+                        $sender->sendMessage(PREFIX . 'You do not have permission to execute this command.');
                     } elseif (empty($msg)) {
                         $sender->sendMessage(str_replace('<permission>', $cmd->getPermission(), $msg));
                     }
-
                     return;
                 }
             }
@@ -192,7 +187,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
      */
     protected function sendUsage(): void
     {
-        $this->currentSender->sendMessage('Usage: ' . $this->getUsage());
+        $this->currentSender->sendMessage(PREFIX . 'Correct use: ' . $this->getUsage());
     }
 
     /**

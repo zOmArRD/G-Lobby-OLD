@@ -82,11 +82,10 @@ trait ArgumentableTrait
         if (count($rawArgs) > 0) {
             foreach ($this->argumentList as $pos => $possibleArguments) {
                 // try the one that spans more first... before the others
-                usort($possibleArguments, function (BaseArgument $a, BaseArgument $b): int {
+                usort($possibleArguments, static function (BaseArgument $a, BaseArgument $b): int {
                     if ($a->getSpanLength() === PHP_INT_MAX) { // if it takes unlimited arguments, pull it down
                         return 1;
                     }
-
                     return -1;
                 });
                 $parsed = false;

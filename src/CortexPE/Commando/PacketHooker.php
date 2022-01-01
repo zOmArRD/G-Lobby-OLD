@@ -42,7 +42,9 @@ class PacketHooker implements Listener
 
         $interceptor = SimplePacketHandler::createInterceptor($registrant, EventPriority::NORMAL, false);
         $interceptor->interceptOutgoing(function (AvailableCommandsPacket $pk, NetworkSession $target): bool {
-            if (self::$isIntercepting) return true;
+            if (self::$isIntercepting) {
+				return true;
+			}
             $p = $target->getPlayer();
             foreach ($pk->commandData as $commandName => $commandData) {
                 $cmd = Server::getInstance()->getCommandMap()->getCommand($commandName);

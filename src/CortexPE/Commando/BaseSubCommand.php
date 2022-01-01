@@ -24,9 +24,9 @@ abstract class BaseSubCommand implements IArgumentable, IRunnable
     /** @var string */
     private string $name;
     /** @var string[] */
-    private array $aliases = [];
+    private array $aliases;
     /** @var string */
-    private string $description = '';
+    private string $description;
     /** @var string|null */
     private ?string $permission = null;
     /** @var BaseConstraint[] */
