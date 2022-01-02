@@ -8,3 +8,7 @@ author: zOmArRD
 permissions:
   ghostly.command.npc:
     default: op
+  ghostly.command.lang.set-other:
+    default: op
+  ghostly.command.server:
+    default: op
