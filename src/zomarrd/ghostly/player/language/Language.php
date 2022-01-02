@@ -13,6 +13,7 @@ namespace zomarrd\ghostly\player\language;
 
 use pocketmine\utils\TextFormat;
 use zomarrd\ghostly\player\GhostlyPlayer;
+use zomarrd\ghostly\utils\Utils;
 
 /**
  * @copyright GitHub Open Source lmao
@@ -83,7 +84,7 @@ class Language
 	public function getMessage(string $type, array $replaceable = []): string
 	{
 		if (isset($this->messages[$type])) {
-			$message = $this->convertString($this->messages[$type]);
+			$message = Utils::checkStrings($this->messages[$type]);
 			foreach ($replaceable as $key => $value) {
 				if (str_contains($message, $key)) {
 					$message = str_replace($key, $value, $message);
@@ -94,40 +95,10 @@ class Language
 		return "";
 	}
 
-	public function convertString(string $string): string
-	{
-		$toReplace = [
-			"{BLUE}" => TextFormat::BLUE,
-			"{GREEN}" => TextFormat::GREEN,
-			"{RED}" => TextFormat::RED,
-			"{DARK_RED}" => TextFormat::DARK_RED,
-			"{PREFIX}" => PREFIX,
-			"{DARK_BLUE}" => TextFormat::DARK_BLUE,
-			"{DARK_AQUA}" => TextFormat::DARK_AQUA,
-			"{DARK_GREEN}" => TextFormat::DARK_GREEN,
-			"{GOLD}" => TextFormat::GOLD,
-			"{GRAY}" => TextFormat::GRAY,
-			"{DARK_GRAY}" => TextFormat::DARK_GRAY,
-			"{DARK_PURPLE}" => TextFormat::DARK_PURPLE,
-			"{LIGHT_PURPLE}" => TextFormat::LIGHT_PURPLE,
-			"{RESET}" => TextFormat::RESET,
-			"{YELLOW}" => TextFormat::YELLOW,
-			"{AQUA}" => TextFormat::AQUA,
-			"{BOLD}" => TextFormat::BOLD,
-			"{WHITE}" => TextFormat::WHITE
-		];
-		foreach ($toReplace as $search => $replace) {
-			if (str_contains($string, $search)) {
-				$string = str_replace($search, $replace, $string);
-			}
-		}
-		return $string;
-	}
-
 	public function getItemNames(string $type): ?string
 	{
 		if (isset($this->item_names[$type])) {
-			return $this->convertString($this->item_names[$type]);
+			return Utils::checkStrings($this->item_names[$type]);
 		}
 		return null;
 	}
