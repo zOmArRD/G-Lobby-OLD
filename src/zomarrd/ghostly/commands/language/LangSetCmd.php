@@ -48,7 +48,7 @@ final class LangSetCmd extends BaseSubCommand
 						$sender->setLanguage($target);
 						$sender->sendTranslated(LangKey::LANG_TEXT_SET, ["{NEW-LANG}" => $sender->getLocale()]);
 					} else {
-						$sender->sendTranslated(PREFIX . LangKey::LANG_COMMAND_SET_LIST);
+						$sender->sendTranslated(LangKey::LANG_COMMAND_SET_LIST);
 						return;
 					}
 				}
@@ -56,37 +56,39 @@ final class LangSetCmd extends BaseSubCommand
 				$sender->sendMessage(PREFIX . '§c' . 'This command must be executed in-game.');
 			}
 		} elseif (isset($args["language"])) {
+			$target = $args["language|player"];
+			$newLang = $args["language"];
+			$isPlayer = Server::getInstance()->getPlayerByPrefix($target);
+			if ($target === $sender->getName()) {
+				$sender->sendMessage(PREFIX . 'Use: </lang set [language]>');
+				return;
+			}
 			if (!$sender->hasPermission(PermissionKeys::GHOSTLY_COMMAND_LANG_SET_OTHER)) {
 				if ($sender instanceof GhostlyPlayer) {
 					$sender->sendTranslated(LangKey::NOT_PERMISSION);
 				}
 				return;
 			}
-			$target = $args["language|player"];
-			$newLang = $args["language"];
-			$isPlayer = Server::getInstance()->getPlayerByPrefix($target);
-			if ($isPlayer instanceof GhostlyPlayer) {
-				if ($isPlayer->getName() === $sender->getName()) {
-					$sender->sendMessage(PREFIX . 'Use: </lang set [language]>');
+			if (!$isPlayer instanceof GhostlyPlayer || !$isPlayer->isOnline()) {
+				if ($sender instanceof GhostlyPlayer) {
+					$sender->sendTranslated(LangKey::PLAYER_NOT_ONLINE, ["{PLAYER-NAME}" => $target]);
+				} else {
+					$sender->sendMessage(PREFIX . "Player $target is not connected.");
+				}
+				return;
+			}
+			foreach (LangHandler::getInstance()->getLanguages() as $language) {
+				if ($language->getLocale() === $newLang) {
+					$isPlayer->setLanguage($newLang);
+					$isPlayer->sendTranslated(LangKey::LANG_TEXT_SET, ["{NEW-LANG}" => $isPlayer->getLang()->getLocale()]);
+				} else {
+					if ($sender instanceof GhostlyPlayer) {
+						$sender->sendTranslated(LangKey::LANG_COMMAND_SET_LIST);
+					} else {
+						$sender->sendMessage(PREFIX . 'Use </lang list> to see the list of available languages');
+					}
 					return;
 				}
-				foreach (LangHandler::getInstance()->getLanguages() as $language) {
-					if ($language->getLocale() === $newLang) {
-						$isPlayer->setLanguage($newLang);
-						$isPlayer->sendTranslated('lang.message.set', ["{NEW-LANG}" => $isPlayer->getLocale()]);
-					} else {
-						if ($sender instanceof GhostlyPlayer) {
-							$sender->sendTranslated(PREFIX . LangKey::LANG_COMMAND_SET_LIST);
-						} else {
-							$sender->sendMessage(PREFIX . 'Use </lang list> to see the list of available languages');
-						}
-						return;
-					}
-				}
-			} else if ($sender instanceof GhostlyPlayer) {
-				$sender->sendTranslated(PREFIX . LangKey::PLAYER_NOT_ONLINE, ["{PLAYER-NAME}", $target]);
-			} else {
-				$sender->sendMessage(PREFIX . "Player $target is not connected.");
 			}
 		}
 	}

@@ -28,7 +28,7 @@ final class LangListCmd extends BaseSubCommand
 	{
 		$line = str_repeat('-----', 3);
 		if ($sender instanceof GhostlyPlayer) {
-			$sender->sendTranslated(PREFIX . LangKey::LANG_TEXT_SET_LANGUAGE);
+			$sender->sendMessage(PREFIX . $sender->getTranslation(LangKey::LANG_TEXT_AVAILABLE_LANGUAGE));
 		}else {
 			$sender->sendMessage(PREFIX . "Available languages");
 		}

@@ -86,7 +86,7 @@ class Language
 		if (isset($this->messages[$type])) {
 			$message = Utils::checkStrings($this->messages[$type]);
 			foreach ($replaceable as $key => $value) {
-				if (str_contains($message, $key)) {
+				if (str_contains((string)$message, (string)$key)) {
 					$message = str_replace($key, $value, $message);
 				}
 			}

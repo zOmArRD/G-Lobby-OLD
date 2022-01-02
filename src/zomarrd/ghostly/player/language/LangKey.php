@@ -28,7 +28,7 @@ final class LangKey
 	public const FORM_BUTTON_CLOSE = "form.button.close";
 	public const FORM_BUTTON_PREDETERMINED = "form.button.predetermined";
 	public const LANG_COMMAND_SET_LIST = "lang.command.set-list";
-	public const LANG_TEXT_LIST_OF_LANGUAGE = "lang.text.list-of-language";
+	public const LANG_TEXT_AVAILABLE_LANGUAGE = "lang.text.available-language";
 	public const LANG_TEXT_SET = "lang.text.set";
 	public const LANG_TEXT_SET_FAIL = "lang.text.set-fail";
 	public const LANG_TEXT_SET_LANGUAGE = "lang.text.set-language";
