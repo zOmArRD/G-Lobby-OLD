@@ -13,7 +13,7 @@ namespace zomarrd\ghostly\extensions\scoreboard;
 
 use pocketmine\utils\Config;
 use zomarrd\ghostly\config\ConfigManager;
-use zomarrd\ghostly\utils\StringFilter;
+use zomarrd\ghostly\utils\Utils;
 
 class Scoreboard extends ScoreAPI
 {
@@ -44,6 +44,6 @@ class Scoreboard extends ScoreAPI
 		if (empty($string)) {
 			return self::EMPTY_CACHE[$line] ?? '';
 		}
-		return StringFilter::checkStrings($string);
+		return Utils::checkStrings($string);
 	}
 }

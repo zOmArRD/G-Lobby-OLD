@@ -14,7 +14,7 @@ namespace zomarrd\ghostly\utils;
 use pocketmine\utils\TextFormat;
 use zomarrd\ghostly\server\ServerManager;
 
-class StringFilter
+class Utils
 {
 	public static function checkStrings(string $string): string
 	{
@@ -48,5 +48,12 @@ class StringFilter
 			$msg = str_replace($keys[$i], (string)$values[$i], $msg);
 		}
 		return $msg;
+	}
+
+	public static function stringifyKeys(array $array): \Generator
+	{
+		foreach ($array as $key => $value) {
+			yield (string)$key => $value;
+		}
 	}
 }

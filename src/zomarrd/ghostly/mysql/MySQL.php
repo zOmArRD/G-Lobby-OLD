@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\mysql;
 
-use mysql_xdevapi\CollectionModify;
 use pocketmine\Server;
 use zomarrd\ghostly\mysql\queries\InsertQuery;
 
