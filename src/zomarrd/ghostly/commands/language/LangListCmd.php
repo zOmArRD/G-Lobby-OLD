@@ -19,7 +19,7 @@ final class LangListCmd extends BaseSubCommand
 {
 	protected function prepare(): void
 	{
-		// TODO: Implement prepare() method.
+		// NOOP :)
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void

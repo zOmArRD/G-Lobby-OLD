@@ -20,6 +20,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Server;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangHandler;
+use zomarrd\ghostly\player\permission\PermissionKeys;
 
 final class LangSetCmd extends BaseSubCommand
 {
@@ -54,6 +55,12 @@ final class LangSetCmd extends BaseSubCommand
 				$sender->sendMessage(PREFIX . '§c' . 'This command must be executed in-game.');
 			}
 		} elseif (isset($args["language"])) {
+			if ($sender->hasPermission(PermissionKeys::GHOSTLY_COMMAND_LANG_SET_OTHER)) {
+				if ($sender instanceof GhostlyPlayer) {
+					$sender->sendTranslated('global.permission.message');
+				}
+				return;
+			}
 			$target = $args["language|player"];
 			$newLang = $args["language"];
 			$isPlayer = Server::getInstance()->getPlayerByPrefix($target);
