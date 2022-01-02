@@ -25,11 +25,13 @@ namespace zomarrd\ghostly\player\language;
  */
 final class LangKey
 {
-	public const GLOBAL_FORM_BUTTON_CLOSE = "global.form.button.close";
-	public const GLOBAL_FORM_BUTTON_PREDETERMINED = "global.form.button.predetermined";
-	public const GLOBAL_PERMISSION_MESSAGE = "global.permission.message";
-	public const LANG_FORM_CONTENT = "lang.form.content";
-	public const LANG_FORM_TITLE = "lang.form.title";
-	public const LANG_MESSAGE_SET = "lang.message.set";
-	public const LANG_MESSAGE_SET_FAIL = "lang.message.set-fail";
+	public const FORM_BUTTON_CLOSE = "form.button.close";
+	public const FORM_BUTTON_PREDETERMINED = "form.button.predetermined";
+	public const LANG_COMMAND_SET_LIST = "lang.command.set-list";
+	public const LANG_TEXT_LIST_OF_LANGUAGE = "lang.text.list-of-language";
+	public const LANG_TEXT_SET = "lang.text.set";
+	public const LANG_TEXT_SET_FAIL = "lang.text.set-fail";
+	public const LANG_TEXT_SET_LANGUAGE = "lang.text.set-language";
+	public const NOT_PERMISSION = "not-permission";
+	public const PLAYER_NOT_ONLINE = "player.not-online";
 }

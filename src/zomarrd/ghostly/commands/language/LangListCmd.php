@@ -13,7 +13,9 @@ namespace zomarrd\ghostly\commands\language;
 
 use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
+use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangHandler;
+use zomarrd\ghostly\player\language\LangKey;
 
 final class LangListCmd extends BaseSubCommand
 {
@@ -25,7 +27,11 @@ final class LangListCmd extends BaseSubCommand
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		$line = str_repeat('-----', 3);
-		$sender->sendMessage(PREFIX . "Available languages");
+		if ($sender instanceof GhostlyPlayer) {
+			$sender->sendTranslated(PREFIX . LangKey::LANG_TEXT_SET_LANGUAGE);
+		}else {
+			$sender->sendMessage(PREFIX . "Available languages");
+		}
 		$sender->sendMessage($line . $line);
 		foreach (LangHandler::getInstance()->getLanguages() as $language) {
 			$sender->sendMessage("§a-§7 {$language->getLocale()} => {$language->getName()}");

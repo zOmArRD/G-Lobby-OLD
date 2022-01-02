@@ -44,6 +44,9 @@ final class LangCmd extends BaseCommand
 		);
 	}
 
+	/**
+	 * @todo ADD COOL-DOWN TO COMMANDS
+	 */
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		if (($sender instanceof GhostlyPlayer) && count($args) === 0) {
