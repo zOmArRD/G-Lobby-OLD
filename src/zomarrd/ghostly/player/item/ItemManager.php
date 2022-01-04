@@ -13,27 +13,20 @@ namespace zomarrd\ghostly\player\item;
 
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIds;
+use pocketmine\item\VanillaItems;
+use pocketmine\utils\SingletonTrait;
 use zomarrd\ghostly\player\IPlayer;
 
 final class ItemManager extends IPlayer
 {
+	use SingletonTrait;
+
 	public function get(string $name): Item
 	{
 		return match ($name) {
-			'server-selector' => $this->loadItem(ItemIds::COMPASS, $this->getPlayer()->getLang()->getItemNames('server-selector')),
+			'server-selector' => VanillaItems::COMPASS()->setCustomName($this->getPlayer()->getLang()->getItemNames('server-selector')),
+			'lobby-selector' => VanillaItems::NETHER_STAR()->setCustomName($this->getPlayer()->getLang()->getItemNames('lobby-selector')),
 			default => ItemFactory::air()
 		};
-	}
-
-	/**
-	 * @param int         $item
-	 * @param string|null $customName
-	 *
-	 * @return Item
-	 */
-	public function loadItem(int $item, ?string $customName): Item
-	{
-		return $customName !== null ? ItemFactory::getInstance()->get($item)->setCustomName($customName) : ItemFactory::getInstance()->get($item);
 	}
 }

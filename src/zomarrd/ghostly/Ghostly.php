@@ -23,7 +23,7 @@ use zomarrd\ghostly\commands\language\LangCommand;
 use zomarrd\ghostly\commands\mute\GlobalMuteCommand;
 use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\events\ItemInteractListener;
-use zomarrd\ghostly\events\PlayerEvents;
+use zomarrd\ghostly\events\PlayerListener;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\skin\MojangAdapter;
@@ -62,7 +62,7 @@ final class Ghostly extends PluginBase
 		}
 
 		$this->registerEvents([
-			new PlayerEvents(),
+			new PlayerListener(),
 			new ItemInteractListener()
 		]);
 
