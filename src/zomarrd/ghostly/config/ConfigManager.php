@@ -13,13 +13,16 @@ namespace zomarrd\ghostly\config;
 
 use pocketmine\utils\Config;
 use zomarrd\ghostly\Ghostly;
+use zomarrd\ghostly\server\LocalServer;
 
 final class ConfigManager
 {
 	public static ConfigManager $instance;
-	private static ?Config $server_config;
+	private static Config $server_config;
+
 	private array $files = [
-		'server_config.json' => 2.0
+		'server_config.json' => 2.0,
+		'network_servers.yml' => 1.0
 	];
 
 	public function __construct()
@@ -51,6 +54,7 @@ final class ConfigManager
 			unset($tempFile);
 		}
 		self::$server_config = $this->getFile('server_config.json');
+		new LocalServer($this->getFile('network_servers.yml')->get('servers'));
 		define('PREFIX', self::getServerConfig()?->get('prefix'));
 		define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
 	}
@@ -65,7 +69,7 @@ final class ConfigManager
 		return new Config($this->getDataFolder() . $file);
 	}
 
-	public static function getServerConfig(): ?Config
+	public static function getServerConfig(): Config
 	{
 		return self::$server_config;
 	}

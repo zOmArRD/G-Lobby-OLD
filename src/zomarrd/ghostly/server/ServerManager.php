@@ -12,8 +12,6 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\server;
 
 use pocketmine\scheduler\ClosureTask;
-use pocketmine\utils\Config;
-use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\mysql\queries\RegisterServerQuery;
@@ -51,10 +49,7 @@ final class ServerManager
 
 	public function init(): void
 	{
-		if (!$this->getConfig()->get('current.server')['is.enabled']) {
-			return;
-		}
-		$cServerName = $this->getConfig()->get('current.server')['server.name'];
+		$cServerName = $this->getCurrentServerName();
 		Ghostly::$logger->info(PREFIX . 'Registering the server in the database');
 		MySQL::runAsync(new RegisterServerQuery($cServerName));
 		sleep(1); //WHY YES ?
@@ -68,15 +63,16 @@ final class ServerManager
 		}), 60);
 	}
 
-	private function getConfig(): Config
+	public function getCurrentServerName(): ?string
 	{
-		return ConfigManager::getServerConfig();
+		return LocalServer::getInstance()->getCurrentServer()["server_name"];
 	}
+
 
 	public function reloadServers(): void
 	{
 		$this->servers = [];
-		$cServerName = $this->getConfig()->get('current.server')['server.name'];
+		$cServerName = $this->getCurrentServerName();
 		MySQL::runAsync(new SelectQuery('SELECT * FROM network_servers;'), 'network_servers', function ($rows) use ($cServerName) {
 			foreach ($rows as $row) {
 				$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist']);

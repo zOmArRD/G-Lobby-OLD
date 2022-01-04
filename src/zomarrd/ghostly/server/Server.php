@@ -97,6 +97,8 @@ final class Server
 		$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
 		$isWhitelist = Ghostly::getInstance()->getServer()->hasWhitelist() ? 1 : 0;
 		MySQL::runAsync(new UpdateRowQuery(serialize(['players' => $players, 'max_players' => $maxPlayers, 'whitelist' => $isWhitelist]), 'server_name', $this->getServerName(), 'network_servers'));
+		$this->setMaxPlayers($maxPlayers);
+		$this->setPlayers($players);
 	}
 
 	public function sync_remote(): void
@@ -105,7 +107,7 @@ final class Server
 			$row = $rows[0];
 			if ($row !== null) {
 				$this->setOnline((bool)$row['online']);
-				$this->setPlayers((int)$row['player_count']);
+				$this->setPlayers((int)$row['players']);
 				$this->setWhitelist((bool)$row['is_whitelisted']);
 				$this->setMaxPlayers((int)$row['max_players']);
 			} else {
