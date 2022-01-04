@@ -81,19 +81,3 @@ try {
 	exit(1);
 }
 generate_lang_keys((array)$json->messages);
-/*if ($json === null){
-	fwrite(STDERR, "Missing keys!\n");
-	exit(1);
-}
-generate_lang_keys($json["messages"]);*/
-/*$files = scandir(dirname(__DIR__));
-foreach ($files as $file) {
-	if (str_contains($file, 'plugin.yml')) {
-		$yml = yaml_parse_file($file);
-	}
-}
-if ($yml === false ){
-	fwrite(STDERR, "Missing Permission files!\n");
-	exit(1);
-}*/
-//generate_permissions($yml["permissions"]);
