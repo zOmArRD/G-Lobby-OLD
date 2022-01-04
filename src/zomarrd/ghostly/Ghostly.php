@@ -14,17 +14,17 @@ namespace zomarrd\ghostly;
 use AttachableLogger;
 use CortexPE\Commando\exception\HookAlreadyRegistered;
 use CortexPE\Commando\PacketHooker;
+use muqsit\invmenu\InvMenuHandler;
 use pocketmine\event\Listener;
 use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
 use pocketmine\network\mcpe\raklib\RakLibInterface;
 use pocketmine\plugin\PluginBase;
-use pocketmine\plugin\PluginLogger;
-use zomarrd\ghostly\commands\language\LangCmd;
+use zomarrd\ghostly\commands\language\LangCommand;
+use zomarrd\ghostly\commands\mute\GlobalMuteCommand;
 use zomarrd\ghostly\config\ConfigManager;
+use zomarrd\ghostly\events\ItemInteractListener;
 use zomarrd\ghostly\events\PlayerEvents;
 use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\queries\RegisterServerQuery;
-use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\skin\MojangAdapter;
 use zomarrd\ghostly\server\ServerManager;
@@ -33,6 +33,7 @@ final class Ghostly extends PluginBase
 {
 	public static Ghostly $instance;
 	public static AttachableLogger $logger;
+	private static bool $globalMute = false;
 
 	protected function onLoad(): void
 	{
@@ -56,12 +57,18 @@ final class Ghostly extends PluginBase
 			PacketHooker::register($this);
 		}
 
+		if(!InvMenuHandler::isRegistered()){
+			InvMenuHandler::register($this);
+		}
+
 		$this->registerEvents([
-			new PlayerEvents()
+			new PlayerEvents(),
+			new ItemInteractListener()
 		]);
 
 		$this->registerCommands("bukkit", [
-			new LangCmd($this, "lang")
+			new LangCommand($this, "lang"),
+			new GlobalMuteCommand($this, 'globalmute')
 		]);
 
 		foreach ($this->getServer()->getNetwork()->getInterfaces() as $interface) {
@@ -92,7 +99,7 @@ INFO
 
 	protected function onDisable(): void
 	{
-		ServerManager::getInstance()?->getCurrentServer()?->setOnline(false);
+		ServerManager::getInstance()->getCurrentServer()?->setOnline(false);
 	}
 
 	public static function getInstance(): Ghostly
@@ -128,5 +135,15 @@ INFO
 	public function getResourcesFolder(): string
 	{
 		return $this->getFile() . 'resources/';
+	}
+
+	public static function setGlobalMute(bool $globalMute): void
+	{
+		self::$globalMute = $globalMute;
+	}
+
+	public static function isGlobalMute(): bool
+	{
+		return self::$globalMute;
 	}
 }

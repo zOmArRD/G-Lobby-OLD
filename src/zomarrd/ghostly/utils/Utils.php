@@ -39,8 +39,8 @@ class Utils
 			"{BOLD}" => TextFormat::BOLD,
 			"{WHITE}" => TextFormat::WHITE,
 			"{date}" => date('d/m/y'),
-			"{NETWORK.GET-PLAYERS}" => ServerManager::getInstance()?->getNetworkPlayers(),
-			"{NETWORK.GET-MAX_PLAYERS}" => ServerManager::getInstance()?->getNetworkMaxPlayers()
+			"{NETWORK.GET-PLAYERS}" => ServerManager::getInstance()->getNetworkPlayers(),
+			"{NETWORK.GET-MAX_PLAYERS}" => ServerManager::getInstance()->getNetworkMaxPlayers()
 		];
 		$keys = array_keys($toReplace);
 		$values = array_values($toReplace);
