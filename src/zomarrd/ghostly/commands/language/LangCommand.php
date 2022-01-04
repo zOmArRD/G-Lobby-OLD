@@ -19,7 +19,7 @@ use pocketmine\plugin\Plugin;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\Language;
 
-final class LangCmd extends BaseCommand
+final class LangCommand extends BaseCommand
 {
 
 	public function __construct(Plugin $plugin, string $name)
@@ -30,14 +30,14 @@ final class LangCmd extends BaseCommand
 	protected function prepare(): void
 	{
 		$this->registerSubCommand(
-			new LangListCmd(
+			new LangListCommand(
 				'list',
 				"List of available languages"
 			)
 		);
 
 		$this->registerSubCommand(
-			new LangSetCmd(
+			new LangSetCommand(
 				'set',
 				"Set your language, or someone else's"
 			)

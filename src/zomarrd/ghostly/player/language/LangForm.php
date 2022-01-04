@@ -30,21 +30,21 @@ final class LangForm
 				}
 				if ($data === 'predetermined') {
 					$player->setLanguage($player->getLocale());
-					$player->sendTranslated(LangKey::LANG_TEXT_SET, ["{NEW-LANG}" => $player->getLang()->getLocale()]);
+					$player->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $player->getLang()->getLocale()]);
 					return;
 				}
 
 				$lang = explode('-', $data);
 				if ($player->getLang()->getLocale() === $lang[0]) {
-					$player->sendTranslated(LangKey::LANG_TEXT_SET_FAIL);
+					$player->sendTranslated(LangKey::LANG_APPLIED_FAIL);
 					return;
 				}
 				$player->setLanguage($lang[0]);
-				$player->sendTranslated(LangKey::LANG_TEXT_SET, ["{NEW-LANG}" => $lang[1]]);
+				$player->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $lang[1]]);
 			}
 		});
-		$form->setTitle($player->getTranslation(LangKey::LANG_TEXT_SET_LANGUAGE));
-		$form->setContent($player->getTranslation(LangKey::LANG_TEXT_AVAILABLE_LANGUAGE));
+		$form->setTitle($player->getTranslation(LangKey::SET_LANGUAGE));
+		$form->setContent($player->getTranslation(LangKey::AVAILABLE_LANGUAGE));
 		foreach($player->getLangHandler()->getLanguages() as $lang) {
 			$form->addButton('§9' . $lang->getName(), $form::IMAGE_TYPE_NULL, '', $lang->getLocale() . "-{$lang->getName()}");
 		}

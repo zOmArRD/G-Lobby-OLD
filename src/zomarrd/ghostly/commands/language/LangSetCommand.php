@@ -21,9 +21,9 @@ use pocketmine\Server;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
-use zomarrd\ghostly\player\permission\PermissionKeys;
+use zomarrd\ghostly\player\permission\PermissionKey;
 
-final class LangSetCmd extends BaseSubCommand
+final class LangSetCommand extends BaseSubCommand
 {
 
 	/**
@@ -46,9 +46,9 @@ final class LangSetCmd extends BaseSubCommand
 				foreach (LangHandler::getInstance()->getLanguages() as $language) {
 					if ($language->getLocale() === $target) {
 						$sender->setLanguage($target);
-						$sender->sendTranslated(LangKey::LANG_TEXT_SET, ["{NEW-LANG}" => $sender->getLocale()]);
+						$sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $sender->getLocale()]);
 					} else {
-						$sender->sendTranslated(LangKey::LANG_COMMAND_SET_LIST);
+						$sender->sendTranslated(LangKey::COMMAND_LANG_LIST);
 						return;
 					}
 				}
@@ -63,7 +63,7 @@ final class LangSetCmd extends BaseSubCommand
 				$sender->sendMessage(PREFIX . 'Use: </lang set [language]>');
 				return;
 			}
-			if (!$sender->hasPermission(PermissionKeys::GHOSTLY_COMMAND_LANG_SET_OTHER)) {
+			if (!$sender->hasPermission(PermissionKey::GHOSTLY_COMMAND_LANG_SET_OTHER)) {
 				if ($sender instanceof GhostlyPlayer) {
 					$sender->sendTranslated(LangKey::NOT_PERMISSION);
 				}
@@ -80,10 +80,10 @@ final class LangSetCmd extends BaseSubCommand
 			foreach (LangHandler::getInstance()->getLanguages() as $language) {
 				if ($language->getLocale() === $newLang) {
 					$isPlayer->setLanguage($newLang);
-					$isPlayer->sendTranslated(LangKey::LANG_TEXT_SET, ["{NEW-LANG}" => $isPlayer->getLang()->getLocale()]);
+					$isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $isPlayer->getLang()->getLocale()]);
 				} else {
 					if ($sender instanceof GhostlyPlayer) {
-						$sender->sendTranslated(LangKey::LANG_COMMAND_SET_LIST);
+						$sender->sendTranslated(LangKey::COMMAND_LANG_LIST);
 					} else {
 						$sender->sendMessage(PREFIX . 'Use </lang list> to see the list of available languages');
 					}

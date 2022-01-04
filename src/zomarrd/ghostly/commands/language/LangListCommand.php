@@ -17,7 +17,7 @@ use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
 
-final class LangListCmd extends BaseSubCommand
+final class LangListCommand extends BaseSubCommand
 {
 	protected function prepare(): void
 	{
@@ -28,7 +28,7 @@ final class LangListCmd extends BaseSubCommand
 	{
 		$line = str_repeat('-----', 3);
 		if ($sender instanceof GhostlyPlayer) {
-			$sender->sendMessage(PREFIX . $sender->getTranslation(LangKey::LANG_TEXT_AVAILABLE_LANGUAGE));
+			$sender->sendMessage(PREFIX . $sender->getTranslation(LangKey::AVAILABLE_LANGUAGE));
 		}else {
 			$sender->sendMessage(PREFIX . "Available languages");
 		}
