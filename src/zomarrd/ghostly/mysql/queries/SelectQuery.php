@@ -36,7 +36,9 @@ class SelectQuery extends Query
 
 	public function onCompletion(): void
 	{
-		if ($this->rows === null) return;
+		if ($this->rows === null) {
+			return;
+		}
 		$this->rows = unserialize($this->rows);
 		parent::onCompletion();
 	}

@@ -24,7 +24,9 @@ final class Server
 		private int    $max_players,
 		private bool   $online,
 		private bool   $whitelist
-	){}
+	)
+	{
+	}
 
 	public function getServerName(): string
 	{
@@ -79,30 +81,30 @@ final class Server
 	 */
 	public function getStatus(): string
 	{
-        if ($this->isOnline()) {
-            return '§7' . 'Players: §c' . $this->getPlayers() . '§7/§c' . $this->getMaxPlayers();
-        }
-
-        if ($this->isWhitelist()) {
-            return '§d' . 'WHITELISTED';
-        }
-        return '§c' . 'OFFLINE';
-	}
-
-	public function sync(bool $local = true): void
-	{
-		if ($local) {
-			$players = count(Ghostly::getInstance()->getServer()->getOnlinePlayers());
-			$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
-			$isWhitelist = Ghostly::getInstance()->getServer()->hasWhitelist() ? 1 : 0;
-			MySQL::runAsync(new UpdateRowQuery(serialize(['players' => $players, 'max_players' => $maxPlayers, 'whitelist' => $isWhitelist]), 'server_name', $this->getServerName(), 'network_servers'));
-			return;
+		if ($this->isOnline()) {
+			return '§7' . 'Players: §c' . $this->getPlayers() . '§7/§c' . $this->getMaxPlayers();
 		}
 
+		if ($this->isWhitelist()) {
+			return '§d' . 'WHITELISTED';
+		}
+		return '§c' . 'OFFLINE';
+	}
+
+	public function sync_local(): void
+	{
+		$players = count(Ghostly::getInstance()->getServer()->getOnlinePlayers());
+		$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
+		$isWhitelist = Ghostly::getInstance()->getServer()->hasWhitelist() ? 1 : 0;
+		MySQL::runAsync(new UpdateRowQuery(serialize(['players' => $players, 'max_players' => $maxPlayers, 'whitelist' => $isWhitelist]), 'server_name', $this->getServerName(), 'network_servers'));
+	}
+
+	public function sync_remote(): void
+	{
 		MySQL::runAsync(new SelectQuery("SELECT * FROM network_servers WHERE server_name='$this->server_name';"), 'network_servers', function ($rows) {
 			$row = $rows[0];
 			if ($row !== null) {
-				$this->setOnline((bool)$row['is_online']);
+				$this->setOnline((bool)$row['online']);
 				$this->setPlayers((int)$row['player_count']);
 				$this->setWhitelist((bool)$row['is_whitelisted']);
 				$this->setMaxPlayers((int)$row['max_players']);

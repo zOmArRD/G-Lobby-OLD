@@ -21,7 +21,7 @@ use zomarrd\ghostly\mysql\queries\SelectQuery;
 
 final class ServerManager
 {
-	private static ?ServerManager $instance = null;
+	private static ServerManager $instance;
 
 	private ?Server $current_server = null;
 
@@ -34,7 +34,7 @@ final class ServerManager
 		$this->init();
 	}
 
-	public static function getInstance(): ?ServerManager
+	public static function getInstance(): ServerManager
 	{
 		return self::$instance;
 	}
@@ -61,9 +61,9 @@ final class ServerManager
 		$this->reloadServers();
 
 		Ghostly::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
-			$this->getCurrentServer()?->sync();
+			$this->getCurrentServer()?->sync_local();
 			foreach ($this->getServers() as $server) {
-				$server->sync(false);
+				$server->sync_remote();
 			}
 		}), 60);
 	}
@@ -93,7 +93,7 @@ final class ServerManager
 	public function getServerByName(string $name): ?Server
 	{
 		foreach ($this->getServers() as $server) {
-			if (($server->getServerName() === $name)) {
+			if ($server->getServerName() === $name) {
 				return $server;
 			}
 		}
