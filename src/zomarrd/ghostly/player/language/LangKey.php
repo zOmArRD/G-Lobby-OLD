@@ -34,5 +34,9 @@ final class LangKey
 	public const LANG_APPLIED_FAIL = "lang.applied-fail";
 	public const NOT_PERMISSION = "not-permission";
 	public const PLAYER_NOT_ONLINE = "player.not-online";
+	public const SERVER_CONNECT_ERROR_1 = "server.connect.error-1";
+	public const SERVER_CONNECTING = "server.connecting";
+	public const SERVER_IS_WHITELISTED = "server.is-whitelisted";
+	public const SERVER_NOT_ONLINE = "server.not-online";
 	public const SET_LANGUAGE = "set-language";
 }
