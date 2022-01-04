@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\player;
 
 use pocketmine\item\Item;
-use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
+use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\item\ItemManager;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\Language;
@@ -26,6 +27,16 @@ class GhostlyPlayer extends Player
 	private bool $loaded = false;
 	private Scoreboard $scoreboard_session;
 	private ItemManager $itemManager;
+
+	public function getUIProfile(): int
+	{
+		return DeviceData::getUIProfile($this->getName());
+	}
+
+	public function hasClassicProfile(): bool
+	{
+		return $this->getUIProfile() === UIProfile::CLASSIC;
+	}
 
 	public function hasDifferentLocale(): bool
 	{
@@ -46,14 +57,14 @@ class GhostlyPlayer extends Player
 		return LangHandler::getInstance();
 	}
 
-	public function getTranslation(string $string, array $replaceable = []): string
-	{
-		return $this->getLang()->getMessage($string, $replaceable);
-	}
-
 	public function sendTranslated(string $string, array $replaceable = []): void
 	{
 		$this->sendMessage($this->getTranslation($string, $replaceable));
+	}
+
+	public function getTranslation(string $string, array $replaceable = []): string
+	{
+		return $this->getLang()->getMessage($string, $replaceable);
 	}
 
 	public function onUpdate(int $currentTick): bool
@@ -97,14 +108,15 @@ class GhostlyPlayer extends Player
 		$this->setGamemode(GameMode::ADVENTURE());
 		$this->setHealth(20);
 		$this->getHungerManager()->setFood(20);
-		//$this->setMovementSpeed($this->getMovementSpeed() * 1.5);
+		$this->setAllowFlight(true);
+		$this->setMovementSpeed($this->getMovementSpeed() * 1.5);
 		/*TODO: Spawn on the lobby*/
 	}
 
 	public function getLobbyItems(): void
 	{
 		$this->getInventory()?->clearAll();
-		foreach (['server-selector' => 0] as $item => $index) {
+		foreach (['server-selector' => 0, 'lobby-selector' => 8] as $item => $index) {
 			$this->setItem($index, $this->getItemManager()->get($item));
 		}
 	}
@@ -121,4 +133,10 @@ class GhostlyPlayer extends Player
 	{
 		return $this->itemManager;
 	}
+
+	public function isOp(): bool
+	{
+		return Ghostly::getInstance()->getServer()->isOp($this->getName());
+	}
+
 }

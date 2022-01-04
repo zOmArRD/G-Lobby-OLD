@@ -17,15 +17,17 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\world\sound\BlazeShootSound;
 use zomarrd\ghostly\Ghostly;
+use zomarrd\ghostly\player\DeviceData;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\permission\PermissionKey;
 
-final class PlayerEvents implements Listener
+final class PlayerListener implements Listener
 {
 	public function onCreation(PlayerCreationEvent $event): void
 	{
@@ -65,7 +67,12 @@ final class PlayerEvents implements Listener
 		$event->cancel();
 		$location = $player->getLocation();
 		$motion = $player->getMotion();
-		$player->setMotion($motion->add(-sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI), $motion->y + 0.75, cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI)));
+		$player->setMotion($motion->add(
+			-sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI),
+			$motion->y + 0.75,
+			cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI))
+		);
+
 		$player->broadcastSound(new BlazeShootSound(), [$player]);
 	}
 
@@ -91,5 +98,11 @@ final class PlayerEvents implements Listener
 				$this->globalmute_alert_delay[$player_name] = time();
 			}
 		}
+	}
+
+	public function onPlayerPreLogin(PlayerPreLoginEvent $event): void
+	{
+		$player = $event->getPlayerInfo();
+		DeviceData::saveUIProfile($player->getUsername(), $player->getExtraData()["UIProfile"]);
 	}
 }
