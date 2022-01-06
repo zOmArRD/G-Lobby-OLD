@@ -75,16 +75,6 @@ abstract class Chest implements Listener
 		$this->buttons[$slot] = $button;
 	}
 
-	public function removeButton(): void
-	{
-
-	}
-
-	protected function addCloseAction(GhostlyPlayer $player, callable $callable): void
-	{
-		$this->inventoryClose[$player->getUniqueId()->toString()] = $callable;
-	}
-
 	public function getMenu(): InvMenu
 	{
 		return $this->menu;

@@ -50,8 +50,8 @@ class LobbySelectorGUI extends Chest
 				"Click to connect to this server!"]);
 		}
 
-		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($item): void {
-			$player->sendMessage($item->getName());
+		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($serverName): void {
+			$player->transfer_to_lobby($serverName);
 		}), $slot);
 	}
 
