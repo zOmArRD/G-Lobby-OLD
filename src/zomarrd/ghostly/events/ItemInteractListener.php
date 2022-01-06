@@ -37,7 +37,7 @@ final class ItemInteractListener implements Listener
 					if ($player->hasClassicProfile()) {
 						Menu::LOBBY_SELECTOR_GUI()->build($player);
 					} else {
-						/*TODO: Send Form Menu*/
+						Menu::LOBBY_SELECTOR_FORM()->build($player);
 					}
 					break;
 			}
