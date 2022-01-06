@@ -15,11 +15,15 @@ use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\world\sound\AnvilUseSound;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\item\ItemManager;
 use zomarrd\ghostly\player\language\LangHandler;
+use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\language\Language;
+use zomarrd\ghostly\server\LocalServer;
+use zomarrd\ghostly\server\ServerManager;
 
 class GhostlyPlayer extends Player
 {
@@ -109,7 +113,7 @@ class GhostlyPlayer extends Player
 		$this->setHealth(20);
 		$this->getHungerManager()->setFood(20);
 		$this->setAllowFlight(true);
-		$this->setMovementSpeed($this->getMovementSpeed() * 1.5);
+		$this->setMovementSpeed($this->getMovementSpeed() * 1.2);
 		/*TODO: Spawn on the lobby*/
 	}
 
@@ -139,4 +143,43 @@ class GhostlyPlayer extends Player
 		return Ghostly::getInstance()->getServer()->isOp($this->getName());
 	}
 
+	/**
+	 * Dedicated function only to transfer to Lobbies?
+	 *
+	 * @param string $lobby
+	 *
+	 * @return void
+	 */
+	public function transfer_to_lobby(string $lobby): void
+	{
+		$server = ServerManager::getInstance()->getServerByName($lobby);
+		$currentServerName = LocalServer::getInstance()->getCurrentServer()["server_name"];
+		$local = LocalServer::getInstance()->getServerByName($lobby);
+
+		if ($lobby === $currentServerName) {
+			$this->broadcastSound(new AnvilUseSound(), [$this]);
+			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
+			return;
+		}
+
+		if ($local["category"] !== "Lobby") {
+			$this->broadcastSound(new AnvilUseSound(), [$this]);
+			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_2);
+			return;
+		}
+
+		if ($server === null || !$server->isOnline()) {
+			$this->broadcastSound(new AnvilUseSound(), [$this]);
+			$this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
+			return;
+		}
+
+		$this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getServerName()]);
+		if ($local["proxy_transfer"]) {
+			$this->transfer($server->getServerName(), 0, "Transfer to Lobby {$server->getServerName()}");
+		} else {
+			$ip = explode(":", $local["address"]);
+			$this->transfer($ip[1], (int)$ip[2], "Transfer to Lobby {$server->getServerName()}");
+		}
+	}
 }
