@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\events;
 
+use pocketmine\event\block\LeavesDecayEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
@@ -20,6 +22,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
+use pocketmine\player\GameMode;
 use pocketmine\world\sound\BlazeShootSound;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\DeviceData;
@@ -64,9 +67,14 @@ final class PlayerListener implements Listener
 	public function onPlayerToggleFlight(PlayerToggleFlightEvent $event): void
 	{
 		$player = $event->getPlayer();
-		$event->cancel();
 		$location = $player->getLocation();
 		$motion = $player->getMotion();
+
+		if ($player->getGamemode() === GameMode::CREATIVE()) {
+			return;
+		}
+
+		$event->cancel();
 		$player->setMotion($motion->add(
 			-sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI),
 			$motion->y + 0.75,
@@ -86,6 +94,7 @@ final class PlayerListener implements Listener
 		$player = $event->getPlayer();
 		$player_name = $player->getName();
 		$global_mute_delay = 2;
+		$message = $event->getMessage();
 
 		if (!$player instanceof GhostlyPlayer) {
 			return;
@@ -98,11 +107,22 @@ final class PlayerListener implements Listener
 				$this->globalmute_alert_delay[$player_name] = time();
 			}
 		}
+
 	}
 
 	public function onPlayerPreLogin(PlayerPreLoginEvent $event): void
 	{
 		$player = $event->getPlayerInfo();
 		DeviceData::saveUIProfile($player->getUsername(), $player->getExtraData()["UIProfile"]);
+	}
+
+	public function preventLeave(LeavesDecayEvent $event): void
+	{
+		$event->cancel();
+	}
+
+	public function onDamage(EntityDamageEvent $event): void
+	{
+		$event->cancel();
 	}
 }
