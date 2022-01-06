@@ -32,9 +32,11 @@ final class LangKey
 	public const GLOBAL_MUTE_IS_ENABLED = "global.mute.is-enabled";
 	public const LANG_APPLIED_CORRECTLY = "lang.applied-correctly";
 	public const LANG_APPLIED_FAIL = "lang.applied-fail";
+	public const LOBBY_SERVER_FORM_CONTENT = "lobby-server.form.content";
 	public const NOT_PERMISSION = "not-permission";
 	public const PLAYER_NOT_ONLINE = "player.not-online";
 	public const SERVER_CONNECT_ERROR_1 = "server.connect.error-1";
+	public const SERVER_CONNECT_ERROR_2 = "server.connect.error-2";
 	public const SERVER_CONNECTING = "server.connecting";
 	public const SERVER_IS_WHITELISTED = "server.is-whitelisted";
 	public const SERVER_NOT_ONLINE = "server.not-online";

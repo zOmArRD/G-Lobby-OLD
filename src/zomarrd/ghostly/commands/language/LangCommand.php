@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\commands\language;
 
-use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseCommand;
-use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\plugin\Plugin;
 use zomarrd\ghostly\player\GhostlyPlayer;
@@ -51,7 +49,6 @@ final class LangCommand extends BaseCommand
 	{
 		if (($sender instanceof GhostlyPlayer) && count($args) === 0) {
 			Language::openLangForm($sender);
-			return;
 		}
 		$this->sendUsage();
 	}
