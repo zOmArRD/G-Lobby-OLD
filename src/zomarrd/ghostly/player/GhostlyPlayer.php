@@ -15,6 +15,7 @@ use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\world\Position;
 use pocketmine\world\sound\AnvilUseSound;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\Ghostly;
@@ -24,6 +25,7 @@ use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\language\Language;
 use zomarrd\ghostly\server\LocalServer;
 use zomarrd\ghostly\server\ServerManager;
+use zomarrd\ghostly\world\Lobby;
 
 class GhostlyPlayer extends Player
 {
@@ -114,7 +116,7 @@ class GhostlyPlayer extends Player
 		$this->getHungerManager()->setFood(20);
 		$this->setAllowFlight(true);
 		$this->setMovementSpeed($this->getMovementSpeed() * 1.2);
-		/*TODO: Spawn on the lobby*/
+		$this->teleport_to_lobby();
 	}
 
 	public function getLobbyItems(): void
@@ -181,5 +183,14 @@ class GhostlyPlayer extends Player
 			$ip = explode(":", $local["address"]);
 			$this->transfer($ip[1], (int)$ip[2], "Transfer to Lobby {$server->getServerName()}");
 		}
+	}
+
+	public function teleport_to_lobby(): void
+	{
+		$lobby = Lobby::getInstance();
+		if ($lobby === null) {
+			return;
+		}
+		$this->teleport(new Position($lobby->getSpawnX(), $lobby->getSpawnY(), $lobby->getSpawnZ(), $lobby->getWorld()), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
 	}
 }

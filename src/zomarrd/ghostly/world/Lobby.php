@@ -20,9 +20,9 @@ final class Lobby
 
 	public function __construct(
 		private World     $world,
-		private int       $spawnX,
-		private int       $spawnY,
-		private int       $spawnZ,
+		private int|float $spawnX,
+		private int|float $spawnY,
+		private int|float $spawnZ,
 		private float|int $spawnYaw,
 		private float|int $spawnPitch,
 		private int       $minVoid
@@ -71,17 +71,17 @@ final class Lobby
 		return new Position($this->getSpawnX(), $this->getSpawnY(), $this->getSpawnZ(), $this->getWorld());
 	}
 
-	public function getSpawnX(): int
+	public function getSpawnX(): float|int
 	{
 		return $this->spawnX;
 	}
 
-	public function getSpawnY(): int
+	public function getSpawnY(): float|int
 	{
 		return $this->spawnY;
 	}
 
-	public function getSpawnZ(): int
+	public function getSpawnZ(): float|int
 	{
 		return $this->spawnZ;
 	}

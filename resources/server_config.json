@@ -27,15 +27,15 @@
 	"player-spawn": {
 		"is_enabled": true,
 		"world": {
-			"name": "world",
-			"min-void": 20
+			"name": "lobby",
+			"min-void": 85
 		},
 		"pos": {
-			"x": null,
-			"y": null,
-			"z": null,
-			"yaw": null,
-			"pitch": null
+			"x": 0.4828,
+			"y": 112.6436,
+			"z": 0.5053,
+			"yaw": 358.48937988281,
+			"pitch": -1.44476318359375
 		}
 	}
 }

@@ -11,9 +11,13 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\config;
 
+use pocketmine\Server;
 use pocketmine\utils\Config;
+use pocketmine\world\World;
+use pocketmine\world\WorldManager;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\server\LocalServer;
+use zomarrd\ghostly\world\Lobby;
 
 final class ConfigManager
 {
@@ -57,6 +61,25 @@ final class ConfigManager
 		new LocalServer($this->getFile('network_servers.yml')->get('servers'));
 		define('PREFIX', self::getServerConfig()?->get('prefix'));
 		define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
+		$data = self::$server_config->get("player-spawn");
+
+		if ($data["is_enabled"]) {
+			$levelName = $data["world"]["name"];
+			if (!$this->getWorldManager()->isWorldLoaded($levelName)) {
+				$this->getWorldManager()->loadWorld($levelName);
+			}
+			$lobby = new Lobby(
+				Server::getInstance()->getWorldManager()->getWorldByName($levelName),
+				$data["pos"]["x"],
+				$data["pos"]["y"],
+				$data["pos"]["z"],
+				$data["pos"]["yaw"],
+				$data["pos"]["pitch"],
+				$data["world"]["min-void"]
+			);
+			$lobby->getWorld()->stopTime();
+			$lobby->getWorld()->setTime(World::TIME_NOON);
+		}
 	}
 
 	public function getDataFolder(): string
@@ -77,5 +100,10 @@ final class ConfigManager
 	public function saveResource(string $file, bool $replace = false): void
 	{
 		Ghostly::getInstance()->saveResource($file, $replace);
+	}
+
+	public function getWorldManager(): WorldManager
+	{
+		return Server::getInstance()->getWorldManager();
 	}
 }
