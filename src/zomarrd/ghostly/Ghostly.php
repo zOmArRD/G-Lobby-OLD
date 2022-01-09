@@ -19,9 +19,12 @@ use pocketmine\event\Listener;
 use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
 use pocketmine\network\mcpe\raklib\RakLibInterface;
 use pocketmine\plugin\PluginBase;
+use zomarrd\ghostly\commands\entity\EntityCommand;
 use zomarrd\ghostly\commands\language\LangCommand;
 use zomarrd\ghostly\commands\mute\GlobalMuteCommand;
 use zomarrd\ghostly\config\ConfigManager;
+use zomarrd\ghostly\entity\Entity;
+use zomarrd\ghostly\events\HumanListener;
 use zomarrd\ghostly\events\ItemInteractListener;
 use zomarrd\ghostly\events\PlayerListener;
 use zomarrd\ghostly\mysql\MySQL;
@@ -63,13 +66,17 @@ final class Ghostly extends PluginBase
 
 		$this->registerEvents([
 			new PlayerListener(),
-			new ItemInteractListener()
+			new ItemInteractListener(),
+			new HumanListener()
 		]);
 
 		$this->registerCommands("bukkit", [
 			new LangCommand($this, "lang"),
-			new GlobalMuteCommand($this, 'globalmute')
+			new GlobalMuteCommand($this, 'globalmute'),
+			new EntityCommand($this, 'entity')
 		]);
+
+		Entity::ENTITY()->register();
 
 		foreach ($this->getServer()->getNetwork()->getInterfaces() as $interface) {
 			if ($interface instanceof RakLibInterface) {

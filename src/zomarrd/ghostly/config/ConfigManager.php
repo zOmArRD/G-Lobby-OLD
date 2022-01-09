@@ -13,7 +13,6 @@ namespace zomarrd\ghostly\config;
 
 use pocketmine\Server;
 use pocketmine\utils\Config;
-use pocketmine\world\World;
 use pocketmine\world\WorldManager;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\server\LocalServer;
@@ -78,7 +77,7 @@ final class ConfigManager
 				$data["world"]["min-void"]
 			);
 			$lobby->getWorld()->stopTime();
-			$lobby->getWorld()->setTime(World::TIME_NOON);
+			$lobby->getWorld()->setTime(12800);
 		}
 	}
 

@@ -31,6 +31,8 @@ class LobbySelectorGUI extends Chest
 		parent::build($player);
 	}
 
+	private array $item_cooldown = [];
+
 	public function addServer(string $serverName, int $slot): void
 	{
 		$server = $this->getServerManager()->getServerByName($serverName);
@@ -50,8 +52,12 @@ class LobbySelectorGUI extends Chest
 				"Click to connect to this server!"]);
 		}
 
-		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($serverName): void {
-			$player->transfer_to_lobby($serverName);
+		$cooldown = $this->item_cooldown;
+		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($serverName, $cooldown): void {
+			if (!isset($this->item_cooldown[$player->getName()]) || time() - $this->item_cooldown[$player->getName()] >= 1.5) {
+				$player->transfer_to_lobby($serverName);
+				$this->item_cooldown[$player->getName()] = time();
+			}
 		}), $slot);
 	}
 

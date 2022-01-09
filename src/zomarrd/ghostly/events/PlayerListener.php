@@ -11,17 +11,19 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\events;
 
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockBurnEvent;
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\LeavesDecayEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
-use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\player\GameMode;
 use pocketmine\world\sound\BlazeShootSound;
 use zomarrd\ghostly\Ghostly;
@@ -46,22 +48,17 @@ final class PlayerListener implements Listener
 		$player->onJoin();
 	}
 
+	public function onQuit(PlayerQuitEvent $event): void
+	{
+		$player = $event->getPlayer();
+		if ($player instanceof GhostlyPlayer) {
+			$player->teleport_to_lobby();
+		}
+	}
+
 	public function onExhaust(PlayerExhaustEvent $event): void
 	{
 		$event->cancel();
-	}
-
-	public function onItemChangeSlot(InventoryTransactionEvent $event): void
-	{
-		$player = $event->getTransaction()->getSource();
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
-		foreach ($event->getTransaction()->getActions() as $action) {
-			if ((true === $action instanceof SlotChangeAction) && !$player->isOp()) {
-				$event->cancel();
-			}
-		}
 	}
 
 	public function onPlayerToggleFlight(PlayerToggleFlightEvent $event): void
@@ -122,6 +119,25 @@ final class PlayerListener implements Listener
 	}
 
 	public function onDamage(EntityDamageEvent $event): void
+	{
+		$event->cancel();
+	}
+
+	public function onBreak(BlockBreakEvent $event): void
+	{
+		if (!$event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
+			$event->cancel();
+		}
+	}
+
+	public function onPlace(BlockPlaceEvent $event): void
+	{
+		if (!$event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
+			$event->cancel();
+		}
+	}
+
+	public function onBlockBurn(BlockBurnEvent $event): void
 	{
 		$event->cancel();
 	}

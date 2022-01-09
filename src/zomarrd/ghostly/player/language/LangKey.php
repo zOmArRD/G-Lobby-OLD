@@ -27,6 +27,7 @@ final class LangKey
 {
 	public const AVAILABLE_LANGUAGE = "available-language";
 	public const COMMAND_LANG_LIST = "command.lang-list";
+	public const DISCORD_INVITATION_MESSAGE = "discord.invitation.message";
 	public const FORM_BUTTON_CLOSE = "form.button.close";
 	public const FORM_BUTTON_PREDETERMINED = "form.button.predetermined";
 	public const GLOBAL_MUTE_IS_ENABLED = "global.mute.is-enabled";
@@ -41,4 +42,5 @@ final class LangKey
 	public const SERVER_IS_WHITELISTED = "server.is-whitelisted";
 	public const SERVER_NOT_ONLINE = "server.not-online";
 	public const SET_LANGUAGE = "set-language";
+	public const STORE_LINK_MESSAGE = "store.link.message";
 }

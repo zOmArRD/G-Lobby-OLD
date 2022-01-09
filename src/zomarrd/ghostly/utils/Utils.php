@@ -16,6 +16,8 @@ use zomarrd\ghostly\server\ServerManager;
 
 class Utils
 {
+	public const ONLY_PLAYER = PREFIX . "§cThis command must be executed by a player!";
+
 	public static function checkStrings(string $string): string
 	{
 		$msg = $string;

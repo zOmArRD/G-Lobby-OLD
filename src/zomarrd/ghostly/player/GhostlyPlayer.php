@@ -111,7 +111,7 @@ class GhostlyPlayer extends Player
 	public function onJoin(): void
 	{
 		$this->getLobbyItems();
-		$this->setGamemode(GameMode::ADVENTURE());
+		$this->setGamemode(GameMode::SURVIVAL());
 		$this->setHealth(20);
 		$this->getHungerManager()->setFood(20);
 		$this->setAllowFlight(true);

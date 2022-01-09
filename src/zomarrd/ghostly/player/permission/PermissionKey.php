@@ -25,6 +25,7 @@ namespace zomarrd\ghostly\player\permission;
  */
 final class PermissionKey
 {
+	public const GHOSTLY_BUILD = "ghostly.build";
 	public const GHOSTLY_COMMAND_GLOBAL_MUTE = "ghostly.command.global-mute";
 	public const GHOSTLY_COMMAND_LANG_SET_OTHER = "ghostly.command.lang.set-other";
 	public const GHOSTLY_COMMAND_NPC = "ghostly.command.npc";

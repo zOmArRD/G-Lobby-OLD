@@ -16,3 +16,5 @@ permissions:
     default: op
   ghostly.command.global-mute:
     default: op
+  ghostly.build:
+    default: op
