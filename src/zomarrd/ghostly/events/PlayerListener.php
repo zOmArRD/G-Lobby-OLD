@@ -21,6 +21,7 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
@@ -31,6 +32,7 @@ use zomarrd\ghostly\player\DeviceData;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\permission\PermissionKey;
+use zomarrd\ghostly\world\Lobby;
 
 final class PlayerListener implements Listener
 {
@@ -52,6 +54,20 @@ final class PlayerListener implements Listener
 	{
 		$player = $event->getPlayer();
 		if ($player instanceof GhostlyPlayer) {
+			$player->teleport_to_lobby();
+		}
+	}
+
+	public function onMove(PlayerMoveEvent $event): void
+	{
+		$player = $event->getPlayer();
+		if (!$player instanceof GhostlyPlayer) {
+			return;
+		}
+
+		$lobby = Lobby::getInstance();
+
+		if (($lobby !== null) && $player->getPosition()->getY() <= $lobby->getMinVoid()) {
 			$player->teleport_to_lobby();
 		}
 	}
