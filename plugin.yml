@@ -2,7 +2,7 @@ name: G-Lobby
 main: zomarrd\ghostly\Ghostly
 api: 4.0.0
 description: Ghostly Lobby Plugin
-version: 3.0.0
+version: 3.5.0
 author: zOmArRD
 
 permissions:
