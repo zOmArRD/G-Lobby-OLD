@@ -110,6 +110,7 @@ final class ItemInteractListener implements Listener
 	public function onInteract(PlayerInteractEvent $event): void
 	{
 		$player = $event->getPlayer();
+
 		if (!$player instanceof GhostlyPlayer) {
 			return;
 		}
