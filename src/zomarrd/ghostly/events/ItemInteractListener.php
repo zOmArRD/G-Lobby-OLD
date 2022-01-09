@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\events;
 
+use pocketmine\block\Flower;
+use pocketmine\block\FlowerPot;
+use pocketmine\block\TallGrass;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -56,7 +59,6 @@ final class ItemInteractListener implements Listener
 					if (!isset($this->item_cooldown[$pn]) || time() - $this->item_cooldown[$pn] >= 2) {
 						switch (true) {
 							case $item->equals($itemManager->get('lobby-selector')):
-								var_dump(2);
 								if ($player->hasClassicProfile()) {
 									Menu::LOBBY_SELECTOR_GUI()->build($player);
 								} else {
@@ -114,14 +116,21 @@ final class ItemInteractListener implements Listener
 		if (!$player->isOp()) {
 			$event->cancel();
 		}
+
+		var_dump($event->getBlock()->getName());
+
 		$pn = $player->getName();
 		$item = $event->getItem();
 		$itemManager = $player->getItemManager();
+		$block = $event->getBlock();
+
+		if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot) {
+			return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
+		}
 
 		if (!isset($this->item_cooldown[$pn]) || time() - $this->item_cooldown[$pn] >= 2) {
 			switch (true) {
 				case $item->equals($itemManager->get('lobby-selector')):
-					var_dump(1);
 					if ($player->hasClassicProfile()) {
 						Menu::LOBBY_SELECTOR_GUI()->build($player);
 					} else {

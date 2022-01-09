@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\player;
 
 use pocketmine\item\Item;
+use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
@@ -192,5 +193,28 @@ class GhostlyPlayer extends Player
 			return;
 		}
 		$this->teleport(new Position($lobby->getSpawnX(), $lobby->getSpawnY(), $lobby->getSpawnZ(), $lobby->getWorld()), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
+	}
+
+	protected function internalSetGameMode(GameMode $gameMode) : void{
+		$this->gamemode = $gameMode;
+
+		$this->allowFlight = true;
+		$this->hungerManager->setEnabled(false);
+
+		if($this->isSpectator()){
+			$this->setFlying(true);
+			$this->setSilent();
+			$this->onGround = false;
+
+			//TODO: HACK! this syncs the onground flag with the client so that flying works properly
+			//this is a yucky hack but we don't have any other options :(
+			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
+		}else{
+			if($this->isSurvival()){
+				$this->setFlying(false);
+			}
+			$this->setSilent(false);
+			$this->checkGroundState(0, 0, 0, 0, 0, 0);
+		}
 	}
 }
