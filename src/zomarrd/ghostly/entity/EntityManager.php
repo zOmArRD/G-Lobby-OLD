@@ -30,9 +30,11 @@ final class EntityManager
 		EntityFactory::getInstance()->register(HumanType::class, function (World $world, CompoundTag $tag): HumanType {
 			return new HumanType(EntityDataHelper::parseLocation($tag, $world), HumanType::parseSkinNBT($tag), $tag);
 		}, ["HumanType"]);
+
 		EntityFactory::getInstance()->register(FloatingTextType::class, function (World $world, CompoundTag $tag): FloatingTextType {
 			return new FloatingTextType(EntityDataHelper::parseLocation($tag, $world), $tag);
 		}, ["FloatingTextType"]);
+
 	}
 
 	public function entity_discord(GhostlyPlayer $player): void
@@ -40,13 +42,17 @@ final class EntityManager
 		$location = $player->getLocation();
 		$skin = $player->getSkin();
 		$this->remove_npc("discord");
+
 		$entity = new HumanType($location, new Skin("discord", $skin->getSkinData(), $skin->getCapeData(), $skin->getGeometryName(), $skin->getGeometryData()));
 		$entity->setNameTag("§r§eClick to join our Discord server!");
 		$entity->spawnToAll();
+
 		$eLocation = $entity->getLocation();
+
 		$x = $eLocation->getX();
 		$y = $eLocation->getY();
 		$z = $eLocation->getZ();
+
 		foreach ([
 					 "§l§9Discord Server" => 3.80,
 					 "Join our Discord community to keep" => 3.40,
@@ -58,24 +64,23 @@ final class EntityManager
 		}
 	}
 
-	public function entity_store(GhostlyPlayer $player): void
+	public function remove_npc(string $npcId): void
 	{
-		$location = $player->getLocation();
-		$skin = $player->getSkin();
-		$this->remove_npc("store");
-		$entity = new HumanType($location, new Skin("store", $skin->getSkinData(), $skin->getCapeData(), $skin->getGeometryName(), $skin->getGeometryData()));
-		$entity->setNameTag("§r§eClick to view store!");
-		$entity->spawnToAll();
-		$eLocation = $entity->getLocation();
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
-		foreach ([
-					 "§l§aStore" => 3.10,
-					 "You can purchase G-Coins, ranks" => 2.70,
-					 "and tags on our store!." => 2.30
-				 ] as $text => $mY) {
-			$this->floating_text($text, "store", new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
+		$lobby = Lobby::getInstance();
+		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
+
+		if (!isset($world)) {
+			return;
+		}
+
+		foreach ($world->getEntities() as $entity) {
+			if (($entity instanceof HumanType) && $entity->getSkin()->getSkinId() === $npcId) {
+				$entity->kill();
+			}
+
+			if (($entity instanceof FloatingTextType) && $entity->getTextId() === $npcId) {
+				$entity->kill();
+			}
 		}
 	}
 
@@ -83,8 +88,10 @@ final class EntityManager
 	{
 		$nbt = new CompoundTag();
 		$nbt->setString("TextId", $id);
+
 		$entity = new FloatingTextType($location, $nbt);
 		$entity->setNameTag("§r§7" . $text);
+
 		if ($spawnToAll) {
 			$entity->spawnToAll();
 		} else {
@@ -95,6 +102,50 @@ final class EntityManager
 		}
 	}
 
+	public function entity_store(GhostlyPlayer $player): void
+	{
+		$location = $player->getLocation();
+		$skin = $player->getSkin();
+		$this->remove_npc("store");
+
+		$entity = new HumanType($location, new Skin("store", $skin->getSkinData(), $skin->getCapeData(), $skin->getGeometryName(), $skin->getGeometryData()));
+		$entity->setNameTag("§r§eClick to view store!");
+		$entity->spawnToAll();
+
+		$eLocation = $entity->getLocation();
+
+		$x = $eLocation->getX();
+		$y = $eLocation->getY();
+		$z = $eLocation->getZ();
+
+		foreach ([
+					 "§l§aStore" => 3.10,
+					 "You can purchase G-Coins, ranks" => 2.70,
+					 "and tags on our store!." => 2.30
+				 ] as $text => $mY) {
+			$this->floating_text($text, "store", new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
+		}
+	}
+
+	public function spawn_zOmArRD(GhostlyPlayer $player): void
+	{
+		$location = $player->getLocation();
+		$skin = $player->getSkin();
+		$this->remove_npc("zomarrd");
+
+		$entity = new HumanType($location, new Skin("zomarrd", $skin->getSkinData(), $skin->getCapeData(), $skin->getGeometryName(), $skin->getGeometryData()));
+		$entity->setNameTag("§r§4zOmArRD");
+		$entity->spawnToAll();
+
+		$eLocation = $entity->getLocation();
+
+		$x = $eLocation->getX();
+		$y = $eLocation->getY();
+		$z = $eLocation->getZ();
+
+		$this->floating_text("§7[§cDev§7]", "zomarrd", new Location($x, $y + 2.15, $z, $eLocation->getWorld(), 0.0, 0.0));
+	}
+
 	public function purge_all(): void
 	{
 		foreach (Server::getInstance()->getWorldManager()->getWorlds() as $world) {
@@ -102,43 +153,6 @@ final class EntityManager
 				if (!$entity instanceof GhostlyPlayer) {
 					$entity->kill();
 				}
-			}
-		}
-	}
-
-	/**
-	 * @param string $textId
-	 *
-	 * @return void
-	 * @deprecated I don't think this should be used...
-	 */
-	public function remove_floatingText(string $textId): void
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-		if (!isset($world)) {
-			return;
-		}
-		foreach ($world->getEntities() as $entity) {
-			if (($entity instanceof FloatingTextType) && $entity->getTextId() === $textId) {
-				$entity->kill();
-			}
-		}
-	}
-
-	public function remove_npc(string $npcId): void
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-		if (!isset($world)) {
-			return;
-		}
-		foreach ($world->getEntities() as $entity) {
-			if (($entity instanceof HumanType) && $entity->getSkin()->getSkinId() === $npcId) {
-				$entity->kill();
-			}
-			if (($entity instanceof FloatingTextType) && $entity->getTextId() === $npcId) {
-				$entity->kill();
 			}
 		}
 	}

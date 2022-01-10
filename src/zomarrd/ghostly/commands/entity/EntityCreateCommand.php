@@ -50,6 +50,11 @@ final class EntityCreateCommand extends BaseSubCommand
 			case "Store":
 			Entity::ENTITY()->entity_store($sender);
 				break;
+			case "zomarrd":
+			case "zOmArRD":
+			case "zo":
+				Entity::ENTITY()->spawn_zOmArRD($sender);
+			break;
 			default:
 				$sender->sendMessage(PREFIX . "§cThis entity does not exist!");
 				return;
