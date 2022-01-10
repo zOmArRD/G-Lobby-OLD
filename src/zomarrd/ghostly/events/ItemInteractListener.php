@@ -82,9 +82,9 @@ final class ItemInteractListener implements Listener
 					if ($target instanceof HumanType) {
 						if (!isset($this->entity_cooldown[$pn]) || time() - $this->entity_cooldown[$pn] >= 1.5) {
 
-							$event = new HumanInteractEvent($target, $player);
-							if (!$event->isCancelled()) {
-								$event->call();
+							$interactEvent = new HumanInteractEvent($target, $player);
+							if (!$interactEvent->isCancelled()) {
+								$interactEvent->call();
 							}
 							$this->entity_cooldown[$pn] = time();
 						}
@@ -114,6 +114,7 @@ final class ItemInteractListener implements Listener
 		if (!$player instanceof GhostlyPlayer) {
 			return;
 		}
+
 		if (!$player->isOp()) {
 			$event->cancel();
 		}
@@ -123,11 +124,12 @@ final class ItemInteractListener implements Listener
 		$itemManager = $player->getItemManager();
 		$block = $event->getBlock();
 
-		if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot) {
-			return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
-		}
-
 		if (!isset($this->item_cooldown[$pn]) || time() - $this->item_cooldown[$pn] >= 2) {
+
+			if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot) {
+				return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
+			}
+
 			switch (true) {
 				case $item->equals($itemManager->get('lobby-selector')):
 					if ($player->hasClassicProfile()) {
