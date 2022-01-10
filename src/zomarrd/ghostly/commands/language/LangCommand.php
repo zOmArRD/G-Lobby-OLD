@@ -49,6 +49,7 @@ final class LangCommand extends BaseCommand
 	{
 		if (($sender instanceof GhostlyPlayer) && count($args) === 0) {
 			Language::openLangForm($sender);
+			return;
 		}
 		$this->sendUsage();
 	}
