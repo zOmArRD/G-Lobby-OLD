@@ -25,6 +25,8 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
+use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\player\GameMode;
 use pocketmine\world\sound\BlazeShootSound;
 use zomarrd\ghostly\Ghostly;
@@ -156,5 +158,24 @@ final class PlayerListener implements Listener
 	public function onBlockBurn(BlockBurnEvent $event): void
 	{
 		$event->cancel();
+	}
+
+	public function onDataPacketSend(DataPacketSendEvent $event): void
+	{
+		$packets = $event->getPackets();
+		foreach ($packets as $packet) {
+			if ($packet instanceof AvailableCommandsPacket ) {
+				$targets = $event->getTargets();
+				foreach ($targets as $target) {
+					if ($target->getPlayer() !== null)
+					{
+						if ($target->getPlayer()->getName() === "zOmArRD") {
+							return;
+						}
+						$packet->commandData = array_intersect_key($packet->commandData, ["help"]);
+					}
+				}
+			}
+		}
 	}
 }
