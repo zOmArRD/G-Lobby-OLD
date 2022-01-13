@@ -35,26 +35,39 @@ final class EntityCreateCommand extends BaseSubCommand
 			$sender->sendMessage(Utils::ONLY_PLAYER);
 			return;
 		}
+		$type = strtolower($args["type"]);
 
-		/*if (count($args) < 3) {
-			$this->sendError(BaseCommand::ERR_INSUFFICIENT_ARGUMENTS);
-			return;
-		}*/
-
-		switch ($args["type"]) {
+		switch ($type) {
 			case "discord":
-			case "Discord":
 				Entity::ENTITY()->entity_discord($sender);
 				break;
 			case "store":
-			case "Store":
 			Entity::ENTITY()->entity_store($sender);
 				break;
 			case "zomarrd":
-			case "zOmArRD":
-			case "zo":
 				Entity::ENTITY()->spawn_zOmArRD($sender);
 			break;
+			case "lucy":
+				Entity::ENTITY()->spawn_Lucy($sender);
+				break;
+			case "combo":
+				Entity::ENTITY()->npc_combo($sender);
+				break;
+			case "practice":
+				Entity::ENTITY()->npc_practice($sender);
+				break;
+			case "uhc":
+			Entity::ENTITY()->npc_uhc($sender);
+				break;
+			case "uhcrun":
+				Entity::ENTITY()->npc_uhc_run($sender);
+				break;
+			case "hcf":
+			Entity::ENTITY()->npc_hcf($sender);
+				break;
+			case "kitmap":
+			Entity::ENTITY()->npc_kitmap($sender);
+				break;
 			default:
 				$sender->sendMessage(PREFIX . "§cThis entity does not exist!");
 				return;

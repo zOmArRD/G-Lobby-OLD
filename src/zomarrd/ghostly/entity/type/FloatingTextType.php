@@ -30,12 +30,12 @@ final class FloatingTextType extends Entity
 	protected $immobile = true;
 	protected $scale = 0.001;
 	protected string $textId;
-	//protected $gravityEnabled = false;
 
 
-	public function __construct(Location $location, CompoundTag $nbt)
+	public function __construct(Location $location, CompoundTag $nbt/*, GhostlyPlayer $owner = null*/)
 	{
 		parent::__construct($location, $nbt);
+
 		$this->setNameTagAlwaysVisible();
 		$this->setNameTagVisible();
 	}
@@ -50,9 +50,9 @@ final class FloatingTextType extends Entity
 		return false;
 	}
 
-	protected function getInitialSizeInfo(): EntitySizeInfo
+	public function setTextId(string $textId): void
 	{
-		return new EntitySizeInfo(0.001, 0.001, 0.001);
+		$this->textId = $textId;
 	}
 
 	public function getTextId(): string
@@ -90,6 +90,11 @@ final class FloatingTextType extends Entity
 		$nbt->setByte("OnGround", $this->onGround ? 1 : 0);
 		$nbt->setString("TextId", $this->textId);
 		return $nbt;
+	}
+
+	protected function getInitialSizeInfo(): EntitySizeInfo
+	{
+		return new EntitySizeInfo(0.001, 0.001, 0.001);
 	}
 
 	protected function initEntity(CompoundTag $nbt) : void{

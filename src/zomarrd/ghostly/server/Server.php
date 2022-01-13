@@ -108,7 +108,7 @@ final class Server
 			if ($row !== null) {
 				$this->setOnline((bool)$row['online']);
 				$this->setPlayers((int)$row['players']);
-				$this->setWhitelist((bool)$row['is_whitelisted']);
+				$this->setWhitelist((bool)$row['whitelist']);
 				$this->setMaxPlayers((int)$row['max_players']);
 			} else {
 				$this->setOnline(false);

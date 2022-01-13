@@ -17,6 +17,7 @@ use pocketmine\world\World;
 final class Lobby
 {
 	public static ?Lobby $instance = null;
+	public Position $spawn;
 
 	public function __construct(
 		private World     $world,
@@ -26,7 +27,10 @@ final class Lobby
 		private float|int $spawnYaw,
 		private float|int $spawnPitch,
 		private int       $minVoid
-	){self::$instance = $this;}
+	){
+		self::$instance = $this;
+		$this->spawn = new Position($this->getSpawnX(), $this->getSpawnY(), $this->getSpawnZ(), $this->getWorld());
+	}
 
 	/**
 	 * @return Lobby|null
@@ -68,7 +72,7 @@ final class Lobby
 
 	public function getSpawnPosition(): Position
 	{
-		return new Position($this->getSpawnX(), $this->getSpawnY(), $this->getSpawnZ(), $this->getWorld());
+		return $this->spawn;
 	}
 
 	public function getSpawnX(): float|int

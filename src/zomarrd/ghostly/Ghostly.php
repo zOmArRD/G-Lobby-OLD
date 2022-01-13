@@ -31,6 +31,7 @@ use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\skin\MojangAdapter;
 use zomarrd\ghostly\server\ServerManager;
+use zomarrd\ghostly\task\GlobalTask;
 
 final class Ghostly extends PluginBase
 {
@@ -83,6 +84,8 @@ final class Ghostly extends PluginBase
                 $interface->setPacketLimit(PHP_INT_MAX);
             }
 		}
+
+		$this->getScheduler()->scheduleRepeatingTask(new GlobalTask(), 1);
 
 		self::$logger->notice('§c' . <<<INFO
 

@@ -16,7 +16,6 @@ use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
-use pocketmine\world\Position;
 use pocketmine\world\sound\AnvilUseSound;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\Ghostly;
@@ -192,7 +191,7 @@ class GhostlyPlayer extends Player
 		if ($lobby === null) {
 			return;
 		}
-		$this->teleport(new Position($lobby->getSpawnX(), $lobby->getSpawnY(), $lobby->getSpawnZ(), $lobby->getWorld()), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
+		$this->teleport($lobby->getSpawnPosition(), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
 	}
 
 	protected function internalSetGameMode(GameMode $gameMode) : void{

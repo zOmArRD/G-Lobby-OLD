@@ -37,12 +37,12 @@ final class EntityKillCommand extends BaseSubCommand
 			return;
 		}
 
-		Entity::ENTITY()->remove_npc($args["EntityId"]);
+		Entity::ENTITY()->remove_entity($args["EntityId"]);
 		$sender->sendMessage(PREFIX . "you have purged the entity {$args["EntityId"]}!");
 	}
 
 	/**
-	 * This is where all the arguments, permissions, sub-commands, etc would be registered
+	 * This is where all the arguments, permissions, sub-commands, etc. would be registered
 	 */
 	protected function prepare(): void
 	{
