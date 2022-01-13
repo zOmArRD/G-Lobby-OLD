@@ -38,7 +38,6 @@ final class EntityManager
 		EntityFactory::getInstance()->register(FloatingTextType::class, function (World $world, CompoundTag $tag): FloatingTextType {
 			return new FloatingTextType(EntityDataHelper::parseLocation($tag, $world), $tag);
 		}, ["FloatingTextType"]);
-
 	}
 
 	public function entity_discord(GhostlyPlayer $player): void
@@ -83,11 +82,14 @@ final class EntityManager
 		}
 
 		foreach ($world->getEntities() as $entity) {
-			if (($entity instanceof HumanType) && $entity->getNpcId() === $npcId) {
-				$entity->kill();
-				$this->kill_text($npcId);
-				$this->kill_text($npcId . Entity::EXTRA);
+
+			if (!$entity instanceof HumanType || $entity->getNpcId() !== $npcId) {
+				continue;
 			}
+
+			$entity->kill();
+			$this->kill_text($npcId);
+			$this->kill_text($npcId . Entity::EXTRA);
 		}
 	}
 
@@ -99,14 +101,16 @@ final class EntityManager
 		$entity = new FloatingTextType($location, $nbt);
 		$entity->setNameTag("§r§7" . $text);
 
-		if ($spawnToAll) {
+		if (!$spawnToAll) {
 			$entity->spawnToAll();
-		} else {
-			if (isset($player)) {
-				throw new \RuntimeException("Player is NULL");
-			}
-			$entity->spawnTo($player);
+			return;
 		}
+
+		if (!isset($player)) {
+			throw new \RuntimeException("Player is NULL");
+		}
+
+		$entity->spawnTo($player);
 	}
 
 	public function entity_store(GhostlyPlayer $player): void
@@ -422,9 +426,11 @@ final class EntityManager
 	{
 		foreach (Server::getInstance()->getWorldManager()->getWorlds() as $world) {
 			foreach ($world->getEntities() as $entity) {
-				if (!$entity instanceof GhostlyPlayer) {
-					$entity->kill();
+				if ($entity instanceof GhostlyPlayer) {
+					continue;
 				}
+
+				$entity->kill();
 			}
 		}
 	}
@@ -446,212 +452,215 @@ final class EntityManager
 		}
 
 		foreach ($world->getEntities() as $entity) {
-			if (($entity instanceof HumanType)) {
-				switch ($entity->getNpcId()) {
-					case Entity::COMBO:
-						$server = ServerManager::getInstance()->getServerByName("Combo");
+			if (!$entity instanceof HumanType) {
+				continue;
+			}
+			switch ($entity->getNpcId()) {
+				case Entity::COMBO:
+					$server = ServerManager::getInstance()->getServerByName("Combo");
 
-						if ($server === null) {
-							$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-							$this->kill_text(Entity::COMBO . Entity::EXTRA);
-							break;
-						}
+					if ($server === null) {
+						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+						$this->kill_text(Entity::COMBO . Entity::EXTRA);
+						break;
+					}
 
-						if (!$server->isOnline()) {
-							$entity->setNameTag($offline[$this->count]);
-							$this->kill_text(Entity::COMBO . Entity::EXTRA);
-							break;
-						}
+					if (!$server->isOnline()) {
+						$entity->setNameTag($offline[$this->count]);
+						$this->kill_text(Entity::COMBO . Entity::EXTRA);
+						break;
+					}
 
-						$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
 
-						if (!$this->exist_text(Entity::COMBO . Entity::EXTRA)) {
-							$location = $entity->getLocation();
-
-							if ($server->isWhitelist()) {
-								$this->floating_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-								break;
-							}
-							$this->floating_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
+					if (!$this->exist_text(Entity::COMBO . Entity::EXTRA)) {
+						$location = $entity->getLocation();
 
 						if ($server->isWhitelist()) {
-							$this->update_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA);
-						} else {
-							$this->update_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA);
+							$this->floating_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+							break;
 						}
+						$this->floating_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
 						break;
-					case Entity::PRACTICE:
-						$server = ServerManager::getInstance()->getServerByName("Practice");
+					}
 
-						if ($server === null) {
-							$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-							$this->kill_text(Entity::PRACTICE . Entity::EXTRA);
-							break;
-						}
+					if ($server->isWhitelist()) {
+						$this->update_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA);
+					} else {
+						$this->update_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA);
+					}
+					break;
+				case Entity::PRACTICE:
+					$server = ServerManager::getInstance()->getServerByName("Practice");
 
-						if (!$server->isOnline()) {
-							$entity->setNameTag($offline[$this->count]);
-							$this->kill_text(Entity::PRACTICE . Entity::EXTRA);
-							break;
-						}
+					if ($server === null) {
+						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+						$this->kill_text(Entity::PRACTICE . Entity::EXTRA);
+						break;
+					}
 
-						$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+					if (!$server->isOnline()) {
+						$entity->setNameTag($offline[$this->count]);
+						$this->kill_text(Entity::PRACTICE . Entity::EXTRA);
+						break;
+					}
 
-						if (!$this->exist_text(Entity::PRACTICE . Entity::EXTRA)) {
-							$location = $entity->getLocation();
+					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
 
-							if ($server->isWhitelist()) {
-								$this->floating_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-								break;
-							}
-							$this->floating_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
+					if (!$this->exist_text(Entity::PRACTICE . Entity::EXTRA)) {
+						$location = $entity->getLocation();
 
 						if ($server->isWhitelist()) {
-							$this->update_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA);
-						} else {
-							$this->update_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA);
+							$this->floating_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+							break;
 						}
+						$this->floating_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
 						break;
-					case Entity::KITMAP:
-						$server = ServerManager::getInstance()->getServerByName("KITMAP");
+					}
 
-						if ($server === null) {
-							$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-							$this->kill_text(Entity::KITMAP . Entity::EXTRA);
-							break;
-						}
+					if ($server->isWhitelist()) {
+						$this->update_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA);
+					} else {
+						$this->update_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA);
+					}
+					break;
+				case Entity::KITMAP:
+					$server = ServerManager::getInstance()->getServerByName("KITMAP");
 
-						if (!$server->isOnline()) {
-							$entity->setNameTag($offline[$this->count]);
-							$this->kill_text(Entity::KITMAP . Entity::EXTRA);
-							break;
-						}
-						$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+					if ($server === null) {
+						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+						$this->kill_text(Entity::KITMAP . Entity::EXTRA);
+						break;
+					}
 
-						if (!$this->exist_text(Entity::KITMAP . Entity::EXTRA)) {
-							$location = $entity->getLocation();
+					if (!$server->isOnline()) {
+						$entity->setNameTag($offline[$this->count]);
+						$this->kill_text(Entity::KITMAP . Entity::EXTRA);
+						break;
+					}
+					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
 
-							if ($server->isWhitelist()) {
-								$this->floating_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-								break;
-							}
-							$this->floating_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
+					if (!$this->exist_text(Entity::KITMAP . Entity::EXTRA)) {
+						$location = $entity->getLocation();
 
 						if ($server->isWhitelist()) {
-							$this->update_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA);
-						} else {
-							$this->update_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA);
+							$this->floating_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+							break;
 						}
+						$this->floating_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
 						break;
-					case Entity::HCF:
-						$server = ServerManager::getInstance()->getServerByName("HCF");
+					}
 
-						if ($server === null) {
-							$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-							$this->kill_text(Entity::HCF . Entity::EXTRA);
-							break;
-						}
+					if ($server->isWhitelist()) {
+						$this->update_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA);
+					} else {
+						$this->update_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA);
+					}
+					break;
+				case Entity::HCF:
+					$server = ServerManager::getInstance()->getServerByName("HCF");
 
-						if (!$server->isOnline()) {
-							$entity->setNameTag($offline[$this->count]);
-							$this->kill_text(Entity::HCF . Entity::EXTRA);
-							break;
-						}
+					if ($server === null) {
+						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+						$this->kill_text(Entity::HCF . Entity::EXTRA);
+						break;
+					}
 
-						$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+					if (!$server->isOnline()) {
+						$entity->setNameTag($offline[$this->count]);
+						$this->kill_text(Entity::HCF . Entity::EXTRA);
+						break;
+					}
 
-						if (!$this->exist_text(Entity::HCF . Entity::EXTRA)) {
-							$location = $entity->getLocation();
+					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
 
-							if ($server->isWhitelist()) {
-								$this->floating_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-								break;
-							}
-							$this->floating_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
+					if (!$this->exist_text(Entity::HCF . Entity::EXTRA)) {
+						$location = $entity->getLocation();
 
 						if ($server->isWhitelist()) {
-							$this->update_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA);
-						} else {
-							$this->update_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA);
+							$this->floating_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+							break;
 						}
+						$this->floating_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
 						break;
-					case Entity::UHC:
-						$server = ServerManager::getInstance()->getServerByName("UHC");
+					}
 
-						if ($server === null) {
-							$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-							$this->kill_text(Entity::UHC . Entity::EXTRA);
-							break;
-						}
+					if ($server->isWhitelist()) {
+						$this->update_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA);
+					} else {
+						$this->update_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA);
+					}
+					break;
+				case Entity::UHC:
+					$server = ServerManager::getInstance()->getServerByName("UHC");
 
-						if (!$server->isOnline()) {
-							$entity->setNameTag($offline[$this->count]);
-							$this->kill_text(Entity::UHC . Entity::EXTRA);
-							break;
-						}
+					if ($server === null) {
+						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+						$this->kill_text(Entity::UHC . Entity::EXTRA);
+						break;
+					}
 
-						$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+					if (!$server->isOnline()) {
+						$entity->setNameTag($offline[$this->count]);
+						$this->kill_text(Entity::UHC . Entity::EXTRA);
+						break;
+					}
 
-						if (!$this->exist_text(Entity::UHC . Entity::EXTRA)) {
-							$location = $entity->getLocation();
+					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
 
-							if ($server->isWhitelist()) {
-								$this->floating_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-								break;
-							}
-							$this->floating_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
+					if (!$this->exist_text(Entity::UHC . Entity::EXTRA)) {
+						$location = $entity->getLocation();
 
 						if ($server->isWhitelist()) {
-							$this->update_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA);
-						} else {
-							$this->update_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA);
+							$this->floating_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+							break;
 						}
+						$this->floating_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
 						break;
-					case Entity::UHC_RUN:
-						$server = ServerManager::getInstance()->getServerByName("UHC_RUN");
+					}
 
-						if ($server === null) {
-							$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-							$this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
-							break;
-						}
+					if ($server->isWhitelist()) {
+						$this->update_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA);
+					} else {
+						$this->update_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA);
+					}
+					break;
+				case Entity::UHC_RUN:
+					$server = ServerManager::getInstance()->getServerByName("UHC_RUN");
 
-						if (!$server->isOnline()) {
-							$entity->setNameTag($offline[$this->count]);
-							$this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
-							break;
-						}
+					if ($server === null) {
+						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+						$this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
+						break;
+					}
 
-						$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+					if (!$server->isOnline()) {
+						$entity->setNameTag($offline[$this->count]);
+						$this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
+						break;
+					}
 
-						if (!$this->exist_text(Entity::UHC_RUN . Entity::EXTRA)) {
-							$location = $entity->getLocation();
+					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
 
-							if ($server->isWhitelist()) {
-								$this->floating_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-								break;
-							}
-							$this->floating_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
+					if (!$this->exist_text(Entity::UHC_RUN . Entity::EXTRA)) {
+						$location = $entity->getLocation();
 
 						if ($server->isWhitelist()) {
-							$this->update_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA);
-						} else {
-							$this->update_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA);
+							$this->floating_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+							break;
 						}
+						$this->floating_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
 						break;
-				}
+					}
+
+					if ($server->isWhitelist()) {
+						$this->update_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA);
+					} else {
+						$this->update_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA);
+					}
+					break;
+				default:
+					throw new \RuntimeException('Unexpected value');
 			}
 		}
 
@@ -668,9 +677,11 @@ final class EntityManager
 		}
 
 		foreach ($world->getEntities() as $entity) {
-			if (($entity instanceof FloatingTextType) && $entity->getTextId() === $textId) {
-				$entity->kill();
+			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
+				continue;
 			}
+
+			$entity->kill();
 		}
 	}
 
@@ -684,9 +695,11 @@ final class EntityManager
 		}
 
 		foreach ($world->getEntities() as $entity) {
-			if (($entity instanceof FloatingTextType) && $entity->getTextId() === $textId) {
-				return true;
+			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
+				continue;
 			}
+
+			return true;
 		}
 
 		return false;
@@ -702,9 +715,11 @@ final class EntityManager
 		}
 
 		foreach ($world->getEntities() as $entity) {
-			if (($entity instanceof FloatingTextType) && $entity->getTextId() === $textId) {
-				$entity->setNameTag($text);
+			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
+				continue;
 			}
+
+			$entity->setNameTag($text);
 		}
 	}
 }

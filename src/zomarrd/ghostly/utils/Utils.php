@@ -46,16 +46,11 @@ class Utils
 		];
 		$keys = array_keys($toReplace);
 		$values = array_values($toReplace);
+
 		for ($i = 0, $iMax = count($keys); $i < $iMax; $i++) {
 			$msg = str_replace($keys[$i], (string)$values[$i], $msg);
 		}
-		return $msg;
-	}
 
-	public static function stringifyKeys(array $array): \Generator
-	{
-		foreach ($array as $key => $value) {
-			yield (string)$key => $value;
-		}
+		return $msg;
 	}
 }

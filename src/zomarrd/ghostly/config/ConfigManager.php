@@ -24,7 +24,7 @@ final class ConfigManager
 	private static Config $server_config;
 
 	private array $files = [
-		'server_config.json' => 2.0,
+		'server_config.json' => 2.5,
 		'network_servers.yml' => 1.0
 	];
 
@@ -49,36 +49,46 @@ final class ConfigManager
 		foreach ($this->files as $file => $version) {
 			$this->saveResource($file);
 			$tempFile = $this->getFile($file);
+
 			if ($tempFile->get('version') !== $version) {
-				Ghostly::$logger->error("The {$file} aren't compatible with the current version, the old file are in " . $this->getDataFolder() . "{$file}.old");
+				Ghostly::$logger->error("The $file aren't compatible with the current version, the old file are in " . $this->getDataFolder() . "$file.old");
 				rename($this->getDataFolder() . $file, $this->getDataFolder() . $file . '.old');
 				$this->saveResource($file, true);
 			}
+
 			unset($tempFile);
 		}
+
 		self::$server_config = $this->getFile('server_config.json');
 		new LocalServer($this->getFile('network_servers.yml')->get('servers'));
+
 		define('PREFIX', self::getServerConfig()?->get('prefix'));
 		define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
+
 		$data = self::$server_config->get("player-spawn");
 
-		if ($data["is_enabled"]) {
-			$levelName = $data["world"]["name"];
-			if (!$this->getWorldManager()->isWorldLoaded($levelName)) {
-				$this->getWorldManager()->loadWorld($levelName);
-			}
-			$lobby = new Lobby(
-				Server::getInstance()->getWorldManager()->getWorldByName($levelName),
-				$data["pos"]["x"],
-				$data["pos"]["y"],
-				$data["pos"]["z"],
-				$data["pos"]["yaw"],
-				$data["pos"]["pitch"],
-				$data["world"]["min-void"]
-			);
-			$lobby->getWorld()->stopTime();
-			$lobby->getWorld()->setTime(12800);
+		if (!$data["is_enabled"]) {
+			return;
 		}
+
+		$levelName = $data["world"]["name"];
+
+		if (!$this->getWorldManager()->isWorldLoaded($levelName)) {
+			$this->getWorldManager()->loadWorld($levelName);
+		}
+
+		$lobby = new Lobby(
+			Server::getInstance()->getWorldManager()->getWorldByName($levelName),
+			$data["pos"]["x"],
+			$data["pos"]["y"],
+			$data["pos"]["z"],
+			$data["pos"]["yaw"],
+			$data["pos"]["pitch"],
+			$data["world"]["min-void"]
+		);
+
+		$lobby->getWorld()->stopTime();
+		$lobby->getWorld()->setTime(12800);
 	}
 
 	public function getDataFolder(): string

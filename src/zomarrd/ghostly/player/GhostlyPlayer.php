@@ -52,10 +52,7 @@ class GhostlyPlayer extends Player
 	public function getLang(bool $fromLocale = false): Language
 	{
 		$locale = $this->getLangHandler()->getLanguage($this->locale);
-		if ($fromLocale) {
-			return $locale;
-		}
-		return $this->getLangHandler()->getLanguage($this->currentLang);
+		return $fromLocale ? $locale : $this->getLangHandler()->getLanguage($this->currentLang);
 	}
 
 	public function getLangHandler(): LangHandler
@@ -80,12 +77,14 @@ class GhostlyPlayer extends Player
 			$this->scoreboard_session = new Scoreboard($this);
 			$this->itemManager = new ItemManager($this);
 			$this->setLoaded();
-			return parent::onUpdate($currentTick);
 		}
+
 		if ($currentTick % 20 === 0) {
 			$this->getScoreboardSession()->setScoreboard();
 		}
+
 		return parent::onUpdate($currentTick);
+
 	}
 
 	public function isLoaded(): bool
@@ -158,40 +157,42 @@ class GhostlyPlayer extends Player
 		$currentServerName = LocalServer::getInstance()->getCurrentServer()["server_name"];
 		$local = LocalServer::getInstance()->getServerByName($lobby);
 
-		if ($lobby === $currentServerName) {
-			$this->broadcastSound(new AnvilUseSound(), [$this]);
-			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
-			return;
-		}
+		if ($lobby !== $currentServerName) {
+			if ($local["category"] !== "Lobby") {
+				$this->broadcastSound(new AnvilUseSound(), [$this]);
+				$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_2);
+				return;
+			}
 
-		if ($local["category"] !== "Lobby") {
-			$this->broadcastSound(new AnvilUseSound(), [$this]);
-			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_2);
-			return;
-		}
+			if ($server === null || !$server->isOnline()) {
+				$this->broadcastSound(new AnvilUseSound(), [$this]);
+				$this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
+				return;
+			}
 
-		if ($server === null || !$server->isOnline()) {
-			$this->broadcastSound(new AnvilUseSound(), [$this]);
-			$this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
-			return;
-		}
+			$this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getServerName()]);
 
-		$this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getServerName()]);
-		if ($local["proxy_transfer"]) {
-			$this->transfer($server->getServerName(), 0, "Transfer to Lobby {$server->getServerName()}");
-		} else {
+			if ($local["proxy_transfer"]) {
+				$this->transfer($server->getServerName(), 0, "Transfer to Lobby {$server->getServerName()}");
+				return;
+			}
+
 			$ip = explode(":", $local["address"]);
 			$this->transfer($ip[1], (int)$ip[2], "Transfer to Lobby {$server->getServerName()}");
+
+		} else {
+			$this->broadcastSound(new AnvilUseSound(), [$this]);
+			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
 		}
 	}
 
 	public function teleport_to_lobby(): void
 	{
 		$lobby = Lobby::getInstance();
-		if ($lobby === null) {
-			return;
+
+		if ($lobby !== null) {
+			$this->teleport($lobby->getSpawnPosition(), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
 		}
-		$this->teleport($lobby->getSpawnPosition(), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
 	}
 
 	protected function internalSetGameMode(GameMode $gameMode) : void{
@@ -200,20 +201,17 @@ class GhostlyPlayer extends Player
 		$this->allowFlight = true;
 		$this->hungerManager->setEnabled(false);
 
-		if($this->isSpectator()){
-			$this->setFlying(true);
-			$this->setSilent();
-			$this->onGround = false;
-
-			//TODO: HACK! this syncs the onground flag with the client so that flying works properly
-			//this is a yucky hack but we don't have any other options :(
-			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
-		}else{
-			if($this->isSurvival()){
+		if(!$this->isSpectator()) {
+			if ($this->isSurvival()) {
 				$this->setFlying(false);
 			}
 			$this->setSilent(false);
 			$this->checkGroundState(0, 0, 0, 0, 0, 0);
+		} else {
+			$this->setFlying(true);
+			$this->setSilent();
+			$this->onGround = false;
+			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
 		}
 	}
 }

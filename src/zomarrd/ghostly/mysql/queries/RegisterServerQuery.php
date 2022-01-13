@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\mysql\queries;
 
-use Exception;
 use mysqli;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\mysql\Query;
@@ -24,17 +23,16 @@ final class RegisterServerQuery extends Query
 
 	public function query(mysqli $mysqli): void
 	{
-		$result = $mysqli->query("SELECT * FROM network_servers WHERE server_name = '$this->serverName';");
+		$result = $mysqli->query("SELECT * FROM ghostly_servers WHERE server_name = '$this->serverName';");
 
 		if ($result !== false) {
 			$assco = $result->fetch_assoc();
-			if (!is_array($assco)) {
-				$mysqli->query("INSERT INTO network_servers(server_name, players, max_players, online, whitelist) VALUES ('$this->serverName', 0, 0, true, true);");
-				return;
+			if (is_array($assco)) {
+				$mysqli->query("UPDATE ghostly_servers SET online = 1 WHERE server_name = '$this->serverName';");
+			} else {
+				$mysqli->query("INSERT INTO ghostly_servers(server_name, players, max_players, online, whitelist) VALUES ('$this->serverName', 0, 0, true, true);");
 			}
-
-            $mysqli->query("UPDATE network_servers SET online = 1 WHERE server_name = '$this->serverName';");
-        } else {
+		} else {
 			MySQL::runAsync(new RegisterServerQuery($this->serverName));
 		}
 	}

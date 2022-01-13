@@ -46,10 +46,9 @@ final class PlayerListener implements Listener
 	public function onJoin(PlayerJoinEvent $event): void
 	{
 		$player = $event->getPlayer();
-		if (!$player instanceof GhostlyPlayer) {
-			return;
+		if ($player instanceof GhostlyPlayer) {
+			$player->onJoin();
 		}
-		$player->onJoin();
 	}
 
 	public function onQuit(PlayerQuitEvent $event): void
@@ -63,13 +62,13 @@ final class PlayerListener implements Listener
 	public function onMove(PlayerMoveEvent $event): void
 	{
 		$player = $event->getPlayer();
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
+		if ($player instanceof GhostlyPlayer) {
+			$lobby = Lobby::getInstance();
 
-		$lobby = Lobby::getInstance();
+			if ($lobby === null || $player->getPosition()->getY() > $lobby->getMinVoid()) {
+				return;
+			}
 
-		if (($lobby !== null) && $player->getPosition()->getY() <= $lobby->getMinVoid()) {
 			$player->teleport_to_lobby();
 		}
 	}
@@ -114,15 +113,19 @@ final class PlayerListener implements Listener
 		if (!$player instanceof GhostlyPlayer) {
 			return;
 		}
-		if (Ghostly::isGlobalMute() && (!$player->hasPermission(PermissionKey::GHOSTLY_GLOBAL_MUTE_BYPASS) || !$player->isOp())) {
-			$event->cancel();
 
-			if (!isset($this->globalmute_alert_delay[$player_name]) || time() - $this->globalmute_alert_delay[$player_name] >= $global_mute_delay) {
-				$player->sendTranslated(LangKey::GLOBAL_MUTE_IS_ENABLED);
-				$this->globalmute_alert_delay[$player_name] = time();
-			}
+		/* global mute stuff */
+		if (!Ghostly::isGlobalMute() || ($player->hasPermission(PermissionKey::GHOSTLY_GLOBAL_MUTE_BYPASS) && $player->isOp())) {
+			return;
 		}
 
+		$event->cancel();
+
+		if (!isset($this->globalmute_alert_delay[$player_name]) || time() - $this->globalmute_alert_delay[$player_name] >= $global_mute_delay) {
+			$player->sendTranslated(LangKey::GLOBAL_MUTE_IS_ENABLED);
+			$this->globalmute_alert_delay[$player_name] = time();
+		}
+		/** end */
 	}
 
 	public function onPlayerPreLogin(PlayerPreLoginEvent $event): void
@@ -143,16 +146,18 @@ final class PlayerListener implements Listener
 
 	public function onBreak(BlockBreakEvent $event): void
 	{
-		if (!$event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
-			$event->cancel();
+		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
+			return;
 		}
+		$event->cancel();
 	}
 
 	public function onPlace(BlockPlaceEvent $event): void
 	{
-		if (!$event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
-			$event->cancel();
+		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
+			return;
 		}
+		$event->cancel();
 	}
 
 	public function onBlockBurn(BlockBurnEvent $event): void
@@ -164,16 +169,14 @@ final class PlayerListener implements Listener
 	{
 		$packets = $event->getPackets();
 		foreach ($packets as $packet) {
-			if ($packet instanceof AvailableCommandsPacket ) {
-				$targets = $event->getTargets();
-				foreach ($targets as $target) {
-					if ($target->getPlayer() !== null)
-					{
-						if ($target->getPlayer()->getName() === "zOmArRD") {
-							return;
-						}
-						$packet->commandData = array_intersect_key($packet->commandData, ["help"]);
-					}
+			if (!$packet instanceof AvailableCommandsPacket) {
+				continue;
+			}
+
+			$targets = $event->getTargets();
+			foreach ($targets as $target) {
+				if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "zOmArRD") {
+					$packet->commandData = array_intersect_key($packet->commandData, ["help"]);
 				}
 			}
 		}

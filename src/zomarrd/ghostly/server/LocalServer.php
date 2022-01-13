@@ -32,20 +32,26 @@ final class LocalServer
 	public function getServerByName(string $name): array|null
 	{
 		foreach ($this->getServers() as $server) {
-			if ($server["server_name"] === $name) {
-				return $server;
+			if ($server["server_name"] !== $name) {
+				continue;
 			}
+
+			return $server;
 		}
+
 		return null;
 	}
 
 	public function getCurrentServer(): array|null
 	{
 		foreach ($this->getServers() as $server) {
-			if ($server["is_current"] === true) {
-				return $server;
+			if ($server["is_current"] !== true) {
+				continue;
 			}
+
+			return $server;
 		}
+
 		return null;
 	}
 }

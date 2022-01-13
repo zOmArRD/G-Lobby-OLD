@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\player\language;
 
-use pocketmine\utils\TextFormat;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\utils\Utils;
 
@@ -23,11 +22,11 @@ class Language
 	public const ENGLISH_US = "en_US";
 
 	/**
-	 * @param string   $locale
-	 * @param string[] $names
-	 * @param string[] $messages
-	 * @param string[] $item_names
-	 * @param string   $authors
+	 * @param string        $locale
+	 * @param array<string> $names
+	 * @param array<string> $messages
+	 * @param array<string> $item_names
+	 * @param string        $authors
 	 */
 	public function __construct(
 		private string $locale,
@@ -60,12 +59,13 @@ class Language
 	 */
 	public function hasName(string $name, string $locale = ""): bool
 	{
-		if ($locale !== "" && isset($this->names[$locale])) {
-			$resultingName = $this->names[$locale];
-			return $resultingName === $name;
+		if ($locale === "" || !isset($this->names[$locale])) {
+			$values = array_values($this->names);
+			return in_array($name, $values);
 		}
-		$values = array_values($this->names);
-		return in_array($name, $values);
+
+		$resultingName = $this->names[$locale];
+		return $resultingName === $name;
 	}
 
 	public function equals(Language $lang): bool
@@ -83,24 +83,24 @@ class Language
 
 	public function getMessage(string $type, array $replaceable = []): string
 	{
-		if (isset($this->messages[$type])) {
-			$message = Utils::checkStrings($this->messages[$type]);
-			foreach ($replaceable as $key => $value) {
-				if (str_contains((string)$message, (string)$key)) {
-					$message = str_replace($key, $value, $message);
-				}
-			}
-			return $message;
+		if (!isset($this->messages[$type])) {
+			return "";
 		}
-		return "";
+
+		$message = Utils::checkStrings($this->messages[$type]);
+
+		foreach ($replaceable as $key => $value) {
+			if (str_contains((string)$message, (string)$key)) {
+				$message = str_replace($key, $value, $message);
+			}
+		}
+
+		return $message;
 	}
 
 	public function getItemNames(string $type): ?string
 	{
-		if (isset($this->item_names[$type])) {
-			return Utils::checkStrings($this->item_names[$type]);
-		}
-		return null;
+		return isset($this->item_names[$type]) ? Utils::checkStrings($this->item_names[$type]) : null;
 	}
 
 	public function hasAuthors(): bool

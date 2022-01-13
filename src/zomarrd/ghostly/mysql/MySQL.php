@@ -16,16 +16,21 @@ use zomarrd\ghostly\mysql\queries\InsertQuery;
 
 final class MySQL
 {
+	public const TABLE_PREFIX = "ghostly_";
+
 	private static array $callbacks = [];
 
-	private const TABLE_SERVERS = 'CREATE TABLE IF NOT EXISTS network_servers(server_name VARCHAR(16), players INT, max_players INT, online BOOLEAN, whitelist BOOLEAN)';
+	private const CREATE_TABLE_SERVERS = "CREATE TABLE IF NOT EXISTS " . self::TABLE_PREFIX . "servers(server_name VARCHAR(16), players INT, max_players INT, online BOOLEAN, whitelist BOOLEAN);";
 
-	public static function runAsync(Query $query, string $database = "network_servers", ?callable $callable = null): void
+	public static function runAsync(Query $query, ?callable $callable = null): void
 	{
-		$query->setHost(MySQL['host'])
+		$query
+			->setHost(MySQL['host'])
 			->setUser(MySQL['user'])
 			->setPassword(MySQL['password'])
-			->setDatabase(MySQL['database'][$database]);
+			->setDatabase(MySQL['database'])
+		;
+
 		self::$callbacks[spl_object_hash($query)] = $callable;
 		Server::getInstance()->getAsyncPool()->submitTask($query);
 	}
@@ -33,6 +38,7 @@ final class MySQL
 	public static function submitAsync(Query $query): void
 	{
 		$callable = self::$callbacks[spl_object_hash($query)] ?? null;
+
 		if (is_callable($callable)) {
 			$callable($query['rows']);
 		}
@@ -40,7 +46,7 @@ final class MySQL
 
 	public static function createTables(): void
 	{
-		foreach ([self::TABLE_SERVERS] as $query) {
+		foreach ([self::CREATE_TABLE_SERVERS] as $query) {
 			self::runAsync(new InsertQuery($query));
 		}
 	}

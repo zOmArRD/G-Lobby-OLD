@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\extensions\scoreboard;
 
-use pocketmine\utils\Config;
 use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\utils\Utils;
 
@@ -41,9 +40,6 @@ class Scoreboard extends ScoreAPI
 
 	public function replaceData(int $line, string $string): string
 	{
-		if (empty($string)) {
-			return self::EMPTY_CACHE[$line] ?? '';
-		}
-		return Utils::checkStrings($string);
+		return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : Utils::checkStrings($string);
 	}
 }

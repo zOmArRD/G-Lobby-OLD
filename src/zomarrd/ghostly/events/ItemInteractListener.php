@@ -31,29 +31,25 @@ use zomarrd\ghostly\player\GhostlyPlayer;
 final class ItemInteractListener implements Listener
 {
 	private array $item_cooldown;
-
 	private array $entity_cooldown;
 
 	public function npc_listener_handler(DataPacketReceiveEvent $event): void
 	{
 		$player = $event->getOrigin()->getPlayer();
 		$packet = $event->getPacket();
-		if (!$packet instanceof InventoryTransactionPacket && !$player instanceof GhostlyPlayer) {
-			return;
-		}
 
-		$pn = $player->getName();
+		if ($packet instanceof InventoryTransactionPacket || $player instanceof GhostlyPlayer) {
+			$pn = $player->getName();
 
-		if (isset($packet->trData)) {
+			if (!isset($packet->trData)) {
+				return;
+			}
+
 			$trData = $packet->trData;
-		} else {
-			return;
-		}
 
-		if ($trData instanceof UseItemTransactionData) {
-			switch ($trData->getActionType()) {
-				case UseItemTransactionData::ACTION_CLICK_AIR:
-				case UseItemTransactionData::ACTION_CLICK_BLOCK:
+			if ($trData instanceof UseItemTransactionData) {
+				$i1 = $trData->getActionType();
+				if ($i1 === UseItemTransactionData::ACTION_CLICK_AIR || $i1 === UseItemTransactionData::ACTION_CLICK_BLOCK) {
 					$item = $player->getInventory()->getItemInHand();
 					$itemManager = $player->getItemManager();
 
@@ -67,30 +63,26 @@ final class ItemInteractListener implements Listener
 								}
 								break;
 						}
+
 						$this->item_cooldown[$pn] = time();
 					}
-					break;
+				}
 			}
-			return;
-		}
 
-		if ($trData instanceof UseItemOnEntityTransactionData) {
-			switch ($trData->getActionType()) {
-				case UseItemOnEntityTransactionData::ACTION_INTERACT:
-				case UseItemOnEntityTransactionData::ACTION_ATTACK:
-					//case UseItemOnEntityTransactionData::ACTION_ITEM_INTERACT:
+			if ($trData instanceof UseItemOnEntityTransactionData) {
+				$i = $trData->getActionType();
+				if (($i === UseItemOnEntityTransactionData::ACTION_INTERACT) || ($i === UseItemOnEntityTransactionData::ACTION_ATTACK)) {
 					$target = $player->getWorld()->getEntity($trData->getActorRuntimeId());
-					if ($target instanceof HumanType) {
-						if (!isset($this->entity_cooldown[$pn]) || time() - $this->entity_cooldown[$pn] >= 1.5) {
 
-							$interactEvent = new HumanInteractEvent($target, $player);
-							if (!$interactEvent->isCancelled()) {
-								$interactEvent->call();
-							}
-							$this->entity_cooldown[$pn] = time();
+					if ($target instanceof HumanType && (!isset($this->entity_cooldown[$pn]) || time() - $this->entity_cooldown[$pn] >= 1.5)) {
+						$interactEvent = new HumanInteractEvent($target, $player);
+						if (!$interactEvent->isCancelled()) {
+							$interactEvent->call();
 						}
+
+						$this->entity_cooldown[$pn] = time();
 					}
-					break;
+				}
 			}
 		}
 	}
@@ -98,12 +90,11 @@ final class ItemInteractListener implements Listener
 	public function slot_change(InventoryTransactionEvent $event): void
 	{
 		$player = $event->getTransaction()->getSource();
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
-		foreach ($event->getTransaction()->getActions() as $action) {
-			if (($action instanceof SlotChangeAction) && !$player->isOp()) {
-				$event->cancel();
+		if ($player instanceof GhostlyPlayer) {
+			foreach ($event->getTransaction()->getActions() as $action) {
+				if (($action instanceof SlotChangeAction) && !$player->isOp()) {
+					$event->cancel();
+				}
 			}
 		}
 	}
@@ -125,22 +116,24 @@ final class ItemInteractListener implements Listener
 		$itemManager = $player->getItemManager();
 		$block = $event->getBlock();
 
-		if (!isset($this->item_cooldown[$pn]) || time() - $this->item_cooldown[$pn] >= 2) {
-
-			if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot || $block instanceof DoublePlant) {
-				return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
-			}
-
-			switch (true) {
-				case $item->equals($itemManager->get('lobby-selector')):
-					if ($player->hasClassicProfile()) {
-						Menu::LOBBY_SELECTOR_GUI()->build($player);
-					} else {
-						Menu::LOBBY_SELECTOR_FORM()->build($player);
-					}
-					break;
-			}
-			$this->item_cooldown[$pn] = time();
+		if (isset($this->item_cooldown[$pn]) && time() - $this->item_cooldown[$pn] < 2) {
+			return;
 		}
+
+		if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot || $block instanceof DoublePlant) {
+			return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
+		}
+
+		switch (true) {
+			case $item->equals($itemManager->get('lobby-selector')):
+				if ($player->hasClassicProfile()) {
+					Menu::LOBBY_SELECTOR_GUI()->build($player);
+				} else {
+					Menu::LOBBY_SELECTOR_FORM()->build($player);
+				}
+				break;
+		}
+
+		$this->item_cooldown[$pn] = time();
 	}
 }

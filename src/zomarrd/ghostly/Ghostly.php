@@ -43,6 +43,7 @@ final class Ghostly extends PluginBase
 	{
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
+
 		new ConfigManager();
 		SkinAdapterSingleton::set(new MojangAdapter());
 		MySQL::createTables();
@@ -54,6 +55,7 @@ final class Ghostly extends PluginBase
 	protected function onEnable(): void
 	{
 		$prefix = PREFIX;
+
 		new ServerManager();
 		new LangHandler();
 
@@ -80,9 +82,11 @@ final class Ghostly extends PluginBase
 		Entity::ENTITY()->register();
 
 		foreach ($this->getServer()->getNetwork()->getInterfaces() as $interface) {
-			if ($interface instanceof RakLibInterface) {
-                $interface->setPacketLimit(PHP_INT_MAX);
-            }
+			if (!$interface instanceof RakLibInterface) {
+				continue;
+			}
+
+			$interface->setPacketLimit(PHP_INT_MAX);
 		}
 
 		$this->getScheduler()->scheduleRepeatingTask(new GlobalTask(), 1);

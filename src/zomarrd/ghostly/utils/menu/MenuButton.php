@@ -28,9 +28,8 @@ class MenuButton
 
 	public function click(GhostlyPlayer $player): void
 	{
-		if ($this->closure === null) {
-			return;
+		if ($this->closure !== null) {
+			($this->closure)($player);
 		}
-		($this->closure)($player);
 	}
 }

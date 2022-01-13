@@ -26,9 +26,10 @@ class UpdateRowQuery extends Query
 	public function query(mysqli $mysqli): void
 	{
 		$updates = [];
-		foreach (unserialize($this->updates) as $key => $value) {
+		foreach (unserialize($this->updates, array([])) as $key => $value) {
             $updates[] = "$key='$value'";
         }
+
 		$mysqli->query("UPDATE $this->table SET " . implode(',', $updates) . " WHERE $this->conditionKey='$this->conditionValue';");
 	}
 }

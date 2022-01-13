@@ -23,7 +23,7 @@ final class ServerManager
 
 	private ?Server $current_server = null;
 
-	/** @var Server[] */
+	/** @var array<Server> */
 	private array $servers = [];
 
 	public function __construct()
@@ -50,8 +50,10 @@ final class ServerManager
 	public function init(): void
 	{
 		$cServerName = $this->getCurrentServerName();
+
 		Ghostly::$logger->info(PREFIX . 'Registering the server in the database');
 		MySQL::runAsync(new RegisterServerQuery($cServerName));
+
 		sleep(1); //WHY YES ?
 		$this->reloadServers();
 
@@ -73,26 +75,33 @@ final class ServerManager
 	{
 		$this->servers = [];
 		$cServerName = $this->getCurrentServerName();
-		MySQL::runAsync(new SelectQuery('SELECT * FROM network_servers;'), 'network_servers', function ($rows) use ($cServerName) {
-			foreach ($rows as $row) {
-				$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist']);
-				if ($row['server_name'] === $cServerName) {
-					$this->current_server = $server;
-				} else {
-					$this->servers[] = $server;
+
+		MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers"),
+			function ($rows) use ($cServerName) {
+				foreach ($rows as $row) {
+					$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist']);
+
+					if ($row['server_name'] === $cServerName) {
+						$this->current_server = $server;
+					} else {
+						$this->servers[] = $server;
+					}
+
+					Ghostly::$logger->info(PREFIX . "The server ({$server->getServerName()}) has been registered in the database!");
 				}
-				Ghostly::$logger->info(PREFIX . "The server ({$server->getServerName()}) has been registered in the database!");
-			}
-		});
+			});
 	}
 
 	public function getServerByName(string $name): ?Server
 	{
 		foreach ($this->getServers() as $server) {
-			if ($server->getServerName() === $name) {
-				return $server;
+			if ($server->getServerName() !== $name) {
+				continue;
 			}
+
+			return $server;
 		}
+
 		return null;
 	}
 
@@ -104,19 +113,24 @@ final class ServerManager
 	public function getNetworkPlayers(): int
 	{
 		$players = 0;
+
 		foreach ($this->getServers() as $server) {
 			$players += $server->getPlayers();
 		}
+
 		$players += count(Ghostly::getInstance()->getServer()->getOnlinePlayers());
+
 		return $players;
 	}
 
 	public function getNetworkMaxPlayers(): int
 	{
 		$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
+
 		foreach ($this->getServers() as $server) {
 			$maxPlayers += $server->getMaxPlayers();
 		}
+
 		return $maxPlayers;
 	}
 }

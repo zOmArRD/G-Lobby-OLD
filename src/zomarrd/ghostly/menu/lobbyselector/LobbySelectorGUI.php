@@ -39,13 +39,14 @@ class LobbySelectorGUI extends Chest
 		$item = VanillaItems::NETHER_STAR()->setCustomName("§r§a" . $serverName);
 		$currentServer = $this->getServerManager()->getCurrentServer();
 
-
 		if ($currentServer !== null && $serverName === $currentServer->getServerName()) {
 			$item->setLore(["§r" .
 				"§7Players: §f{$currentServer->getPlayers()}§7/§f{$currentServer->getMaxPlayers()}\n\n§c" .
 				"You are already connected!"
 			]);
-		} elseif ($server === null || !$server->isOnline()) {
+		}
+
+		if ($server === null || !$server->isOnline()) {
 			$item->setCustomName("§r§c" . $serverName)->setLore(["§r§c" . "This server is currently offline!"]);
 		} else {
 			$item->setLore(["§r" . "§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}\n\n§a" .
@@ -54,10 +55,12 @@ class LobbySelectorGUI extends Chest
 
 		$cooldown = $this->item_cooldown;
 		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($serverName, $cooldown): void {
-			if (!isset($this->item_cooldown[$player->getName()]) || time() - $this->item_cooldown[$player->getName()] >= 1.5) {
-				$player->transfer_to_lobby($serverName);
-				$this->item_cooldown[$player->getName()] = time();
+			if (isset($this->item_cooldown[$player->getName()]) && time() - $this->item_cooldown[$player->getName()] < 1.5) {
+				return;
 			}
+
+			$player->transfer_to_lobby($serverName);
+			$this->item_cooldown[$player->getName()] = time();
 		}), $slot);
 	}
 
@@ -66,10 +69,12 @@ class LobbySelectorGUI extends Chest
 		$slot = 0;
 		$servers = $this->getLocalServer()->getServers();
 		foreach ($servers as $server) {
-			if ($server["category"] === "Lobby") {
-				$this->addServer($server["server_name"], $slot);
-				$slot++;
+			if ($server["category"] !== "Lobby") {
+				continue;
 			}
+
+			$this->addServer($server["server_name"], $slot);
+			$slot++;
 		}
 	}
 

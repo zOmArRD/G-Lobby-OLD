@@ -24,9 +24,7 @@ final class Server
 		private int    $max_players,
 		private bool   $online,
 		private bool   $whitelist
-	)
-	{
-	}
+	){}
 
 	public function getServerName(): string
 	{
@@ -66,8 +64,9 @@ final class Server
 	public function setOnline(bool $online): void
 	{
 		if (!$online) {
-			MySQL::runAsync(new UpdateRowQuery(serialize(['online' => 0, 'players' => 0]), 'server_name', $this->getServerName(), 'network_servers'));
+			MySQL::runAsync(new UpdateRowQuery(serialize(['online' => 0, 'players' => 0]), 'server_name', $this->getServerName(), 'ghostly_servers'));
 		}
+
 		$this->online = $online;
 	}
 
@@ -81,14 +80,15 @@ final class Server
 	 */
 	public function getStatus(): string
 	{
-		if ($this->isOnline()) {
-			return '§7' . 'Players: §c' . $this->getPlayers() . '§7/§c' . $this->getMaxPlayers();
+		if (!$this->isOnline()) {
+			if ($this->isWhitelist()) {
+				return '§d' . 'WHITELISTED';
+			}
+
+			return '§c' . 'OFFLINE';
 		}
 
-		if ($this->isWhitelist()) {
-			return '§d' . 'WHITELISTED';
-		}
-		return '§c' . 'OFFLINE';
+		return '§7' . 'Players: §c' . $this->getPlayers() . '§7/§c' . $this->getMaxPlayers();
 	}
 
 	public function sync_local(): void
@@ -96,24 +96,25 @@ final class Server
 		$players = count(Ghostly::getInstance()->getServer()->getOnlinePlayers());
 		$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
 		$isWhitelist = Ghostly::getInstance()->getServer()->hasWhitelist() ? 1 : 0;
-		MySQL::runAsync(new UpdateRowQuery(serialize(['players' => $players, 'max_players' => $maxPlayers, 'whitelist' => $isWhitelist]), 'server_name', $this->getServerName(), 'network_servers'));
+		MySQL::runAsync(new UpdateRowQuery(serialize(['players' => $players, 'max_players' => $maxPlayers, 'whitelist' => $isWhitelist]), 'server_name', $this->getServerName(), 'ghostly_servers'));
 		$this->setMaxPlayers($maxPlayers);
 		$this->setPlayers($players);
 	}
 
 	public function sync_remote(): void
 	{
-		MySQL::runAsync(new SelectQuery("SELECT * FROM network_servers WHERE server_name='$this->server_name';"), 'network_servers', function ($rows) {
+		MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers WHERE server_name='$this->server_name';"), function ($rows) {
 			$row = $rows[0];
 			if ($row !== null) {
 				$this->setOnline((bool)$row['online']);
 				$this->setPlayers((int)$row['players']);
 				$this->setWhitelist((bool)$row['whitelist']);
 				$this->setMaxPlayers((int)$row['max_players']);
-			} else {
-				$this->setOnline(false);
-				$this->setPlayers(0);
+				return;
 			}
+
+			$this->setOnline(false);
+			$this->setPlayers(0);
 		});
 	}
 }

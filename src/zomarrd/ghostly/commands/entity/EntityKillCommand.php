@@ -22,10 +22,6 @@ final class EntityKillCommand extends BaseSubCommand
 {
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
-		/*if (!$sender instanceof GhostlyPlayer) {
-			return;
-		}*/
-
 		if (count($args) < 0) {
 			$this->sendError(BaseCommand::ERR_INSUFFICIENT_ARGUMENTS);
 			return;

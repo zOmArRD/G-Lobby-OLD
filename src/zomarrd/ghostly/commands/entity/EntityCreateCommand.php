@@ -22,19 +22,13 @@ use zomarrd\ghostly\utils\Utils;
 final class EntityCreateCommand extends BaseSubCommand
 {
 
-	/**
-	 * @param CommandSender $sender
-	 * @param string        $aliasUsed
-	 * @param array         $args
-	 *
-	 * @return void
-	 */
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		if (!$sender instanceof GhostlyPlayer) {
 			$sender->sendMessage(Utils::ONLY_PLAYER);
 			return;
 		}
+
 		$type = strtolower($args["type"]);
 
 		switch ($type) {

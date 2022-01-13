@@ -78,17 +78,19 @@ final class FloatingTextType extends Entity
 				new FloatTag($this->location->pitch)
 			]));
 
-		if(!($this instanceof Player)){
+		if(!$this instanceof Player){
 			EntityFactory::getInstance()->injectSaveId(get_class($this), $nbt);
-			if($this->getNameTag() !== ""){
+			if($this->getNameTag() !== "") {
 				$nbt->setString("CustomName", $this->getNameTag());
 				$nbt->setByte("CustomNameVisible", $this->isNameTagVisible() ? 1 : 0);
 			}
 		}
+
 		$nbt->setFloat("FallDistance", $this->fallDistance);
 		$nbt->setShort("Fire", $this->fireTicks);
 		$nbt->setByte("OnGround", $this->onGround ? 1 : 0);
 		$nbt->setString("TextId", $this->textId);
+
 		return $nbt;
 	}
 

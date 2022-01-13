@@ -27,13 +27,13 @@ final class LobbySelectorForm
 		$server_name = $server_data["server_name"];
 		$server = ServerManager::getInstance()->getServerByName($server_name);
 		$text = "§r";
+
 		if ($currentServer !== null && $server_name === $currentServer->getServerName()) {
 			$text .= "§a{$server_name}\n§7Players: §f{$currentServer->getPlayers()}§7/§f{$currentServer->getMaxPlayers()}";
-		} elseif ($server === null || !$server->isOnline()) {
-			$text .= "§c{$server_name}\n§cOFFLINE";
-		} else {
-			$text .= "§a{$server_name}\n§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}";
 		}
+
+		$text = $server === null || !$server->isOnline() ? $text . "§c{$server_name}\n§cOFFLINE" : $text . "§a{$server_name}\n§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}";
+
 		$form->addButton($text, $server_data["form_image_type"], $server_data["form_image_path"], $server_name);
 	}
 
@@ -49,17 +49,23 @@ final class LobbySelectorForm
 				if ($data === "close") {
 					return;
 				}
+
 				$player->transfer_to_lobby($data);
 			}
 		});
+
 		$this->form->setTitle("Lobby Selector");
 		$this->form->setContent($player->getTranslation(LangKey::LOBBY_SERVER_FORM_CONTENT));
 		$servers = LocalServer::getInstance()->getServers();
+
 		foreach ($servers as $server) {
-			if ($server["category"] === "Lobby") {
-				$this->addServerButton($server, $this->getForm());
+			if ($server["category"] !== "Lobby") {
+				continue;
 			}
+
+			$this->addServerButton($server, $this->getForm());
 		}
+
 		$this->getForm()->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $this->getForm()::IMAGE_TYPE_NULL, '', 'close');
 		$player->sendForm($this->getForm());
 	}

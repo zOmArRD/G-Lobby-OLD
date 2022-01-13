@@ -27,15 +27,19 @@ final class LangListCommand extends BaseSubCommand
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		$line = str_repeat('-----', 3);
-		if ($sender instanceof GhostlyPlayer) {
-			$sender->sendMessage(PREFIX . $sender->getTranslation(LangKey::AVAILABLE_LANGUAGE));
-		}else {
+
+		if (!$sender instanceof GhostlyPlayer) {
 			$sender->sendMessage(PREFIX . "Available languages");
+		} else {
+			$sender->sendMessage(PREFIX . $sender->getTranslation(LangKey::AVAILABLE_LANGUAGE));
 		}
+
 		$sender->sendMessage($line . $line);
+
 		foreach (LangHandler::getInstance()->getLanguages() as $language) {
 			$sender->sendMessage("§a-§7 {$language->getLocale()} => {$language->getName()}");
 		}
+
 		$sender->sendMessage($line . $line);
 	}
 }

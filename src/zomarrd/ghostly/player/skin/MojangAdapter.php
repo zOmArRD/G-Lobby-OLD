@@ -28,27 +28,31 @@ final class MojangAdapter implements SkinAdapter
      */
     public function toSkinData(Skin $skin): SkinData
 	{
-		if (isset($this->personaSkins[$skin->getSkinId()])) {
-			return $this->personaSkins[$skin->getSkinId()];
-		}
-		$capeData = $skin->getCapeData();
-		$capeImage = $capeData === "" ? new SkinImage(0, 0, "") : new SkinImage(32, 64, $capeData);
-		$geometryName = $skin->getGeometryName();
-		if ($geometryName === "") {
-			$geometryName = "geometry.humanoid.custom";
-		}
-		$resourcePatch = json_encode(["geometry" => ["default" => $geometryName]], JSON_THROW_ON_ERROR);
-		if ($resourcePatch === false) {
+		if (!isset($this->personaSkins[$skin->getSkinId()])) {
+			$capeData = $skin->getCapeData();
+			$capeImage = $capeData === "" ? new SkinImage(0, 0, "") : new SkinImage(32, 64, $capeData);
+			$geometryName = $skin->getGeometryName();
+
+			if ($geometryName === "") {
+				$geometryName = "geometry.humanoid.custom";
+			}
+
+			$resourcePatch = json_encode(["geometry" => ["default" => $geometryName]], JSON_THROW_ON_ERROR);
+			if ($resourcePatch !== false) {
+				return new SkinData(
+					$skin->getSkinId(),
+					"",
+					$resourcePatch,
+					SkinImage::fromLegacy($skin->getSkinData()), [],
+					$capeImage,
+					$skin->getGeometryData()
+				);
+			}
+
 			throw new \RuntimeException("json_encode() failed: " . json_last_error_msg());
 		}
-		return new SkinData(
-			$skin->getSkinId(),
-			"", //TODO: playfab ID
-			$resourcePatch,
-			SkinImage::fromLegacy($skin->getSkinData()), [],
-			$capeImage,
-			$skin->getGeometryData()
-		);
+
+		return $this->personaSkins[$skin->getSkinId()];
 	}
 
 	/**
@@ -58,17 +62,18 @@ final class MojangAdapter implements SkinAdapter
 	{
 		$capeData = $data->getCapeImage()->getData();
 
-		if ($data->isPersona()) {
-			$this->personaSkins[$data->getSkinId()] = $data;
-			return new Skin($data->getSkinId(), str_repeat(random_bytes(3) . "\xff", 2048), $capeData);
+		if (!$data->isPersona()) {
+			$resourcePatch = json_decode($data->getResourcePatch(), true, 512, JSON_THROW_ON_ERROR);
+
+			if (!is_array($resourcePatch) || !isset($resourcePatch["geometry"]["default"]) || !is_string($resourcePatch["geometry"]["default"])) {
+				throw new InvalidSkinException("Missing geometry name field");
+			}
+
+			$geometryName = $resourcePatch["geometry"]["default"];
+			return new Skin($data->getSkinId(), $data->getSkinImage()->getData(), $capeData, $geometryName, $data->getGeometryData());
 		}
 
-		$resourcePatch = json_decode($data->getResourcePatch(), true, 512, JSON_THROW_ON_ERROR);
-		if (is_array($resourcePatch) && isset($resourcePatch["geometry"]["default"]) && is_string($resourcePatch["geometry"]["default"])) {
-			$geometryName = $resourcePatch["geometry"]["default"];
-		} else {
-			throw new InvalidSkinException("Missing geometry name field");
-		}
-		return new Skin($data->getSkinId(), $data->getSkinImage()->getData(), $capeData, $geometryName, $data->getGeometryData());
+		$this->personaSkins[$data->getSkinId()] = $data;
+		return new Skin($data->getSkinId(), str_repeat(random_bytes(3) . "\xff", 2048), $capeData);
 	}
 }

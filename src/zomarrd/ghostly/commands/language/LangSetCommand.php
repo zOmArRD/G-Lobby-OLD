@@ -12,9 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\commands\language;
 
 use CortexPE\Commando\args\RawStringArgument;
-use CortexPE\Commando\args\TextArgument;
 use CortexPE\Commando\BaseSubCommand;
-use CortexPE\Commando\constraint\InGameRequiredConstraint;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
@@ -42,54 +40,62 @@ final class LangSetCommand extends BaseSubCommand
 	{
 		if ((count($args) === 1) && isset($args["language|player"])) {
 			$target = $args["language|player"];
-			if ($sender instanceof GhostlyPlayer) {
+			if (!$sender instanceof GhostlyPlayer) {
+				$sender->sendMessage(PREFIX . '§c' . 'This command must be executed in-game.');
+			} else {
 				foreach (LangHandler::getInstance()->getLanguages() as $language) {
-					if ($language->getLocale() === $target) {
-						$sender->setLanguage($target);
-						$sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $sender->getLocale()]);
-					} else {
+					if ($language->getLocale() !== $target) {
 						$sender->sendTranslated(LangKey::COMMAND_LANG_LIST);
 						return;
 					}
+
+					$sender->setLanguage($target);
+					$sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $sender->getLocale()]);
 				}
+			}
+		}
+
+		if (!isset($args["language"])) {
+			return;
+		}
+
+		$target = $args["language|player"];
+		$newLang = $args["language"];
+		$isPlayer = Server::getInstance()->getPlayerByPrefix($target);
+
+		if ($target === $sender->getName()) {
+			$sender->sendMessage(PREFIX . 'Use: </lang set [language]>');
+			return;
+		}
+
+		if (!$sender->hasPermission(PermissionKey::GHOSTLY_COMMAND_LANG_SET_OTHER)) {
+			if ($sender instanceof GhostlyPlayer) {
+				$sender->sendTranslated(LangKey::NOT_PERMISSION);
+			}
+			return;
+		}
+
+		if (!$isPlayer instanceof GhostlyPlayer || !$isPlayer->isOnline()) {
+			if ($sender instanceof GhostlyPlayer) {
+				$sender->sendTranslated(LangKey::PLAYER_NOT_ONLINE, ["{PLAYER-NAME}" => $target]);
 			} else {
-				$sender->sendMessage(PREFIX . '§c' . 'This command must be executed in-game.');
+				$sender->sendMessage(PREFIX . "Player $target is not connected.");
 			}
-		} elseif (isset($args["language"])) {
-			$target = $args["language|player"];
-			$newLang = $args["language"];
-			$isPlayer = Server::getInstance()->getPlayerByPrefix($target);
-			if ($target === $sender->getName()) {
-				$sender->sendMessage(PREFIX . 'Use: </lang set [language]>');
-				return;
-			}
-			if (!$sender->hasPermission(PermissionKey::GHOSTLY_COMMAND_LANG_SET_OTHER)) {
+			return;
+		}
+
+		foreach (LangHandler::getInstance()->getLanguages() as $language) {
+			if ($language->getLocale() !== $newLang) {
 				if ($sender instanceof GhostlyPlayer) {
-					$sender->sendTranslated(LangKey::NOT_PERMISSION);
+					$sender->sendTranslated(LangKey::COMMAND_LANG_LIST);
+				} else {
+					$sender->sendMessage(PREFIX . 'Use </lang list> to see the list of available languages');
 				}
 				return;
 			}
-			if (!$isPlayer instanceof GhostlyPlayer || !$isPlayer->isOnline()) {
-				if ($sender instanceof GhostlyPlayer) {
-					$sender->sendTranslated(LangKey::PLAYER_NOT_ONLINE, ["{PLAYER-NAME}" => $target]);
-				} else {
-					$sender->sendMessage(PREFIX . "Player $target is not connected.");
-				}
-				return;
-			}
-			foreach (LangHandler::getInstance()->getLanguages() as $language) {
-				if ($language->getLocale() === $newLang) {
-					$isPlayer->setLanguage($newLang);
-					$isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $isPlayer->getLang()->getLocale()]);
-				} else {
-					if ($sender instanceof GhostlyPlayer) {
-						$sender->sendTranslated(LangKey::COMMAND_LANG_LIST);
-					} else {
-						$sender->sendMessage(PREFIX . 'Use </lang list> to see the list of available languages');
-					}
-					return;
-				}
-			}
+
+			$isPlayer->setLanguage($newLang);
+			$isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $isPlayer->getLang()->getLocale()]);
 		}
 	}
 }

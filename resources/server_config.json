@@ -1,13 +1,11 @@
 {
-	"version": 2.0,
+	"version": 2.5,
 	"prefix": "§l§cGhostly §f» §r",
 	"mysql.credentials": {
 		"user": "root",
 		"password": "omar",
 		"host": "localhost",
-		"database": {
-			"network_servers": "mc"
-		}
+		"database": "mc"
 	},
 	"scoreboard": {
 		"display": "§c§lGhostly §fNetwork",

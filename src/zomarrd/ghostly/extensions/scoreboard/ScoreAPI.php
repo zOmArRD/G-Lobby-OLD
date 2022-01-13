@@ -16,7 +16,6 @@ use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use zomarrd\ghostly\Ghostly;
-use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\IPlayer;
 
 abstract class ScoreAPI extends IPlayer
@@ -33,6 +32,7 @@ abstract class ScoreAPI extends IPlayer
 		if ($this->isObjectiveName()) {
 			$this->remove();
 		}
+
 		$packet = new SetDisplayObjectivePacket();
 		$packet->objectiveName = $objectiveName;
 		$packet->displayName = $displayName;
@@ -67,34 +67,33 @@ abstract class ScoreAPI extends IPlayer
 
 	public function setLine(int $score, string $message): void
 	{
-		if (!$this->isObjectiveName()) {
-			return;
+		if ($this->isObjectiveName()) {
+			if ($score > 15 || $score < 0) {
+				Ghostly::$logger->error("Score must be between the value of 0-15. $score out of range.");
+				return;
+			}
+
+			$entry = new ScorePacketEntry();
+			$entry->objectiveName = $this->getObjectiveName();
+			$entry->type = $entry::TYPE_FAKE_PLAYER;
+
+			if (isset($this->lines[$score])) {
+				$packet1 = new SetScorePacket();
+				$packet1->entries[] = $this->lines[$score];
+				$packet1->type = $packet1::TYPE_REMOVE;
+				$this->getPlayer()->getNetworkSession()->sendDataPacket($packet1);
+				unset($this->lines[$score]);
+			}
+
+			$entry->score = $score;
+			$entry->scoreboardId = $score;
+			$entry->customName = $message;
+			$this->lines[$score] = $entry;
+
+			$packet2 = new SetScorePacket();
+			$packet2->entries[] = $entry;
+			$packet2->type = $packet2::TYPE_CHANGE;
+			$this->getPlayer()->getNetworkSession()->sendDataPacket($packet2);
 		}
-
-		if ($score > 15 || $score < 0) {
-			Ghostly::$logger->error("Score must be between the value of 0-15. $score out of range.");
-			return;
-		}
-
-		$entry = new ScorePacketEntry();
-		$entry->objectiveName = $this->getObjectiveName();
-		$entry->type = $entry::TYPE_FAKE_PLAYER;
-		if (isset($this->lines[$score])) {
-			$packet1 = new SetScorePacket();
-			$packet1->entries[] = $this->lines[$score];
-			$packet1->type = $packet1::TYPE_REMOVE;
-			$this->getPlayer()->getNetworkSession()->sendDataPacket($packet1);
-			unset($this->lines[$score]);
-		}
-		$entry->score = $score;
-
-		$entry->scoreboardId = $score;
-		$entry->customName = $message;
-		$this->lines[$score] = $entry;
-
-		$packet2 = new SetScorePacket();
-		$packet2->entries[] = $entry;
-		$packet2->type = $packet2::TYPE_CHANGE;
-		$this->getPlayer()->getNetworkSession()->sendDataPacket($packet2);
 	}
 }

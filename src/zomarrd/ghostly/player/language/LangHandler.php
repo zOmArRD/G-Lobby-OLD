@@ -21,7 +21,7 @@ final class LangHandler
 {
 	private static LangHandler $instance;
 
-	/** @var Language[] */
+	/** @var array<Language> */
 	private array $languages;
 
 	private Language $defaultLanguage;
@@ -34,25 +34,33 @@ final class LangHandler
 		self::$instance = $this;
 		$resourcesFolder = Ghostly::getInstance()->getResourcesFolder() . "lang";
 		$files = scandir($resourcesFolder);
+
 		foreach ($files as $file) {
-			if (str_contains($file, '.json')) {
-				$path = $resourcesFolder . "/{$file}";
-				$data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
-				$languageData = $data["language_data"];
-				$default = $languageData["default"];
-				$locale = str_replace('.json', '', $file);
-				$lang = new Language(
-					$locale,
-					$languageData["names"],
-					$data["messages"],
-					$data["item_data"],
-					$languageData["author"]
-				);
-				$this->languages[$locale] = $lang;
-				if ($default) {
-					$this->defaultLanguage = $lang;
-				}
+			if (!str_contains($file, '.json')) {
+				continue;
 			}
+
+			$path = $resourcesFolder . "/{$file}";
+			$data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+			$languageData = $data["language_data"];
+			$default = $languageData["default"];
+			$locale = str_replace('.json', '', $file);
+
+			$lang = new Language(
+				$locale,
+				$languageData["names"],
+				$data["messages"],
+				$data["item_data"],
+				$languageData["author"]
+			);
+
+			$this->languages[$locale] = $lang;
+
+			if (!$default) {
+				continue;
+			}
+
+			$this->defaultLanguage = $lang;
 		}
 	}
 
@@ -74,10 +82,13 @@ final class LangHandler
 	public function getLanguageFromName(string $name, string $locale = ""): ?Language
 	{
 		foreach ($this->languages as $language) {
-			if ($language->hasName($name, $locale)) {
-				return $language;
+			if (!$language->hasName($name, $locale)) {
+				continue;
 			}
+			
+			return $language;
 		}
+
 		return null;
 	}
 }

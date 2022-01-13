@@ -26,7 +26,7 @@ abstract class Chest implements Listener
 	/** @var array<int, MenuButton> */
 	private array $buttons = [];
 
-	/** @var callable[] */
+	/** @var array<callable> */
 	private array $inventoryClose = [];
 
 	public function __construct(
@@ -37,42 +37,40 @@ abstract class Chest implements Listener
 			->setInventoryCloseListener(function (GhostlyPlayer $player, Inventory $inventory): void {
 				$closure = $this->inventoryClose[$player->getUniqueId()->toString()] ?? null;
 
-				if ($closure === null) {
-					return;
+				if ($closure !== null) {
+					$closure($player);
+					unset($this->inventoryClose[$player->getUniqueId()->toString()]);
 				}
 
-				$closure($player);
-				unset($this->inventoryClose[$player->getUniqueId()->toString()]);
 			})->setListener(function (InvMenuTransaction $transaction): InvMenuTransactionResult {
 				$player = $transaction->getPlayer();
 				$button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 
-				if ($button === null) {
-					return $transaction->continue();
+				if ($button !== null) {
+					if ($player instanceof GhostlyPlayer) {
+						$button->click($player);
+					}
+
+					return $transaction->discard();
 				}
 
-				if ($player instanceof GhostlyPlayer) {
-					$button->click($player);
-				}
-				return $transaction->discard();
+				return $transaction->continue();
 			});
 	}
 
 	public function build(GhostlyPlayer $player): void
 	{
-		if (!$player->isOnline()) {
-			return;
+		if ($player->isOnline()) {
+			$this->menu->send($player);
 		}
-		$this->menu->send($player);
 	}
 
 	public function addButton(MenuButton $button, int $slot): void
 	{
-		if ($slot >= $this->menu->getInventory()->getSize()) {
-			return;
+		if ($slot < $this->menu->getInventory()->getSize()) {
+			$this->menu->getInventory()->setItem($slot, $button->getItem());
+			$this->buttons[$slot] = $button;
 		}
-		$this->menu->getInventory()->setItem($slot, $button->getItem());
-		$this->buttons[$slot] = $button;
 	}
 
 	public function getMenu(): InvMenu
