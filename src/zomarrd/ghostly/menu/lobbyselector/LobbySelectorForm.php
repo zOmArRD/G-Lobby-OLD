@@ -20,8 +20,6 @@ use zomarrd\ghostly\server\ServerManager;
 
 final class LobbySelectorForm
 {
-	private SimpleForm $form;
-
 	public function addServerButton(Server $server, SimpleForm $form): void
 	{
 		$currentServer = ServerManager::getInstance()->getCurrentServer();
@@ -42,14 +40,9 @@ final class LobbySelectorForm
 		$form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
 	}
 
-	public function getForm(): SimpleForm
-	{
-		return $this->form;
-	}
-
 	public function build(GhostlyPlayer $player): void
 	{
-		$this->form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
+		$form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
 			if (isset($data)) {
 				if ($data === "close") {
 					return;
@@ -59,13 +52,13 @@ final class LobbySelectorForm
 			}
 		});
 
-		$this->form->setTitle("Lobby Selector");
-		$this->form->setContent($player->getTranslation(LangKey::LOBBY_SERVER_FORM_CONTENT));
+		$form->setTitle("Lobby Selector");
+		$form->setContent($player->getTranslation(LangKey::LOBBY_SERVER_FORM_CONTENT));
 		$servers = ServerManager::getInstance()->getServers();
 		$current = ServerManager::getInstance()->getCurrentServer();
 
 		if (isset($current)) {
-			$this->addServerButton($current, $this->getForm());
+			$this->addServerButton($current, $form);
 		}
 
 		foreach ($servers as $server) {
@@ -73,10 +66,10 @@ final class LobbySelectorForm
 				continue;
 			}
 
-			$this->addServerButton($server, $this->getForm());
+			$this->addServerButton($server, $form);
 		}
 
-		$this->getForm()->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $this->getForm()::IMAGE_TYPE_NULL, '', 'close');
-		$player->sendForm($this->getForm());
+		$form->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
+		$player->sendForm($form);
 	}
 }
