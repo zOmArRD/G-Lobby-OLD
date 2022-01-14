@@ -15,7 +15,6 @@ use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\world\WorldManager;
 use zomarrd\ghostly\Ghostly;
-use zomarrd\ghostly\server\LocalServer;
 use zomarrd\ghostly\world\Lobby;
 
 final class ConfigManager
@@ -25,7 +24,7 @@ final class ConfigManager
 
 	private array $files = [
 		'server_config.json' => 2.5,
-		'network_servers.yml' => 1.0
+		'server_config.yml' => 1.5
 	];
 
 	public function __construct()
@@ -60,7 +59,6 @@ final class ConfigManager
 		}
 
 		self::$server_config = $this->getFile('server_config.json');
-		new LocalServer($this->getFile('network_servers.yml')->get('servers'));
 
 		define('PREFIX', self::getServerConfig()?->get('prefix'));
 		define('MySQL', self::getServerConfig()?->get('mysql.credentials'));

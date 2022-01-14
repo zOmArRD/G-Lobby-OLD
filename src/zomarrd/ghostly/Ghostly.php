@@ -35,6 +35,11 @@ use zomarrd\ghostly\task\GlobalTask;
 
 final class Ghostly extends PluginBase
 {
+	public const SERVER = "Lobby-1";
+	public const ADDRESS = "ghostlymc.live:19133";
+	public const PROXY_TRANSFER = true;
+	public const CATEGORY = "Lobby";
+
 	public static Ghostly $instance;
 	public static AttachableLogger $logger;
 	private static bool $globalMute = false;

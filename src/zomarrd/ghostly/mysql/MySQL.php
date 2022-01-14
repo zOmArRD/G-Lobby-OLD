@@ -20,7 +20,7 @@ final class MySQL
 
 	private static array $callbacks = [];
 
-	private const CREATE_TABLE_SERVERS = "CREATE TABLE IF NOT EXISTS " . self::TABLE_PREFIX . "servers(server_name VARCHAR(16), players INT, max_players INT, online BOOLEAN, whitelist BOOLEAN);";
+	private const CREATE_TABLE_SERVERS = "CREATE TABLE IF NOT EXISTS " . self::TABLE_PREFIX . "servers(server_name VARCHAR(16), players INT, max_players INT, online BOOLEAN, whitelist BOOLEAN, proxy_transfer BOOLEAN, category VARCHAR(16), address TEXT);";
 
 	public static function runAsync(Query $query, ?callable $callable = null): void
 	{

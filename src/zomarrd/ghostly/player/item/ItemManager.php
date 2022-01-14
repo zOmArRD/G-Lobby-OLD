@@ -14,12 +14,10 @@ namespace zomarrd\ghostly\player\item;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\VanillaItems;
-use pocketmine\utils\SingletonTrait;
 use zomarrd\ghostly\player\IPlayer;
 
 final class ItemManager extends IPlayer
 {
-	use SingletonTrait;
 
 	public function get(string $name): Item
 	{

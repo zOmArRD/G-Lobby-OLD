@@ -12,29 +12,34 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\menu\lobbyselector;
 
 use jojoe77777\FormAPI\SimpleForm;
+use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
-use zomarrd\ghostly\server\LocalServer;
+use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerManager;
 
 final class LobbySelectorForm
 {
 	private SimpleForm $form;
 
-	public function addServerButton(array $server_data, SimpleForm $form): void
+	public function addServerButton(Server $server, SimpleForm $form): void
 	{
 		$currentServer = ServerManager::getInstance()->getCurrentServer();
-		$server_name = $server_data["server_name"];
-		$server = ServerManager::getInstance()->getServerByName($server_name);
 		$text = "§r";
 
-		if ($currentServer !== null && $server_name === $currentServer->getServerName()) {
-			$text .= "§a{$server_name}\n§7Players: §f{$currentServer->getPlayers()}§7/§f{$currentServer->getMaxPlayers()}";
+		if ($server->getName() === Ghostly::SERVER) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}§7]\n§cYou are already connected here!";
 		}
 
-		$text = $server === null || !$server->isOnline() ? $text . "§c{$server_name}\n§cOFFLINE" : $text . "§a{$server_name}\n§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}";
+		if ($server->isOnline()) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§eClick to transfer!";
+		}
 
-		$form->addButton($text, $server_data["form_image_type"], $server_data["form_image_path"], $server_name);
+		if ($server->isWhitelist()) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cWHITELISTED";
+		}
+
+		$form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
 	}
 
 	public function getForm(): SimpleForm
@@ -56,10 +61,15 @@ final class LobbySelectorForm
 
 		$this->form->setTitle("Lobby Selector");
 		$this->form->setContent($player->getTranslation(LangKey::LOBBY_SERVER_FORM_CONTENT));
-		$servers = LocalServer::getInstance()->getServers();
+		$servers = ServerManager::getInstance()->getServers();
+		$current = ServerManager::getInstance()->getCurrentServer();
+
+		if (isset($current)) {
+			$this->addServerButton($current, $this->getForm());
+		}
 
 		foreach ($servers as $server) {
-			if ($server["category"] !== "Lobby") {
+			if ($server->getCategory() !== "Lobby") {
 				continue;
 			}
 

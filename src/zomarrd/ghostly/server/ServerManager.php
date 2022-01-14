@@ -65,9 +65,9 @@ final class ServerManager
 		}), 60);
 	}
 
-	public function getCurrentServerName(): ?string
+	public function getCurrentServerName(): string
 	{
-		return LocalServer::getInstance()->getCurrentServer()["server_name"];
+		return Ghostly::SERVER;
 	}
 
 
@@ -79,7 +79,7 @@ final class ServerManager
 		MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers"),
 			function ($rows) use ($cServerName) {
 				foreach ($rows as $row) {
-					$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist']);
+					$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist'], (bool)$row["proxy_transfer"], $row["category"], $row["address"]);
 
 					if ($row['server_name'] === $cServerName) {
 						$this->current_server = $server;
@@ -87,7 +87,7 @@ final class ServerManager
 						$this->servers[] = $server;
 					}
 
-					Ghostly::$logger->info(PREFIX . "The server ({$server->getServerName()}) has been registered in the database!");
+					Ghostly::$logger->info(PREFIX . "The server ({$server->getName()}) has been registered in the database!");
 				}
 			});
 	}
@@ -95,7 +95,7 @@ final class ServerManager
 	public function getServerByName(string $name): ?Server
 	{
 		foreach ($this->getServers() as $server) {
-			if ($server->getServerName() !== $name) {
+			if ($server->getName() !== $name) {
 				continue;
 			}
 
@@ -128,6 +128,10 @@ final class ServerManager
 		$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
 
 		foreach ($this->getServers() as $server) {
+			if (!$server->isOnline()) {
+				continue;
+			}
+
 			$maxPlayers += $server->getMaxPlayers();
 		}
 

@@ -101,7 +101,7 @@ final class EntityManager
 		$entity = new FloatingTextType($location, $nbt);
 		$entity->setNameTag("§r§7" . $text);
 
-		if (!$spawnToAll) {
+		if ($spawnToAll) {
 			$entity->spawnToAll();
 			return;
 		}
@@ -659,8 +659,6 @@ final class EntityManager
 						$this->update_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA);
 					}
 					break;
-				default:
-					throw new \RuntimeException('Unexpected value');
 			}
 		}
 

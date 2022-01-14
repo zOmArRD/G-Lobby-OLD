@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\menu\lobbyselector;
 
 use pocketmine\item\VanillaItems;
+use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\GhostlyPlayer;
-use zomarrd\ghostly\server\LocalServer;
+use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\utils\menu\Chest;
 use zomarrd\ghostly\utils\menu\MenuButton;
@@ -33,33 +34,31 @@ class LobbySelectorGUI extends Chest
 
 	private array $item_cooldown = [];
 
-	public function addServer(string $serverName, int $slot): void
+	public function addServer(Server $server, int $slot): void
 	{
-		$server = $this->getServerManager()->getServerByName($serverName);
-		$item = VanillaItems::NETHER_STAR()->setCustomName("§r§a" . $serverName);
-		$currentServer = $this->getServerManager()->getCurrentServer();
+		$item = VanillaItems::NETHER_STAR()->setCustomName("§r§a" . $server->getName());
 
-		if ($currentServer !== null && $serverName === $currentServer->getServerName()) {
-			$item->setLore(["§r" .
-				"§7Players: §f{$currentServer->getPlayers()}§7/§f{$currentServer->getMaxPlayers()}\n\n§c" .
-				"You are already connected!"
-			]);
-		}
-
-		if ($server === null || !$server->isOnline()) {
-			$item->setCustomName("§r§c" . $serverName)->setLore(["§r§c" . "This server is currently offline!"]);
+		if (!$server->isOnline()) {
+			$item->setCustomName("§r§c" . $server->getName())->setLore(["§r§c" . "This server is currently offline!"]);
 		} else {
 			$item->setLore(["§r" . "§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}\n\n§a" .
 				"Click to connect to this server!"]);
 		}
 
+		if ($server->getName() === Ghostly::SERVER && $server->isOnline()) {
+			$item->setLore(["§r" .
+				"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}\n\n§c" .
+				"You are already connected!"
+			]);
+		}
+
 		$cooldown = $this->item_cooldown;
-		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($serverName, $cooldown): void {
+		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($server, $cooldown): void {
 			if (isset($this->item_cooldown[$player->getName()]) && time() - $this->item_cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
-			$player->transfer_to_lobby($serverName);
+			$player->transfer_to_lobby($server);
 			$this->item_cooldown[$player->getName()] = time();
 		}), $slot);
 	}
@@ -67,13 +66,19 @@ class LobbySelectorGUI extends Chest
 	public function addLobbyServers(): void
 	{
 		$slot = 0;
-		$servers = $this->getLocalServer()->getServers();
+		$servers = $this->getServerManager()->getServers();
+		$current = $this->getServerManager()->getCurrentServer();
+
+		if (isset($current)) {
+			$this->addServer($current, $slot);
+		}
+
 		foreach ($servers as $server) {
-			if ($server["category"] !== "Lobby") {
+			if ($server->getCategory() !== "Lobby") {
 				continue;
 			}
 
-			$this->addServer($server["server_name"], $slot);
+			$this->addServer($server, $slot);
 			$slot++;
 		}
 	}
@@ -81,10 +86,5 @@ class LobbySelectorGUI extends Chest
 	public function getServerManager(): ServerManager
 	{
 		return ServerManager::getInstance();
-	}
-
-	public function getLocalServer(): LocalServer
-	{
-		return LocalServer::getInstance();
 	}
 }

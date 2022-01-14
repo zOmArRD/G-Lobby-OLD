@@ -23,7 +23,7 @@ use zomarrd\ghostly\player\item\ItemManager;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\language\Language;
-use zomarrd\ghostly\server\LocalServer;
+use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\world\Lobby;
 
@@ -147,43 +147,36 @@ class GhostlyPlayer extends Player
 	/**
 	 * Dedicated function only to transfer to Lobbies?
 	 *
-	 * @param string $lobby
+	 * @param string|Server $server
 	 *
 	 * @return void
 	 */
-	public function transfer_to_lobby(string $lobby): void
+	public function transfer_to_lobby(string|Server $server): void
 	{
-		$server = ServerManager::getInstance()->getServerByName($lobby);
-		$currentServerName = LocalServer::getInstance()->getCurrentServer()["server_name"];
-		$local = LocalServer::getInstance()->getServerByName($lobby);
+		if (is_string($server)) {
+			$server = ServerManager::getInstance()->getServerByName($server);
+		}
 
-		if ($lobby !== $currentServerName) {
-			if ($local["category"] !== "Lobby") {
-				$this->broadcastSound(new AnvilUseSound(), [$this]);
-				$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_2);
-				return;
-			}
-
-			if ($server === null || !$server->isOnline()) {
-				$this->broadcastSound(new AnvilUseSound(), [$this]);
-				$this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
-				return;
-			}
-
-			$this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getServerName()]);
-
-			if ($local["proxy_transfer"]) {
-				$this->transfer($server->getServerName(), 0, "Transfer to Lobby {$server->getServerName()}");
-				return;
-			}
-
-			$ip = explode(":", $local["address"]);
-			$this->transfer($ip[1], (int)$ip[2], "Transfer to Lobby {$server->getServerName()}");
-
-		} else {
+		if (is_null($server) || $server->getName() === Ghostly::SERVER) {
 			$this->broadcastSound(new AnvilUseSound(), [$this]);
 			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
+			return;
 		}
+
+		if (!$server->isOnline()) {
+			$this->broadcastSound(new AnvilUseSound(), [$this]);
+			$this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
+			return;
+		}
+
+		$this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getName()]);
+
+		if ($server->isProxyTransfer()) {
+			$this->transfer($server->getName(), 0, "Transfer to Lobby {$server->getName()}");
+			return;
+		}
+
+		$this->transfer($server->getAddress()["ip"], $server->getAddress()["port"], "Transfer to Lobby {$server->getName()}");
 	}
 
 	public function teleport_to_lobby(): void
