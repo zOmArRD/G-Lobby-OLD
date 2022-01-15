@@ -71,6 +71,7 @@ class LobbySelectorGUI extends Chest
 
 		if (isset($current)) {
 			$this->addServer($current, $slot);
+			$slot++;
 		}
 
 		foreach ($servers as $server) {
