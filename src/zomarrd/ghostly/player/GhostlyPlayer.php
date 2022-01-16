@@ -16,13 +16,17 @@ use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\world\sound\AnvilBreakSound;
 use pocketmine\world\sound\AnvilUseSound;
+use pocketmine\world\sound\ExplodeSound;
+use pocketmine\world\sound\Sound;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\item\ItemManager;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\language\Language;
+use zomarrd\ghostly\player\permission\PermissionKey;
 use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\world\Lobby;
@@ -79,12 +83,11 @@ class GhostlyPlayer extends Player
 			$this->setLoaded();
 		}
 
-		if ($currentTick % 20 === 0) {
+		if ($currentTick % 10 === 0) {
 			$this->getScoreboardSession()->setScoreboard();
 		}
 
 		return parent::onUpdate($currentTick);
-
 	}
 
 	public function isLoaded(): bool
@@ -121,7 +124,7 @@ class GhostlyPlayer extends Player
 	public function getLobbyItems(): void
 	{
 		$this->getInventory()?->clearAll();
-		foreach (['server-selector' => 0, 'lobby-selector' => 8] as $item => $index) {
+		foreach (['item-servers' => 0, 'item-cosmetics' => 4, 'item-lobby' => 8] as $item => $index) {
 			$this->setItem($index, $this->getItemManager()->get($item));
 		}
 	}
@@ -145,19 +148,24 @@ class GhostlyPlayer extends Player
 	}
 
 	/**
-	 * Dedicated function only to transfer to Lobbies?
-	 *
 	 * @param string|Server $server
 	 *
 	 * @return void
+	 * @todo Add Queue System for this shit omg!
 	 */
-	public function transfer_to_lobby(string|Server $server): void
+	public function transferTo(string|Server $server): void
 	{
 		if (is_string($server)) {
 			$server = ServerManager::getInstance()->getServerByName($server);
 		}
 
-		if (is_null($server) || $server->getName() === Ghostly::SERVER) {
+		if (is_null($server)) {
+			$this->broadcastSound(new ExplodeSound(), [$this]);
+			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
+			return;
+		}
+
+		if ($server->getName() === Ghostly::SERVER) {
 			$this->broadcastSound(new AnvilUseSound(), [$this]);
 			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
 			return;
@@ -169,14 +177,14 @@ class GhostlyPlayer extends Player
 			return;
 		}
 
-		$this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getName()]);
-
-		if ($server->isProxyTransfer()) {
-			$this->transfer($server->getName(), 0, "Transfer to Lobby {$server->getName()}");
+		if ($server->isWhitelist() && !$this->hasPermission(PermissionKey::GHOSTLY_SERVER_CONNECT_WHITELISTED)) {
+			$this->broadcastSound(new AnvilBreakSound(), [$this]);
+			$this->sendTranslated(LangKey::SERVER_IS_WHITELISTED);
 			return;
 		}
 
-		$this->transfer($server->getAddress()["ip"], $server->getAddress()["port"], "Transfer to Lobby {$server->getName()}");
+		$this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getName()]);
+		$this->transfer($server->getName(), 0, "Transfer to {$server->getName()}");
 	}
 
 	public function teleport_to_lobby(): void
@@ -206,5 +214,10 @@ class GhostlyPlayer extends Player
 			$this->onGround = false;
 			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
 		}
+	}
+
+	public function sendSound(Sound $sound): void
+	{
+		$this->broadcastSound($sound, [$this]);
 	}
 }
