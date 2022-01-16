@@ -18,3 +18,5 @@ permissions:
     default: op
   ghostly.build:
     default: op
+  ghostly.server.connect-whitelisted:
+    default: op
