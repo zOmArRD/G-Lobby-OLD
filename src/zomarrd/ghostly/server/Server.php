@@ -24,9 +24,7 @@ final class Server
 		private int    $max_players,
 		private bool   $online,
 		private bool   $whitelist,
-		private bool   $proxy_transfer,
-		private string $category,
-		private string $address
+		private null|string $category
 	){}
 
 	/**
@@ -35,14 +33,14 @@ final class Server
 	public function getStatus(): string
 	{
 		if (!$this->isOnline()) {
-			if ($this->isWhitelist()) {
-				return '§d' . 'WHITELISTED';
-			}
-
-			return '§c' . 'OFFLINE';
+			return '§r§c' . 'OFFLINE';
 		}
 
-		return '§7' . 'Players: §c' . $this->getPlayers() . '§7/§c' . $this->getMaxPlayers();
+		if ($this->isWhitelist()) {
+			return '§r§c' . 'WHITELISTED';
+		}
+
+		return '§r§7' . 'Players: §f' . $this->getPlayers() . '§7/§f' . $this->getMaxPlayers();
 	}
 
 	public function isOnline(): bool
@@ -121,37 +119,13 @@ final class Server
 		$this->whitelist = $whitelist;
 	}
 
-	public function isProxyTransfer(): bool
-	{
-		return $this->proxy_transfer;
-	}
-
-	public function setProxyTransfer(bool $proxy_transfer): void
-	{
-		$this->proxy_transfer = $proxy_transfer;
-	}
-
-	public function getCategory(): string
+	public function getCategory(): ?string
 	{
 		return $this->category;
 	}
 
-	public function setCategory(string $category): void
+	public function setCategory(?string $category): void
 	{
 		$this->category = $category;
-	}
-
-	public function getAddress(): array
-	{
-		$address = explode(":", $this->address);
-		return [
-			"ip" => $address[0],
-			"port" => (int)$address[1]
-		];
-	}
-
-	public function setAddress(string $address): void
-	{
-		$this->address = $address;
 	}
 }

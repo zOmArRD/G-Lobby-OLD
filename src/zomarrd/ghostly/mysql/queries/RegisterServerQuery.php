@@ -30,11 +30,9 @@ final class RegisterServerQuery extends Query
 			if (is_array($assco)) {
 				$mysqli->query("UPDATE ghostly_servers SET online = 1 WHERE server_name = '$this->serverName';");
 			} else {
-				$proxy = Ghostly::PROXY_TRANSFER;
-				$address = Ghostly::ADDRESS;
 				$category = Ghostly::CATEGORY;
 
-				$mysqli->query("INSERT INTO ghostly_servers(server_name, players, max_players, online, whitelist, proxy_transfer, category, address) VALUES ('$this->serverName', 0, 0, true, true, $proxy, '$category', '$address');");
+				$mysqli->query("INSERT INTO ghostly_servers(server_name, players, max_players, online, whitelist, category) VALUES ('$this->serverName', 0, 0, true, true, '$category');");
 			}
 		} else {
 			MySQL::runAsync(new RegisterServerQuery($this->serverName));

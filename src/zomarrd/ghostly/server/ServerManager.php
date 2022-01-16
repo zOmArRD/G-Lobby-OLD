@@ -16,6 +16,7 @@ use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\mysql\queries\RegisterServerQuery;
 use zomarrd\ghostly\mysql\queries\SelectQuery;
+use zomarrd\ghostly\player\GhostlyPlayer;
 
 final class ServerManager
 {
@@ -71,15 +72,15 @@ final class ServerManager
 	}
 
 
-	public function reloadServers(): void
+	public function reloadServers(GhostlyPlayer $player = null): void
 	{
 		$this->servers = [];
 		$cServerName = $this->getCurrentServerName();
 
 		MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers"),
-			function ($rows) use ($cServerName) {
+			function ($rows) use ($cServerName, $player) {
 				foreach ($rows as $row) {
-					$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist'], (bool)$row["proxy_transfer"], $row["category"], $row["address"]);
+					$server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist'], $row["category"]);
 
 					if ($row['server_name'] === $cServerName) {
 						$this->current_server = $server;
@@ -88,6 +89,7 @@ final class ServerManager
 					}
 
 					Ghostly::$logger->info(PREFIX . "The server ({$server->getName()}) has been registered in the database!");
+					$player?->sendMessage(PREFIX . "The server ({$server->getName()}) has been registered in the database!");
 				}
 			});
 	}
