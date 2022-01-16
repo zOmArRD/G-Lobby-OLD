@@ -16,11 +16,25 @@ use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use zomarrd\ghostly\Ghostly;
+use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\IPlayer;
 
 abstract class ScoreAPI extends IPlayer
 {
 	public array $lines = [], $objectiveName = [];
+
+	private SetDisplayObjectivePacket $displayPacket;
+
+	public function __construct(GhostlyPlayer $player)
+	{
+		$this->displayPacket = new SetDisplayObjectivePacket();
+		parent::__construct($player);
+	}
+
+	public function getDisplayPacket(): SetDisplayObjectivePacket
+	{
+		return $this->displayPacket;
+	}
 
 	public function removeObjectiveName(): void
 	{
@@ -33,14 +47,13 @@ abstract class ScoreAPI extends IPlayer
 			$this->remove();
 		}
 
-		$packet = new SetDisplayObjectivePacket();
-		$packet->objectiveName = $objectiveName;
-		$packet->displayName = $displayName;
-		$packet->sortOrder = 1;
-		$packet->displaySlot = 'sidebar';
-		$packet->criteriaName = 'dummy';
+		$this->getDisplayPacket()->objectiveName = $objectiveName;
+		$this->getDisplayPacket()->displayName = $displayName;
+		$this->getDisplayPacket()->sortOrder = 1;
+		$this->getDisplayPacket()->displaySlot = 'sidebar';
+		$this->getDisplayPacket()->criteriaName = 'dummy';
 		$this->setObjectiveName($objectiveName);
-		$this->getPlayer()->getNetworkSession()->sendDataPacket($packet);
+		$this->getPlayer()->getNetworkSession()->sendDataPacket($this->getDisplayPacket());
 	}
 
 	public function isObjectiveName(): bool
