@@ -1,5 +1,5 @@
 {
-	"version": 2.5,
+	"version": 3.0,
 	"prefix": "§l§cGhostly §f» §r",
 	"mysql.credentials": {
 		"user": "root",
@@ -8,7 +8,23 @@
 		"database": "mc"
 	},
 	"scoreboard": {
-		"display": "§c§lGhostly §fNetwork",
+		"display": [
+			"§l§cGhostly §fNetwork",
+			"§l§fG§chostly §fNetwork",
+			"§l§cG§fh§costly §fNetwork",
+			"§l§cGh§fo§cstly §fNetwork",
+			"§l§cGho§fs§ctly §fNetwork",
+			"§l§cGhos§ft§cly §fNetwork",
+			"§l§cGhost§fl§cy §fNetwork",
+			"§l§cGhostl§fy Network",
+			"§l§cGhostly §cN§fetwork",
+			"§l§cGhostly §fN§ce§ftwork",
+			"§l§cGhostly §fNe§ct§fwork",
+			"§l§cGhostly §fNet§cw§fork",
+			"§l§cGhostly §fNetw§co§frk",
+			"§l§cGhostly §fNetwo§cr§fk",
+			"§l§cGhostly §fNetwor§ck"
+		],
 		"lines": [
 			"§c\uE001",
 			" §7GhostlyMC.live",
