@@ -38,6 +38,7 @@ final class LangKey
 	public const PLAYER_NOT_ONLINE = "player.not-online";
 	public const SERVER_CONNECT_ERROR_1 = "server.connect.error-1";
 	public const SERVER_CONNECT_ERROR_2 = "server.connect.error-2";
+	public const SERVER_CONNECT_ERROR_3 = "server.connect.error-3";
 	public const SERVER_CONNECTING = "server.connecting";
 	public const SERVER_IS_WHITELISTED = "server.is-whitelisted";
 	public const SERVER_NOT_ONLINE = "server.not-online";
