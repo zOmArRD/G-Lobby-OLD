@@ -14,6 +14,7 @@ namespace zomarrd\ghostly;
 use AttachableLogger;
 use CortexPE\Commando\exception\HookAlreadyRegistered;
 use CortexPE\Commando\PacketHooker;
+use JsonException;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\event\Listener;
 use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
@@ -22,6 +23,7 @@ use pocketmine\plugin\PluginBase;
 use zomarrd\ghostly\commands\entity\EntityCommand;
 use zomarrd\ghostly\commands\language\LangCommand;
 use zomarrd\ghostly\commands\mute\GlobalMuteCommand;
+use zomarrd\ghostly\commands\server\ServerCommand;
 use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\entity\Entity;
 use zomarrd\ghostly\events\HumanListener;
@@ -36,19 +38,21 @@ use zomarrd\ghostly\task\GlobalTask;
 final class Ghostly extends PluginBase
 {
 	public const SERVER = "Lobby-1";
-	public const ADDRESS = "ghostlymc.live:19133";
-	public const PROXY_TRANSFER = true;
 	public const CATEGORY = "Lobby";
 
 	public static Ghostly $instance;
 	public static AttachableLogger $logger;
 	private static bool $globalMute = false;
+	public static array $colors;
 
+	/**
+	 * @throws JsonException
+	 */
 	protected function onLoad(): void
 	{
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
-
+		self::$colors = json_decode(file_get_contents($this->getFile() . "resources/colors.json"), true, 512, JSON_THROW_ON_ERROR);
 		new ConfigManager();
 		SkinAdapterSingleton::set(new MojangAdapter());
 		MySQL::createTables();
@@ -79,6 +83,7 @@ final class Ghostly extends PluginBase
 		]);
 
 		$this->registerCommands("bukkit", [
+			new ServerCommand($this),
 			new LangCommand($this, "lang"),
 			new GlobalMuteCommand($this, 'globalmute'),
 			new EntityCommand($this, 'entity')
