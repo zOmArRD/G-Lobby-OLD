@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\menu\lobbyselector;
 
 use pocketmine\item\VanillaItems;
+use pocketmine\world\sound\PopSound;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\server\Server;
-use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\utils\menu\Chest;
 use zomarrd\ghostly\utils\menu\MenuButton;
 
@@ -28,6 +28,7 @@ class LobbySelectorGUI extends Chest
 
 	public function build(GhostlyPlayer $player): void
 	{
+		$player->sendSound(new PopSound());
 		$this->addLobbyServers();
 		parent::build($player);
 	}
@@ -54,12 +55,12 @@ class LobbySelectorGUI extends Chest
 
 		$cooldown = $this->item_cooldown;
 		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($server, $cooldown): void {
-			if (isset($this->item_cooldown[$player->getName()]) && time() - $this->item_cooldown[$player->getName()] < 1.5) {
+			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
-			$player->transfer_to_lobby($server);
-			$this->item_cooldown[$player->getName()] = time();
+			$player->transferTo($server);
+			$cooldown[$player->getName()] = time();
 		}), $slot);
 	}
 
@@ -82,10 +83,5 @@ class LobbySelectorGUI extends Chest
 			$this->addServer($server, $slot);
 			$slot++;
 		}
-	}
-
-	public function getServerManager(): ServerManager
-	{
-		return ServerManager::getInstance();
 	}
 }

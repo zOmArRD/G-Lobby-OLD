@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\menu\lobbyselector;
 
 use jojoe77777\FormAPI\SimpleForm;
+use pocketmine\world\sound\PopSound;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
@@ -42,13 +43,15 @@ final class LobbySelectorForm
 
 	public function build(GhostlyPlayer $player): void
 	{
+		$player->sendSound(new PopSound());
+
 		$form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
 			if (isset($data)) {
 				if ($data === "close") {
 					return;
 				}
 
-				$player->transfer_to_lobby($data);
+				$player->transferTo($data);
 			}
 		});
 
