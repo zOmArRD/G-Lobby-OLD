@@ -20,6 +20,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
+use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionData;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
@@ -54,16 +55,7 @@ final class ItemInteractListener implements Listener
 					$itemManager = $player->getItemManager();
 
 					if (!isset($this->item_cooldown[$pn]) || time() - $this->item_cooldown[$pn] >= 2) {
-						switch (true) {
-							case $item->equals($itemManager->get('lobby-selector')):
-								if ($player->hasClassicProfile()) {
-									Menu::LOBBY_SELECTOR_GUI()->build($player);
-								} else {
-									Menu::LOBBY_SELECTOR_FORM()->build($player);
-								}
-								break;
-						}
-
+						$this->handleInteract($player, $item);
 						$this->item_cooldown[$pn] = time();
 					}
 				}
@@ -90,11 +82,14 @@ final class ItemInteractListener implements Listener
 	public function slot_change(InventoryTransactionEvent $event): void
 	{
 		$player = $event->getTransaction()->getSource();
-		if ($player instanceof GhostlyPlayer) {
-			foreach ($event->getTransaction()->getActions() as $action) {
-				if (($action instanceof SlotChangeAction) && !$player->isOp()) {
-					$event->cancel();
-				}
+
+		if (!$player instanceof GhostlyPlayer) {
+			return;
+		}
+
+		foreach ($event->getTransaction()->getActions() as $action) {
+			if (($action instanceof SlotChangeAction) && !$player->isOp()) {
+				$event->cancel();
 			}
 		}
 	}
@@ -113,7 +108,6 @@ final class ItemInteractListener implements Listener
 
 		$pn = $player->getName();
 		$item = $event->getItem();
-		$itemManager = $player->getItemManager();
 		$block = $event->getBlock();
 
 		if (isset($this->item_cooldown[$pn]) && time() - $this->item_cooldown[$pn] < 2) {
@@ -124,16 +118,30 @@ final class ItemInteractListener implements Listener
 			return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
 		}
 
+		$this->handleInteract($player, $item);
+
+		$this->item_cooldown[$pn] = time();
+	}
+
+	public function handleInteract(GhostlyPlayer $player, Item $item): void
+	{
+		$itemManager = $player->getItemManager();
+
 		switch (true) {
-			case $item->equals($itemManager->get('lobby-selector')):
+			case $item->equals($itemManager->get('item-lobby')):
 				if ($player->hasClassicProfile()) {
 					Menu::LOBBY_SELECTOR_GUI()->build($player);
 				} else {
 					Menu::LOBBY_SELECTOR_FORM()->build($player);
 				}
 				break;
+			case $item->equals($itemManager->get('item-servers')):
+				if ($player->hasClassicProfile()) {
+					Menu::SERVER_SELECTOR_GUI()->build($player);
+				} else {
+					/*TODO SEND THE MENU IN FORM EDITION*/
+				}
+				break;
 		}
-
-		$this->item_cooldown[$pn] = time();
 	}
 }
