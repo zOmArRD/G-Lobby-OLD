@@ -18,6 +18,7 @@ use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\event\Listener;
 use pocketmine\inventory\Inventory;
 use zomarrd\ghostly\player\GhostlyPlayer;
+use zomarrd\ghostly\server\ServerManager;
 
 abstract class Chest implements Listener
 {
@@ -30,10 +31,11 @@ abstract class Chest implements Listener
 	private array $inventoryClose = [];
 
 	public function __construct(
-		private string $chestName
+		private string $chestName,
+		private string $identifier = InvMenuTypeIds::TYPE_CHEST
 	)
 	{
-		$this->menu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST)->setName($this->chestName)
+		$this->menu = InvMenu::create($this->identifier)->setName($this->chestName)
 			->setInventoryCloseListener(function (GhostlyPlayer $player, Inventory $inventory): void {
 				$closure = $this->inventoryClose[$player->getUniqueId()->toString()] ?? null;
 
@@ -76,5 +78,10 @@ abstract class Chest implements Listener
 	public function getMenu(): InvMenu
 	{
 		return $this->menu;
+	}
+
+	public function getServerManager(): ServerManager
+	{
+		return ServerManager::getInstance();
 	}
 }
