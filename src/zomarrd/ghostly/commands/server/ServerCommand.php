@@ -9,19 +9,21 @@
  */
 declare(strict_types=1);
 
-namespace zomarrd\ghostly\commands;
+namespace zomarrd\ghostly\commands\server;
 
 use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\plugin\Plugin;
-use zomarrd\ghostly\player\permission\Permission;
+use zomarrd\ghostly\menu\Menu;
+use zomarrd\ghostly\player\GhostlyPlayer;
+use zomarrd\ghostly\player\permission\PermissionKey;
 
 final class ServerCommand extends BaseCommand
 {
-	public function __construct(Plugin $plugin, string $name)
+	public function __construct(Plugin $plugin)
 	{
-		$this->setPermission(Permission::COMMAND_SERVER);
-		parent::__construct($plugin, $name, 'Server Command');
+		$this->setPermission(PermissionKey::GHOSTLY_COMMAND_SERVER);
+		parent::__construct($plugin, 'server', 'Server Administration');
 	}
 
 	protected function prepare(): void
@@ -31,6 +33,8 @@ final class ServerCommand extends BaseCommand
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
-		// TODO: Implement onRun() method.
+		if ($sender instanceof GhostlyPlayer) {
+			Menu::SERVER_MANAGER_FORM()->build($sender);
+		}
 	}
 }
