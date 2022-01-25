@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace build;
 
+use Generator;
+
 const LANG_HEADER = <<<'HEADER'
 <?php
 /*
@@ -37,7 +39,7 @@ namespace zomarrd\ghostly\player\permission;
 
 HEADER;
 
-function stringifyKeys(array $array): \Generator
+function stringifyKeys(array $array): Generator
 {
 	foreach ($array as $key => $value) {
 		yield (string)$key => $value;

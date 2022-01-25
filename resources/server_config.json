@@ -1,5 +1,5 @@
 {
-	"version": 3.0,
+	"version": 3.1,
 	"prefix": "§l§cGhostly §f» §r",
 	"mysql.credentials": {
 		"user": "root",
@@ -25,17 +25,17 @@
 			"§l§cGhostly §fNetwo§cr§fk",
 			"§l§cGhostly §fNetwor§ck"
 		],
-		"lines": [
-			"§c\uE001",
-			" §7GhostlyMC.live",
-			"",
-			" §cRank: §7{PLAYER.GET-RANK}",
-			"",
-			" §f {NETWORK.GET-PLAYERS}§c/§f{NETWORK.GET-MAX_PLAYERS}",
-			" §cNetwork:",
-			"",
+		"line": [
+			"\uE001",
 			" §7{date}",
-			"\uE001"
+			"",
+			" §cNetwork:",
+			" §f {NETWORK.GET-PLAYERS}§c/§f{NETWORK.GET-MAX_PLAYERS}",
+			"",
+			" §cRank: §7Default",
+			"",
+			" §7GhostlyMC.live",
+			"§c\uE001"
 		]
 	},
 	"player-spawn": {

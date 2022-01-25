@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace build;
 
+use Generator;
+use JsonException;
+
 const LANG_HEADER = <<<'HEADER'
 <?php
 /*
@@ -37,7 +40,7 @@ namespace zomarrd\ghostly\player\language;
 
 HEADER;
 
-function stringifyKeys(array $array): \Generator
+function stringifyKeys(array $array): Generator
 {
 	foreach ($array as $key => $value) {
 		yield (string)$key => $value;
@@ -76,7 +79,7 @@ HEADER;
 $langFile = file_get_contents(dirname(__DIR__) . '/resources/lang/en_US.json');
 try {
 	$json = json_decode($langFile, false, 512, JSON_THROW_ON_ERROR);
-} catch (\JsonException $e) {
+} catch (JsonException $e) {
 	echo $e->getMessage();
 	exit(1);
 }
