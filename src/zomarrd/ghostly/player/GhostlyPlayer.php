@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\player;
 
+use muqsit\invmenu\InvMenuHandler;
 use pocketmine\item\Item;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
+use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
-use pocketmine\world\sound\AnvilBreakSound;
-use pocketmine\world\sound\AnvilUseSound;
-use pocketmine\world\sound\ExplodeSound;
-use pocketmine\world\sound\Sound;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\item\ItemManager;
@@ -31,16 +31,29 @@ use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\world\Lobby;
 
+/**
+ * @todo check<PARTICLE_EYE_DESPAWN>
+ */
 class GhostlyPlayer extends Player
 {
 	private string $currentLang = Language::ENGLISH_US;
-	private bool $loaded = false;
+	private bool $loaded = false, $scoreboard = true;
 	private Scoreboard $scoreboard_session;
 	private ItemManager $itemManager;
 
 	public function getUIProfile(): int
 	{
 		return DeviceData::getUIProfile($this->getName());
+	}
+
+	public function isScoreboard(): bool
+	{
+		return $this->scoreboard;
+	}
+
+	public function setScoreboard(bool $scoreboard): void
+	{
+		$this->scoreboard = $scoreboard;
 	}
 
 	public function hasClassicProfile(): bool
@@ -160,25 +173,25 @@ class GhostlyPlayer extends Player
 		}
 
 		if (is_null($server)) {
-			$this->broadcastSound(new ExplodeSound(), [$this]);
+			$this->sendSound(LevelSoundEvent::EXPLODE);
 			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
 			return;
 		}
 
 		if ($server->getName() === Ghostly::SERVER) {
-			$this->broadcastSound(new AnvilUseSound(), [$this]);
+			$this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
 			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
 			return;
 		}
 
 		if (!$server->isOnline()) {
-			$this->broadcastSound(new AnvilUseSound(), [$this]);
+			$this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
 			$this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
 			return;
 		}
 
 		if ($server->isWhitelist() && !$this->hasPermission(PermissionKey::GHOSTLY_SERVER_CONNECT_WHITELISTED)) {
-			$this->broadcastSound(new AnvilBreakSound(), [$this]);
+			$this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
 			$this->sendTranslated(LangKey::SERVER_IS_WHITELISTED);
 			return;
 		}
@@ -216,8 +229,22 @@ class GhostlyPlayer extends Player
 		}
 	}
 
-	public function sendSound(Sound $sound): void
+	public function sendSound(int $sound, string $type = "level-sound"): void
 	{
-		$this->broadcastSound($sound, [$this]);
+		switch ($type) {
+			case "level-event":
+				$this->getNetworkSession()->sendDataPacket(LevelEventPacket::create($sound, 0, $this->getLocation()->asVector3()));
+				break;
+			case "level-sound":
+				$this->getNetworkSession()->sendDataPacket(LevelSoundEventPacket::create($sound, $this->getLocation()->asVector3(), -1, ":", false, false));
+				break;
+		}
+	}
+
+	public function closeInventory(): void
+	{
+		$this->sendSound(LevelSoundEvent::DROP_SLOT);
+		$session = InvMenuHandler::getPlayerManager()->get($this);
+		$session->removeCurrentMenu();
 	}
 }

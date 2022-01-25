@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\events;
 
 use pocketmine\event\Listener;
-use pocketmine\world\sound\ExplodeSound;
+use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use zomarrd\ghostly\entity\Entity;
 use zomarrd\ghostly\entity\events\HumanInteractEvent;
 use zomarrd\ghostly\player\language\LangKey;
@@ -27,6 +27,10 @@ final class HumanListener implements Listener
 
 		$i = $entity->getNpcId();
 
+		if ($i === Entity::OMAR) {
+			$player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
+		}
+
 		if ($i === Entity::DISCORD) {
 			$player->sendTranslated(LangKey::DISCORD_INVITATION_MESSAGE);
 		}
@@ -39,8 +43,8 @@ final class HumanListener implements Listener
 			$server = ServerManager::getInstance()->getServerByName($entity->getServerName());
 
 			if (is_null($server)) {
-				$player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x + 0.5)), ($player->getLocation()->z - ($entity->getLocation()->z + 0.5)), (20 / 0xa));
-				$player->broadcastSound(new ExplodeSound(), [$player]);
+				$player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x)), ($player->getLocation()->z - ($entity->getLocation()->z)), (20 / 0xa));
+				$player->sendSound(LevelSoundEvent::EXPLODE);
 				$player->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
 				return;
 			}

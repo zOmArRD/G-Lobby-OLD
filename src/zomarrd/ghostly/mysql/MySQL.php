@@ -20,7 +20,8 @@ final class MySQL
 
 	private static array $callbacks = [];
 
-	private const CREATE_TABLE_SERVERS = "CREATE TABLE IF NOT EXISTS " . self::TABLE_PREFIX . "servers(server_name VARCHAR(16), players INT, max_players INT, online BOOLEAN, whitelist BOOLEAN, proxy_transfer BOOLEAN, category VARCHAR(16), address TEXT);";
+	private const CREATE_TABLE_SERVERS = "CREATE TABLE IF NOT EXISTS " . self::TABLE_PREFIX . "servers(server_name VARCHAR(16), players INT, max_players INT, online BOOLEAN, whitelist BOOLEAN, category VARCHAR(16));";
+	private const CREATE_PLAYER_CONFIG = "CREATE TABLE IF NOT EXISTS player_config(player VARCHAR(16), lang VARCHAR(12), scoreboard BOOLEAN DEFAULT true);";
 
 	public static function runAsync(Query $query, ?callable $callable = null): void
 	{
@@ -46,7 +47,7 @@ final class MySQL
 
 	public static function createTables(): void
 	{
-		foreach ([self::CREATE_TABLE_SERVERS] as $query) {
+		foreach ([self::CREATE_TABLE_SERVERS, self::CREATE_PLAYER_CONFIG] as $query) {
 			self::runAsync(new InsertQuery($query));
 		}
 	}

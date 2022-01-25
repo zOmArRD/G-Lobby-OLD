@@ -24,6 +24,7 @@ use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionData;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
+use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use zomarrd\ghostly\entity\events\HumanInteractEvent;
 use zomarrd\ghostly\entity\type\HumanType;
 use zomarrd\ghostly\menu\Menu;
@@ -126,21 +127,23 @@ final class ItemInteractListener implements Listener
 	public function handleInteract(GhostlyPlayer $player, Item $item): void
 	{
 		$itemManager = $player->getItemManager();
-
-		switch (true) {
-			case $item->equals($itemManager->get('item-lobby')):
+		$itemId = $item->getNamedTag()->getString("itemId", "");
+		switch ($itemId) {
+			case "item-lobby":
 				if ($player->hasClassicProfile()) {
 					Menu::LOBBY_SELECTOR_GUI()->build($player);
 				} else {
 					Menu::LOBBY_SELECTOR_FORM()->build($player);
 				}
+				$player->sendSound(LevelSoundEvent::DROP_SLOT);
 				break;
-			case $item->equals($itemManager->get('item-servers')):
+			case "item-servers":
 				if ($player->hasClassicProfile()) {
 					Menu::SERVER_SELECTOR_GUI()->build($player);
 				} else {
 					/*TODO SEND THE MENU IN FORM EDITION*/
 				}
+				$player->sendSound(LevelSoundEvent::DROP_SLOT);
 				break;
 		}
 	}

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\menu\lobbyselector;
 
 use pocketmine\item\VanillaItems;
-use pocketmine\world\sound\PopSound;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\GhostlyPlayer;
+use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\utils\menu\Chest;
 use zomarrd\ghostly\utils\menu\MenuButton;
@@ -28,13 +28,23 @@ class LobbySelectorGUI extends Chest
 
 	public function build(GhostlyPlayer $player): void
 	{
-		$player->sendSound(new PopSound());
+		$close = VanillaItems::RED_BED()->setCustomName($player->getTranslation(LangKey::FORM_BUTTON_CLOSE));
+
+		$this->addButton(new MenuButton($close, function (GhostlyPlayer $player): void {
+			$player->closeInventory();
+		}), 0);
+
 		$this->addLobbyServers();
 		parent::build($player);
 	}
 
-	private array $item_cooldown = [];
-
+	/**
+	 * @param Server $server
+	 * @param int    $slot
+	 *
+	 * @return void
+	 * @todo add whitelisted lore
+	 */
 	public function addServer(Server $server, int $slot): void
 	{
 		$item = VanillaItems::NETHER_STAR()->setCustomName("§r§a" . $server->getName());
@@ -53,20 +63,15 @@ class LobbySelectorGUI extends Chest
 			]);
 		}
 
-		$cooldown = $this->item_cooldown;
-		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($server, $cooldown): void {
-			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
-				return;
-			}
-
+		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($server): void {
+			$player->closeInventory();
 			$player->transferTo($server);
-			$cooldown[$player->getName()] = time();
 		}), $slot);
 	}
 
 	public function addLobbyServers(): void
 	{
-		$slot = 0;
+		$slot = 10;
 		$servers = $this->getServerManager()->getServers();
 		$current = $this->getServerManager()->getCurrentServer();
 

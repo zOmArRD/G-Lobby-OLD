@@ -21,6 +21,7 @@ use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Server;
 use pocketmine\world\World;
+use RuntimeException;
 use zomarrd\ghostly\entity\type\FloatingTextType;
 use zomarrd\ghostly\entity\type\HumanType;
 use zomarrd\ghostly\player\GhostlyPlayer;
@@ -107,7 +108,7 @@ final class EntityManager
 		}
 
 		if (!isset($player)) {
-			throw new \RuntimeException("Player is NULL");
+			throw new RuntimeException("Player is NULL");
 		}
 
 		$entity->spawnTo($player);

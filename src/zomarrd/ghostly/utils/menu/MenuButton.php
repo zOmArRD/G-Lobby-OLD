@@ -11,14 +11,15 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\utils\menu;
 
+use Closure;
 use pocketmine\item\Item;
 use zomarrd\ghostly\player\GhostlyPlayer;
 
 class MenuButton
 {
 	public function __construct(
-		private Item $item,
-		private ?\Closure $closure = null
+		private Item     $item,
+		private ?Closure $closure = null
 	){}
 
 	public function getItem(): Item

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\events;
 
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockBurnEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -21,15 +22,20 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\types\LevelEvent;
+use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
-use pocketmine\world\sound\BlazeShootSound;
 use zomarrd\ghostly\Ghostly;
+use zomarrd\ghostly\mysql\MySQL;
+use zomarrd\ghostly\mysql\queries\InsertQuery;
+use zomarrd\ghostly\mysql\queries\SelectQuery;
 use zomarrd\ghostly\player\DeviceData;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
@@ -43,15 +49,58 @@ final class PlayerListener implements Listener
 		$event->setPlayerClass(GhostlyPlayer::class);
 	}
 
-	public function onJoin(PlayerJoinEvent $event): void
+	/**
+	 * @param \pocketmine\event\player\PlayerPreLoginEvent $event
+	 *
+	 * @return void
+	 * @todo Move this to the login packet
+	 */
+	public function PlayerPreLoginEvent(PlayerPreLoginEvent $event): void
+	{
+		$playerInfo = $event->getPlayerInfo();
+		$name = $playerInfo->getUsername();
+		$locale = $playerInfo->getLocale();
+
+		DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()["UIProfile"]);
+
+		MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function ($result) use ($name, $locale): void {
+			if(count($result) === 0) {
+				MySQL::runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
+			}
+		});
+	}
+
+	public function PlayerLoginEvent(PlayerLoginEvent $event): void
 	{
 		$player = $event->getPlayer();
+		if (!$player instanceof GhostlyPlayer) {
+			return;
+		}
+
+		$player_name = $player->getName();
+
+		MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function ($result) use ($player, $player_name): void {
+			if (count($result) === 0) {
+				$player->transfer("ghostlymc.live");
+				return;
+			}
+			$data = $result[0];
+
+			$player->setLanguage($data->lang);
+			$player->setScoreboard((bool)$data->scoreboard);
+		});
+	}
+
+	public function PlayerJoinEvent(PlayerJoinEvent $event): void
+	{
+		$player = $event->getPlayer();
+
 		if ($player instanceof GhostlyPlayer) {
 			$player->onJoin();
 		}
 	}
 
-	public function onQuit(PlayerQuitEvent $event): void
+	public function PlayerQuitEvent(PlayerQuitEvent $event): void
 	{
 		$player = $event->getPlayer();
 		if ($player instanceof GhostlyPlayer) {
@@ -59,30 +108,55 @@ final class PlayerListener implements Listener
 		}
 	}
 
-	public function onMove(PlayerMoveEvent $event): void
+	public function PlayerMoveEvent(PlayerMoveEvent $event): void
 	{
 		$player = $event->getPlayer();
-		if ($player instanceof GhostlyPlayer) {
-			$lobby = Lobby::getInstance();
+		if (!$player instanceof GhostlyPlayer) {
+			return;
+		}
 
-			if ($lobby === null || $player->getPosition()->getY() > $lobby->getMinVoid()) {
-				return;
-			}
+		$block = $player->getWorld()->getBlock($player->getLocation()->subtract(0, -1, 0));
 
+		/*if ($block->getId() === ItemIds::WATER) {
+			$player->getNetworkProperties()->setPlayerFlag( EntityMetadataFlags::SWIMMING, true);
+		} else {
+			$player->getNetworkProperties()->setPlayerFlag( EntityMetadataFlags::SWIMMING, false);
+		}*/
+
+		$lobby = Lobby::getInstance();
+
+		if (is_null($lobby)) {
+			return;
+		}
+
+		$motion = $player->getMotion();
+		$location = $player->getLocation();
+
+		if ($lobby->getWorld()->getBlock($player->getLocation()->floor()->subtract(0, 1, 0))->getId() === BlockLegacyIds::SLIME) {
+			$x = -sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI);
+			$z = cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI);
+			$player->setMotion($motion->add($x * 2, 1.20, $z * 2));
+			$player->sendSound(LevelSoundEvent::LAUNCH);
+		}
+
+		if ($location->getY() <= $lobby->getMinVoid()) {
 			$player->teleport_to_lobby();
 		}
 	}
 
-	public function onExhaust(PlayerExhaustEvent $event): void
+	public function PlayerExhaustEvent(PlayerExhaustEvent $event): void
 	{
 		$event->cancel();
 	}
 
-	public function onPlayerToggleFlight(PlayerToggleFlightEvent $event): void
+	public function PlayerToggleFlightEvent(PlayerToggleFlightEvent $event): void
 	{
 		$player = $event->getPlayer();
 		$location = $player->getLocation();
 		$motion = $player->getMotion();
+		if (!$player instanceof GhostlyPlayer) {
+			return;
+		}
 
 		if ($player->getGamemode() === GameMode::CREATIVE()) {
 			return;
@@ -95,7 +169,7 @@ final class PlayerListener implements Listener
 			cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI))
 		);
 
-		$player->broadcastSound(new BlazeShootSound(), [$player]);
+		$player->sendSound(LevelEvent::SOUND_BLAZE_SHOOT, "level-event");
 	}
 
 	private array $globalmute_alert_delay;
@@ -103,7 +177,7 @@ final class PlayerListener implements Listener
 	/**
 	 * Create a cool-down for the chat
 	 */
-	public function onPlayerChat(PlayerChatEvent $event): void
+	public function PlayerChatEvent(PlayerChatEvent $event): void
 	{
 		$player = $event->getPlayer();
 		$player_name = $player->getName();
@@ -128,23 +202,17 @@ final class PlayerListener implements Listener
 		/** end */
 	}
 
-	public function onPlayerPreLogin(PlayerPreLoginEvent $event): void
-	{
-		$player = $event->getPlayerInfo();
-		DeviceData::saveUIProfile($player->getUsername(), $player->getExtraData()["UIProfile"]);
-	}
-
-	public function preventLeave(LeavesDecayEvent $event): void
+	public function LeavesDecayEvent(LeavesDecayEvent $event): void
 	{
 		$event->cancel();
 	}
 
-	public function onDamage(EntityDamageEvent $event): void
+	public function EntityDamageEvent(EntityDamageEvent $event): void
 	{
 		$event->cancel();
 	}
 
-	public function onBreak(BlockBreakEvent $event): void
+	public function BlockBreakEvent(BlockBreakEvent $event): void
 	{
 		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
 			return;
@@ -152,7 +220,7 @@ final class PlayerListener implements Listener
 		$event->cancel();
 	}
 
-	public function onPlace(BlockPlaceEvent $event): void
+	public function BlockPlaceEvent(BlockPlaceEvent $event): void
 	{
 		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
 			return;
@@ -160,12 +228,12 @@ final class PlayerListener implements Listener
 		$event->cancel();
 	}
 
-	public function onBlockBurn(BlockBurnEvent $event): void
+	public function BlockBurnEvent(BlockBurnEvent $event): void
 	{
 		$event->cancel();
 	}
 
-	public function onDataPacketSend(DataPacketSendEvent $event): void
+	public function DataPacketSendEvent(DataPacketSendEvent $event): void
 	{
 		$packets = $event->getPackets();
 		foreach ($packets as $packet) {

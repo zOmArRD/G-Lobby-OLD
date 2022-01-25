@@ -3,21 +3,21 @@
  * Created by PhpStorm.
  *
  * User: zOmArRD
- * Date: 24/12/2021
+ * Date: 25/1/2022
  *
  * Copyright © 2021 GhostlyMC Network - All Rights Reserved.
  */
 declare(strict_types=1);
 
-namespace zomarrd\ghostly\player\skin;
+namespace zomarrd\ghostly\network\skin;
 
-use Exception;
 use JsonException;
 use pocketmine\entity\InvalidSkinException;
 use pocketmine\entity\Skin;
 use pocketmine\network\mcpe\convert\SkinAdapter;
 use pocketmine\network\mcpe\protocol\types\skin\SkinData;
 use pocketmine\network\mcpe\protocol\types\skin\SkinImage;
+use RuntimeException;
 
 final class MojangAdapter implements SkinAdapter
 {
@@ -49,15 +49,13 @@ final class MojangAdapter implements SkinAdapter
 				);
 			}
 
-			throw new \RuntimeException("json_encode() failed: " . json_last_error_msg());
+			throw new RuntimeException("json_encode() failed: " . json_last_error_msg());
 		}
 
 		return $this->personaSkins[$skin->getSkinId()];
 	}
 
-	/**
-	 * @throws Exception
-	 */
+
 	public function fromSkinData(SkinData $data): Skin
 	{
 		$capeData = $data->getCapeImage()->getData();

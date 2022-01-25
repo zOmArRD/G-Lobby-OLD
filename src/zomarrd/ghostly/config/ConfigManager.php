@@ -14,6 +14,7 @@ namespace zomarrd\ghostly\config;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\world\WorldManager;
+use RuntimeException;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\world\Lobby;
 
@@ -23,7 +24,7 @@ final class ConfigManager
 	private static Config $server_config;
 
 	private array $files = [
-		'server_config.json' => 3.0
+		'server_config.json' => 3.1
 	];
 
 	public function __construct()
@@ -41,7 +42,7 @@ final class ConfigManager
 	{
 		/** This can be erased? */
         if (!@mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
 		foreach ($this->files as $file => $version) {

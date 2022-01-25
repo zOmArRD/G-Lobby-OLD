@@ -23,6 +23,13 @@ class Scoreboard extends ScoreAPI
 
 	public function setScoreboard(): void
 	{
+		if (!$this->getPlayer()->isScoreboard()) {
+			if ($this->isObjectiveName()) {
+				$this->remove();
+			}
+			return;
+		}
+
 		if ($this->count > 14) {
 			$this->count = 0;
 		}
