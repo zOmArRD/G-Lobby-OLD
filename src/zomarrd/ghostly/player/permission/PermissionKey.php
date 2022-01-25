@@ -32,4 +32,5 @@ final class PermissionKey
 	public const GHOSTLY_COMMAND_SERVER = "ghostly.command.server";
 	public const GHOSTLY_GLOBAL_MUTE_BYPASS = "ghostly.global-mute.bypass";
 	public const GHOSTLY_SERVER_CONNECT_WHITELISTED = "ghostly.server.connect-whitelisted";
+	public const GHOSTLY_SERVER_JOIN_BYPASS = "ghostly.server.join-bypass";
 }

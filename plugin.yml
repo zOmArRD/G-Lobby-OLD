@@ -20,3 +20,5 @@ permissions:
     default: op
   ghostly.server.connect-whitelisted:
     default: op
+  ghostly.server.join-bypass:
+    default: op
