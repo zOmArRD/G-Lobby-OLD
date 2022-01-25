@@ -34,6 +34,7 @@ use CortexPE\Commando\constraint\BaseConstraint;
 use CortexPE\Commando\exception\InvalidErrorCode;
 use CortexPE\Commando\traits\ArgumentableTrait;
 use CortexPE\Commando\traits\IArgumentable;
+use InvalidArgumentException;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\plugin\Plugin;
@@ -248,7 +249,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
                 $subCommand->setParent($this);
                 $this->subCommands[$key] = $subCommand;
             } else {
-                throw new \InvalidArgumentException("SubCommand with same name / alias for '{$key}' already exists");
+                throw new InvalidArgumentException("SubCommand with same name / alias for '{$key}' already exists");
             }
         }
     }

@@ -17,6 +17,7 @@ use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
+use ReflectionClass;
 use function array_unshift;
 
 class PacketHooker implements Listener
@@ -129,7 +130,7 @@ class PacketHooker implements Listener
                 $param = $set[$k] = clone $input[$k][$index]->getNetworkParameterData();
 
                 if (isset($param->enum) && $param->enum instanceof CommandEnum) {
-                    $refClass = new \ReflectionClass(CommandEnum::class);
+                    $refClass = new ReflectionClass(CommandEnum::class);
                     $refProp = $refClass->getProperty('enumName');
                     $refProp->setAccessible(true);
                     $refProp->setValue($param->enum, 'enum#' . spl_object_id($param->enum));
