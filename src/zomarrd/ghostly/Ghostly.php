@@ -44,7 +44,7 @@ final class Ghostly extends PluginBase
 {
 	public const SERVER = "Lobby-1";
 	public const CATEGORY = "Lobby";
-	public const IS_PROXY = true;
+	public const IS_PROXY = false;
 
 	public static Ghostly $instance;
 	public static AttachableLogger $logger;
@@ -156,7 +156,6 @@ final class Ghostly extends PluginBase
 
 							/** @noinspection PhpUndefinedMethodInspection */
 							$this->getLogger()->setPrefix($this->getLogPrefix());
-
 						})->call($event->getOrigin());
 					}, function (bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
 						(function () use ($isAuthenticated, $authRequired, $error, $clientPubKey): void {

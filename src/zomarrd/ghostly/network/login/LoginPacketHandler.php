@@ -32,6 +32,7 @@ use pocketmine\player\Player;
 use pocketmine\player\XboxLivePlayerInfo;
 use pocketmine\Server;
 use Ramsey\Uuid\Uuid;
+use ReflectionClass;
 use zomarrd\ghostly\network\skin\ClientDataToSkinDataHelper;
 use zomarrd\ghostly\network\skin\SkinAdapterSingleton;
 
@@ -54,7 +55,6 @@ final class LoginPacketHandler extends PacketHandler
 	{
 		if (!$this->isCompatibleProtocol($packet->protocol)) {
 			$this->session->sendDataPacket(PlayStatusPacket::create($packet->protocol < ProtocolInfo::CURRENT_PROTOCOL ? PlayStatusPacket::LOGIN_FAILED_CLIENT : PlayStatusPacket::LOGIN_FAILED_SERVER), true);
-			//This pocketmine disconnect message will only be seen by the console (PlayStatusPacket causes the messages to be shown for the client)
 			$this->session->disconnect(PREFIX . "Apparently we don't support this version of Minecraft\n§aContact support in: discord.ghostlymc.live!", false);
 			return true;
 		}
@@ -62,7 +62,7 @@ final class LoginPacketHandler extends PacketHandler
 		$extraData = $this->fetchAuthData($packet->chainDataJwt);
 
 		if (!Player::isValidUserName($extraData->displayName)) {
-			$this->session->disconnect(PREFIX . "§cYou can not enter with this name to GhostlyMC!");
+			$this->session->disconnect(PREFIX . "§cYou can not enter with this name, try to change it!");
 			return true;
 		}
 
@@ -82,12 +82,17 @@ final class LoginPacketHandler extends PacketHandler
 
 		$uuid = Uuid::fromString($extraData->identity);
 
-		/*if (isset($clientData->Waterdog_XUID)) {
+		$class = new ReflectionClass($this->session);
+		$property = $class->getProperty("ip");
+		$property->setAccessible(true);
+
+		if (isset($clientData->Waterdog_IP, $clientData->Waterdog_XUID)) {
+			$property->setValue($this->session, $clientData->Waterdog_IP);
 			$xuid = $clientData->Waterdog_XUID;
 		} else {
-			$this->session->disconnect(PREFIX . "§cLogin-Error 502");
+			$this->session->disconnect(PREFIX . "Login without proxy is not allowed!");
 			return true;
-		}*/
+		}
 
 		$playerInfo = new XboxLivePlayerInfo(
 			$extraData->XUID,
@@ -109,15 +114,11 @@ final class LoginPacketHandler extends PacketHandler
 
 		/** @todo do this in the onJoin? */
 		if ($this->server->getNetwork()->getConnectionCount() > $this->server->getMaxPlayers()) {
-			$ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_FULL, "");
+			$ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_FULL, PREFIX . "This server has reached its maximum capacity, please try again later!");
 		}
 
 		if (!$this->server->isWhitelisted($playerInfo->getUsername())) {
-			$ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_WHITELISTED, "Server is whitelisted");
-		}
-
-		if ($this->server->getNameBans()->isBanned($playerInfo->getUsername()) || $this->server->getIPBans()->isBanned($this->session->getIp())) {
-			$ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_BANNED, "You are banned");
+			$ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_WHITELISTED, PREFIX . "We are in maintenance!");
 		}
 
 		$ev->call();

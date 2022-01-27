@@ -32,10 +32,12 @@ use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
+use pocketmine\Server;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\mysql\queries\InsertQuery;
 use zomarrd\ghostly\mysql\queries\SelectQuery;
+use zomarrd\ghostly\network\proxy\AntiProxy;
 use zomarrd\ghostly\player\DeviceData;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
@@ -50,7 +52,7 @@ final class PlayerListener implements Listener
 	}
 
 	/**
-	 * @param \pocketmine\event\player\PlayerPreLoginEvent $event
+	 * @param PlayerPreLoginEvent $event
 	 *
 	 * @return void
 	 * @todo Move this to the login packet
@@ -97,6 +99,7 @@ final class PlayerListener implements Listener
 
 		if ($player instanceof GhostlyPlayer) {
 			$player->onJoin();
+			Server::getInstance()->getAsyncPool()->submitTask(new AntiProxy($player->getName(), $player->getNetworkSession()->getIp()));
 		}
 	}
 

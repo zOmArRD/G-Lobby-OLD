@@ -22,3 +22,5 @@ permissions:
     default: op
   ghostly.server.join-bypass:
     default: op
+  ghostly.proxy-bypass:
+    default: op

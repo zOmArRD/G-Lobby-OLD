@@ -22,6 +22,7 @@ final class MySQL
 
 	private const CREATE_TABLE_SERVERS = "CREATE TABLE IF NOT EXISTS " . self::TABLE_PREFIX . "servers(server_name VARCHAR(16), players INT, max_players INT, online BOOLEAN, whitelist BOOLEAN, category VARCHAR(16));";
 	private const CREATE_PLAYER_CONFIG = "CREATE TABLE IF NOT EXISTS player_config(player VARCHAR(16), lang VARCHAR(12), scoreboard BOOLEAN DEFAULT true);";
+	private const CREATE_PLAYER_LOCATION = "CREATE TABLE IF NOT EXISTS player_location(xuid VARCHAR(50), ip VARCHAR(36), city VARCHAR(36), region VARCHAR(36), country VARCHAR(36), continent VARCHAR(36));";
 
 	public static function runAsync(Query $query, ?callable $callable = null): void
 	{
@@ -47,7 +48,7 @@ final class MySQL
 
 	public static function createTables(): void
 	{
-		foreach ([self::CREATE_TABLE_SERVERS, self::CREATE_PLAYER_CONFIG] as $query) {
+		foreach ([self::CREATE_TABLE_SERVERS, self::CREATE_PLAYER_CONFIG, self::CREATE_PLAYER_LOCATION] as $query) {
 			self::runAsync(new InsertQuery($query));
 		}
 	}
