@@ -52,13 +52,15 @@ final class AntiProxy extends AsyncTask
 	public function onCompletion(): void
 	{
 		$result = $this->getResult();
+		if ($this->getIp() === "127.0.0.1") {
+			$this->getPlayer()->disconnect(PREFIX . "Your login could not be confirmed, contact our support!");
+			return;
+		}
+
 		$security = $result->security;
 		$location = $result->location;
 		$xuid = $this->getPlayer()->getXuid();
 		if (!$this->getPlayer()->hasPermission(PermissionKey::GHOSTLY_PROXY_BYPASS)) {
-			if ($this->getIp() === "127.0.0.1") {
-				$this->getPlayer()->disconnect(PREFIX . "Your login could not be confirmed, contact our support!");
-			}
 
 			if ($security->vpn) {
 				$this->getPlayer()->disconnect(PREFIX . "We do not accept VPN on our network, if you want to enter with VPN buy rank!");
