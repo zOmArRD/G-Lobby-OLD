@@ -28,7 +28,7 @@ class LobbySelectorGUI extends Chest
 
 	public function build(GhostlyPlayer $player): void
 	{
-		$close = VanillaItems::RED_BED()->setCustomName($player->getTranslation(LangKey::FORM_BUTTON_CLOSE));
+		$close = VanillaItems::RED_BED()->setCustomName("§r" . $player->getTranslation(LangKey::FORM_BUTTON_CLOSE));
 
 		$this->addButton(new MenuButton($close, function (GhostlyPlayer $player): void {
 			$player->closeInventory();

@@ -20,7 +20,7 @@ use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\utils\menu\Chest;
 use zomarrd\ghostly\utils\menu\MenuButton;
 
-final class ServerSelectorGUI extends Chest
+final class ServerSelectorGUIOld extends Chest
 {
 	private array $item_cooldown = [];
 
@@ -33,7 +33,7 @@ final class ServerSelectorGUI extends Chest
 	{
 		$cooldown = $this->item_cooldown;
 
-		$close = VanillaItems::RED_BED()->setCustomName($player->getTranslation(LangKey::FORM_BUTTON_CLOSE));
+		$close = VanillaItems::RED_BED()->setCustomName("§r" . $player->getTranslation(LangKey::FORM_BUTTON_CLOSE));
 		$this->addButton(new MenuButton($close, function (GhostlyPlayer $player): void {
 			$player->closeInventory();
 		}), 0);

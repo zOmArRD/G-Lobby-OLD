@@ -21,7 +21,6 @@ use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
-use pocketmine\player\Player;
 
 final class FloatingTextType extends Entity
 {
@@ -32,7 +31,7 @@ final class FloatingTextType extends Entity
 	protected string $textId;
 
 
-	public function __construct(Location $location, CompoundTag $nbt/*, GhostlyPlayer $owner = null*/)
+	public function __construct(Location $location, CompoundTag $nbt)
 	{
 		parent::__construct($location, $nbt);
 
@@ -78,12 +77,10 @@ final class FloatingTextType extends Entity
 				new FloatTag($this->location->pitch)
 			]));
 
-		if(!$this instanceof Player){
-			EntityFactory::getInstance()->injectSaveId(get_class($this), $nbt);
-			if($this->getNameTag() !== "") {
-				$nbt->setString("CustomName", $this->getNameTag());
-				$nbt->setByte("CustomNameVisible", $this->isNameTagVisible() ? 1 : 0);
-			}
+		EntityFactory::getInstance()->injectSaveId(get_class($this), $nbt);
+		if ($this->getNameTag() !== "") {
+			$nbt->setString("CustomName", $this->getNameTag());
+			$nbt->setByte("CustomNameVisible", $this->isNameTagVisible() ? 1 : 0);
 		}
 
 		$nbt->setFloat("FallDistance", $this->fallDistance);
