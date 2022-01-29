@@ -49,7 +49,7 @@ abstract class ScoreAPI extends IPlayer
 
 		$this->getDisplayPacket()->objectiveName = $objectiveName;
 		$this->getDisplayPacket()->displayName = $displayName;
-		$this->getDisplayPacket()->sortOrder = 1;
+		$this->getDisplayPacket()->sortOrder = 0;
 		$this->getDisplayPacket()->displaySlot = 'sidebar';
 		$this->getDisplayPacket()->criteriaName = 'dummy';
 		$this->setObjectiveName($objectiveName);
