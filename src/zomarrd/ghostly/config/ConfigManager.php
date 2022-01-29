@@ -24,7 +24,7 @@ final class ConfigManager
 	private static Config $server_config;
 
 	private array $files = [
-		'server_config.json' => 3.1
+		'server_config.json' => 4.0
 	];
 
 	public function __construct()
@@ -59,6 +59,8 @@ final class ConfigManager
 		}
 
 		self::$server_config = $this->getFile('server_config.json');
+
+		Ghostly::$is_proxy_server = self::getServerConfig()->get('is_proxy_server');
 
 		define('PREFIX', self::getServerConfig()?->get('prefix'));
 		define('MySQL', self::getServerConfig()?->get('mysql.credentials'));

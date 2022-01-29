@@ -1,6 +1,8 @@
 {
-	"version": 3.1,
+	"version": 4.0,
 	"prefix": "§l§cGhostly §f» §r",
+	"proxy_detect": false,
+	"is_proxy_server": false,
 	"mysql.credentials": {
 		"user": "root",
 		"password": "omar",
@@ -25,7 +27,7 @@
 			"§l§cGhostly §fNetwo§cr§fk",
 			"§l§cGhostly §fNetwor§ck"
 		],
-		"line": [
+		"lines": [
 			"\uE001",
 			" §7{date}",
 			"",
