@@ -33,6 +33,7 @@ use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
 use pocketmine\Server;
+use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\mysql\queries\InsertQuery;
@@ -99,7 +100,10 @@ final class PlayerListener implements Listener
 
 		if ($player instanceof GhostlyPlayer) {
 			$player->onJoin();
-			Server::getInstance()->getAsyncPool()->submitTask(new AntiProxy($player->getName(), $player->getNetworkSession()->getIp()));
+
+			if (ConfigManager::getServerConfig()->get('proxy_detect')) {
+				Server::getInstance()->getAsyncPool()->submitTask(new AntiProxy($player->getName(), $player->getNetworkSession()->getIp()));
+			}
 		}
 	}
 

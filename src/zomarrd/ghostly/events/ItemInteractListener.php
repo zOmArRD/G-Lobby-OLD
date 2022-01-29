@@ -139,7 +139,7 @@ final class ItemInteractListener implements Listener
 				break;
 			case "item-servers":
 				if ($player->hasClassicProfile()) {
-					Menu::SERVER_SELECTOR_GUI()->build($player);
+					Menu::SERVER_SELECTOR_GUI()->send($player);
 				} else {
 					/*TODO SEND THE MENU IN FORM EDITION*/
 				}

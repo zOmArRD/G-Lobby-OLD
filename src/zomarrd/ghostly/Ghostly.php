@@ -34,6 +34,8 @@ use zomarrd\ghostly\entity\Entity;
 use zomarrd\ghostly\events\HumanListener;
 use zomarrd\ghostly\events\ItemInteractListener;
 use zomarrd\ghostly\events\PlayerListener;
+use zomarrd\ghostly\exception\ExtensionMissing;
+use zomarrd\ghostly\menu\Menu;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\network\login\LoginPacketHandler;
 use zomarrd\ghostly\player\language\LangHandler;
@@ -44,12 +46,12 @@ final class Ghostly extends PluginBase
 {
 	public const SERVER = "Lobby-1";
 	public const CATEGORY = "Lobby";
-	public const IS_PROXY = false;
 
 	public static Ghostly $instance;
 	public static AttachableLogger $logger;
 	public static array $colors;
 	private static bool $globalMute = false;
+	public static bool $is_proxy_server = true;
 
 	public static function getInstance(): Ghostly
 	{
@@ -83,6 +85,11 @@ final class Ghostly extends PluginBase
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
 		self::$colors = json_decode(file_get_contents($this->getFile() . "resources/colors.json"), true, 512, JSON_THROW_ON_ERROR);
+
+		if (!extension_loaded('mysqli')) {
+			throw new ExtensionMissing("mysqli");
+		}
+
 		new ConfigManager();
 		MySQL::createTables();
 	}
@@ -105,6 +112,8 @@ final class Ghostly extends PluginBase
 		if (!InvMenuHandler::isRegistered()) {
 			InvMenuHandler::register($this);
 		}
+
+		Menu::SERVER_SELECTOR_GUI()->register();
 
 		$this->registerEvents([
 			new PlayerListener(),
@@ -137,7 +146,7 @@ final class Ghostly extends PluginBase
 			$interface->setPacketLimit(PHP_INT_MAX);
 		}
 
-		if (self::IS_PROXY) {
+		if (self::$is_proxy_server) {
 			$this->getServer()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, function (DataPacketReceiveEvent $event): void {
 				$packet = $event->getPacket();
 				if (!$packet instanceof LoginPacket) {

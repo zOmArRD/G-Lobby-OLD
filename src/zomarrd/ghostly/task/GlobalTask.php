@@ -11,16 +11,16 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\task;
 
-use pocketmine\item\VanillaItems;
 use pocketmine\scheduler\Task;
 use zomarrd\ghostly\entity\Entity;
+use zomarrd\ghostly\menu\Menu;
 
 final class GlobalTask extends Task
 {
-	protected $int = 0;
-	private array $armors;
+	/*protected $int = 0;
+	private array $armors;*/
 
-	public function __construct()
+	/*public function __construct()
 	{
 		$this->armors = [
 			VanillaItems::LEATHER_CAP(),
@@ -28,12 +28,16 @@ final class GlobalTask extends Task
 			VanillaItems::LEATHER_PANTS(),
 			VanillaItems::LEATHER_BOOTS()
 		];
-	}
+	}*/
 
 	public function onRun(int $currentTick): void
 	{
 		if ($currentTick % 20 === 0) {
 			Entity::ENTITY()->update_server_status();
+		}
+
+		if ($currentTick % 50 === 0) {
+			Menu::SERVER_SELECTOR_GUI()->prepare();
 		}
 
 		/*$armors = array_map(function (Armor $armor): Armor {
