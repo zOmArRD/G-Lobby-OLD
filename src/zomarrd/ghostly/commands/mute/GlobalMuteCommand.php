@@ -11,14 +11,13 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\commands\mute;
 
-use CortexPE\Commando\args\IntegerArgument;
+use CortexPE\Commando\args\BooleanArgument;
 use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\plugin\Plugin;
 use zomarrd\ghostly\Ghostly;
-use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\permission\PermissionKey;
 
 final class GlobalMuteCommand extends BaseCommand
@@ -34,19 +33,13 @@ final class GlobalMuteCommand extends BaseCommand
 	 */
 	protected function prepare(): void
 	{
-		//$this->registerArgument(0, new BooleanArgument('value'));
-		$this->registerArgument(0, new IntegerArgument('soundId'));
+		$this->registerArgument(0, new BooleanArgument('value'));
 		$this->registerArgument(1, new RawStringArgument('type'));
 
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
-		if ($sender instanceof GhostlyPlayer) {
-			$sender->sendSound($args["soundId"], $args["type"]);
-			return;
-		}
-
 		$value = $args["value"];
 		if ($value) {
 			if (!Ghostly::isGlobalMute()) {
