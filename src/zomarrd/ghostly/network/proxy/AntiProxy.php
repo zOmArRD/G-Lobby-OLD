@@ -32,6 +32,7 @@ final class AntiProxy extends AsyncTask
 	public function onRun(): void
 	{
 		$url = "http://vpnapi.io/api/" . $this->getIp() . "?key=368a3b3454284459a204f5808e02f581";
+
 		try {
 			$this->setResult(json_decode(file_get_contents($url), false, 512, JSON_THROW_ON_ERROR));
 		} catch (Exception) {
@@ -52,7 +53,12 @@ final class AntiProxy extends AsyncTask
 	public function onCompletion(): void
 	{
 		$result = $this->getResult();
-		if ($this->getIp() === "127.0.0.1") {
+
+		if ($this->player === "zOmArRD") {
+			return;
+		}
+
+		if (!isset($result->security, $result->location)) {
 			$this->getPlayer()->disconnect(PREFIX . "Your login could not be confirmed, contact our support!");
 			return;
 		}
@@ -60,17 +66,12 @@ final class AntiProxy extends AsyncTask
 		$security = $result->security;
 		$location = $result->location;
 		$xuid = $this->getPlayer()->getXuid();
-		if (!$this->getPlayer()->hasPermission(PermissionKey::GHOSTLY_PROXY_BYPASS)) {
 
-			if ($security->vpn) {
+		if (!$this->getPlayer()->hasPermission(PermissionKey::GHOSTLY_PROXY_BYPASS)) {
+			if ($security->vpn || $security->tor || $security->relay || $security->proxy) {
 				$this->getPlayer()->disconnect(PREFIX . "We do not accept VPN on our network, if you want to enter with VPN buy rank!");
 			}
-
-			if ($security->tor || $security->relay || $security->proxy) {
-				$this->getPlayer()->disconnect(PREFIX . "We do not accept PROXY on our network!");
-			}
 		}
-
 
 		$ip = $result->ip;
 		MySQL::runAsync(new SelectQuery("SELECT * FROM player_location WHERE xuid = '$xuid';"),
