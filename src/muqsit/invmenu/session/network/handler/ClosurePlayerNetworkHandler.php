@@ -7,20 +7,18 @@ namespace muqsit\invmenu\session\network\handler;
 use Closure;
 use muqsit\invmenu\session\network\NetworkStackLatencyEntry;
 
-final class ClosurePlayerNetworkHandler implements PlayerNetworkHandler{
-
-	private Closure $creator;
+final class ClosurePlayerNetworkHandler implements PlayerNetworkHandler
+{
 
 	/**
-	 * @param Closure $creator
-	 *
-	 * @phpstan-param Closure(Closure) : NetworkStackLatencyEntry $creator
+	 * @param Closure(Closure) : NetworkStackLatencyEntry $creator
 	 */
-	public function __construct(Closure $creator){
-		$this->creator = $creator;
-	}
+	public function __construct(
+		private Closure $creator
+	) {}
 
-	public function createNetworkStackLatencyEntry(Closure $then) : NetworkStackLatencyEntry{
+	public function createNetworkStackLatencyEntry(Closure $then): NetworkStackLatencyEntry
+	{
 		return ($this->creator)($then);
 	}
 }

@@ -8,7 +8,8 @@ use LogicException;
 use muqsit\invmenu\type\BlockActorFixedInvMenuType;
 use muqsit\invmenu\type\graphic\network\BlockInvMenuGraphicNetworkTranslator;
 
-final class BlockActorFixedInvMenuTypeBuilder implements InvMenuTypeBuilder{
+final class BlockActorFixedInvMenuTypeBuilder implements InvMenuTypeBuilder
+{
 	use BlockInvMenuTypeBuilderTrait;
 	use FixedInvMenuTypeBuilderTrait;
 	use GraphicNetworkTranslatableInvMenuTypeBuilderTrait;
@@ -16,24 +17,24 @@ final class BlockActorFixedInvMenuTypeBuilder implements InvMenuTypeBuilder{
 
 	private ?string $block_actor_id = null;
 
-	public function __construct(){
+	public function __construct()
+	{
 		$this->addGraphicNetworkTranslator(BlockInvMenuGraphicNetworkTranslator::instance());
 	}
 
-	public function setBlockActorId(string $block_actor_id) : self{
+	public function setBlockActorId(string $block_actor_id): self
+	{
 		$this->block_actor_id = $block_actor_id;
 		return $this;
 	}
 
-	private function getBlockActorId() : string{
-		if($this->block_actor_id === null){
-			throw new LogicException("No block actor ID was specified");
-		}
-
-		return $this->block_actor_id;
+	public function build(): BlockActorFixedInvMenuType
+	{
+		return new BlockActorFixedInvMenuType($this->getBlock(), $this->getSize(), $this->getBlockActorId(), $this->getGraphicNetworkTranslator(), $this->getAnimationDuration());
 	}
 
-	public function build() : BlockActorFixedInvMenuType{
-		return new BlockActorFixedInvMenuType($this->getBlock(), $this->getSize(), $this->getBlockActorId(), $this->getGraphicNetworkTranslator(), $this->getAnimationDuration());
+	private function getBlockActorId(): string
+	{
+		return $this->block_actor_id ?? throw new LogicException("No block actor ID was specified");
 	}
 }

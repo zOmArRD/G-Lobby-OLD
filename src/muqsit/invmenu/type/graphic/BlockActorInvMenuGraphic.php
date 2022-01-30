@@ -16,15 +16,8 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\player\Player;
 
-final class BlockActorInvMenuGraphic implements PositionedInvMenuGraphic{
-
-	public static function createTile(string $tile_id, ?string $name) : CompoundTag{
-		$tag = CompoundTag::create()->setString(Tile::TAG_ID, $tile_id);
-		if($name !== null){
-			$tag->setString(Nameable::TAG_CUSTOM_NAME, $name);
-		}
-		return $tag;
-	}
+final class BlockActorInvMenuGraphic implements PositionedInvMenuGraphic
+{
 
 	private BlockInvMenuGraphic $block_graphic;
 	private Vector3 $position;
@@ -32,7 +25,8 @@ final class BlockActorInvMenuGraphic implements PositionedInvMenuGraphic{
 	private ?InvMenuGraphicNetworkTranslator $network_translator;
 	private int $animation_duration;
 
-	public function __construct(Block $block, Vector3 $position, CompoundTag $tile, ?InvMenuGraphicNetworkTranslator $network_translator = null, int $animation_duration = 0){
+	public function __construct(Block $block, Vector3 $position, CompoundTag $tile, ?InvMenuGraphicNetworkTranslator $network_translator = null, int $animation_duration = 0)
+	{
 		$this->block_graphic = new BlockInvMenuGraphic($block, $position);
 		$this->position = $position;
 		$this->tile = $tile;
@@ -40,31 +34,46 @@ final class BlockActorInvMenuGraphic implements PositionedInvMenuGraphic{
 		$this->animation_duration = $animation_duration;
 	}
 
-	public function getPosition() : Vector3{
+	public static function createTile(string $tile_id, ?string $name): CompoundTag
+	{
+		$tag = CompoundTag::create()->setString(Tile::TAG_ID, $tile_id);
+		if ($name !== null) {
+			$tag->setString(Nameable::TAG_CUSTOM_NAME, $name);
+		}
+		return $tag;
+	}
+
+	public function getPosition(): Vector3
+	{
 		return $this->position;
 	}
 
-	public function send(Player $player, ?string $name) : void{
+	public function send(Player $player, ?string $name): void
+	{
 		$this->block_graphic->send($player, $name);
-		if($name !== null){
+		if ($name !== null) {
 			$this->tile->setString(Nameable::TAG_CUSTOM_NAME, $name);
 		}
 		$player->getNetworkSession()->sendDataPacket(BlockActorDataPacket::create(BlockPosition::fromVector3($this->position), new CacheableNbt($this->tile)));
 	}
 
-	public function sendInventory(Player $player, Inventory $inventory) : bool{
+	public function sendInventory(Player $player, Inventory $inventory): bool
+	{
 		return $player->setCurrentWindow($inventory);
 	}
 
-	public function remove(Player $player) : void{
+	public function remove(Player $player): void
+	{
 		$this->block_graphic->remove($player);
 	}
 
-	public function getNetworkTranslator() : ?InvMenuGraphicNetworkTranslator{
+	public function getNetworkTranslator(): ?InvMenuGraphicNetworkTranslator
+	{
 		return $this->network_translator;
 	}
 
-	public function getAnimationDuration() : int{
+	public function getAnimationDuration(): int
+	{
 		return $this->animation_duration;
 	}
 }

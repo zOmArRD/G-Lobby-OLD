@@ -7,13 +7,15 @@ namespace muqsit\invmenu\inventory;
 use muqsit\invmenu\InvMenu;
 use pocketmine\inventory\Inventory;
 
-final class SharedInvMenuSynchronizer{
+final class SharedInvMenuSynchronizer
+{
 
-	protected Inventory $inventory;
-	protected SharedInventorySynchronizer $synchronizer;
-	protected SharedInventoryNotifier $notifier;
+	private Inventory $inventory;
+	private SharedInventorySynchronizer $synchronizer;
+	private SharedInventoryNotifier $notifier;
 
-	public function __construct(InvMenu $menu, Inventory $inventory){
+	public function __construct(InvMenu $menu, Inventory $inventory)
+	{
 		$this->inventory = $inventory;
 
 		$menu_inventory = $menu->getInventory();
@@ -25,7 +27,8 @@ final class SharedInvMenuSynchronizer{
 		$menu_inventory->getListeners()->add($this->notifier);
 	}
 
-	public function destroy() : void{
+	public function destroy(): void
+	{
 		$this->synchronizer->getSynchronizingInventory()->getListeners()->remove($this->notifier);
 		$this->inventory->getListeners()->remove($this->synchronizer);
 	}

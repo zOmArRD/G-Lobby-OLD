@@ -6,7 +6,8 @@ namespace muqsit\invmenu\type\util\builder;
 
 use muqsit\invmenu\type\InvMenuType;
 
-interface InvMenuTypeBuilder{
+interface InvMenuTypeBuilder
+{
 
-	public function build() : InvMenuType;
+	public function build(): InvMenuType;
 }
