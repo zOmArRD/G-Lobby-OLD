@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\network\skin;
 
 use InvalidArgumentException;
-use pocketmine\network\mcpe\protocol\types\login\ClientDataPersonaPieceTintColor;
-use pocketmine\network\mcpe\protocol\types\login\ClientDataPersonaSkinPiece;
 use pocketmine\network\mcpe\protocol\types\skin\PersonaPieceTintColor;
 use pocketmine\network\mcpe\protocol\types\skin\PersonaSkinPiece;
 use pocketmine\network\mcpe\protocol\types\skin\SkinAnimation;
 use pocketmine\network\mcpe\protocol\types\skin\SkinData;
 use pocketmine\network\mcpe\protocol\types\skin\SkinImage;
+use zomarrd\ghostly\network\login\ClientDataPersonaPieceTintColor;
+use zomarrd\ghostly\network\login\ClientDataPersonaSkinPiece;
 use zomarrd\ghostly\network\login\LoginClientData;
 
 class ClientDataToSkinDataHelper

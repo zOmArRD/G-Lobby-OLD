@@ -42,6 +42,7 @@ final class LangKey
 	public const SERVER_CONNECTING = "server.connecting";
 	public const SERVER_IS_WHITELISTED = "server.is-whitelisted";
 	public const SERVER_NOT_ONLINE = "server.not-online";
+	public const SERVER_SEARCHING = "server.searching";
 	public const SET_LANGUAGE = "set-language";
 	public const STORE_LINK_MESSAGE = "store.link.message";
 }

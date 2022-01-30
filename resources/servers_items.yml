@@ -29,7 +29,6 @@ Practice:
     - "§r§6#1 §7Global ELO: §f$?? USD §9Pay§bPal"
     - "§r#2 §7Global ELO: §f1000 §6G-Coins"
     - "§r#3 §7Global ELO: §f500 §6G-Coins\n"
-    - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
     - "§r§cThis server is currently offline!"
 # Combo
 Combo:
@@ -70,7 +69,6 @@ HCF:
     - "§r§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME\n"
     - "§r§6#1 §7F-Top: §f5000 §6G-Coins"
     - "§r§6#1 §7Top Kills: §f3000 §6G-Coins\n"
-    - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
     - "§r§cThis server is currently offline!"
 # KITMAP
 KITMAP:
@@ -78,7 +76,7 @@ KITMAP:
     - "§r§8Competitive\n"
     - "§7Map Information:"
     - "§r§f· 20 Members, 1 Ally"
-    - "§r§f· Sharpness I, Protection I, Power IIIn\n"
+    - "§r§f· Sharpness I, Protection I, Power III\n"
     - "§r§aSOTW: §f01/??/2022 §7| 17:00pm CENTRAL TIME"
     - "§r§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME\n"
     - "§r§6#1 §7F-Top: §f3500 §6G-Coins"

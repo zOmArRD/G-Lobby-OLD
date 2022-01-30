@@ -20,6 +20,7 @@ use pocketmine\event\EventPriority;
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\QueryRegenerateEvent;
+use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\network\mcpe\raklib\RakLibInterface;
 use pocketmine\player\PlayerInfo;
@@ -39,6 +40,7 @@ use zomarrd\ghostly\exception\ExtensionMissing;
 use zomarrd\ghostly\menu\Menu;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\network\login\LoginPacketHandler;
+use zomarrd\ghostly\network\skin\MojangAdapter;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\task\GlobalTask;
@@ -108,6 +110,8 @@ final class Ghostly extends PluginBase
 
 		new ServerManager();
 		new LangHandler();
+
+		SkinAdapterSingleton::set(new MojangAdapter());
 
 		if (!PacketHooker::isRegistered()) {
 			PacketHooker::register($this);

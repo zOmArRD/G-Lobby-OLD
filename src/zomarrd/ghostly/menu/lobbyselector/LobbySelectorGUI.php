@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\menu\lobbyselector;
 
+use pocketmine\item\enchantment\EnchantmentInstance;
+use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\VanillaItems;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\GhostlyPlayer;
@@ -78,6 +80,7 @@ class LobbySelectorGUI extends Chest
 		}
 
 		if ($server->getName() === Ghostly::SERVER && $server->isOnline()) {
+			$item->addEnchantment(new EnchantmentInstance(VanillaEnchantments::INFINITY()));
 			$item->setLore(["§r" .
 				"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}\n\n§c" .
 				"You are already connected!"
@@ -85,8 +88,10 @@ class LobbySelectorGUI extends Chest
 		}
 
 		$this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($server): void {
+			$player->sendTranslated(LangKey::SERVER_SEARCHING);
+			$player->setCanInteractItem(false);
 			$player->closeInventory();
-			$player->transferTo($server);
+			$player->server_transfer_task($server);
 		}), $slot);
 	}
 }

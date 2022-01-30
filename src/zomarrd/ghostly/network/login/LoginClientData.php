@@ -11,10 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\network\login;
 
-use pocketmine\network\mcpe\protocol\types\login\ClientDataAnimationFrame;
-use pocketmine\network\mcpe\protocol\types\login\ClientDataPersonaPieceTintColor;
-use pocketmine\network\mcpe\protocol\types\login\ClientDataPersonaSkinPiece;
-
 class LoginClientData
 {
 
@@ -140,7 +136,9 @@ class LoginClientData
 	/** @required */
 	public int $UIProfile;
 
+	/** @required */
 	public string $Waterdog_XUID;
 
+	/** @required */
 	public string $Waterdog_IP;
 }

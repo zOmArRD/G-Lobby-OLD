@@ -127,6 +127,10 @@ final class ItemInteractListener implements Listener
 			return;
 		}
 
+		if (!$player->canInteractItem()) {
+			return;
+		}
+
 		if (!$player->isOp()) {
 			$event->cancel();
 		}

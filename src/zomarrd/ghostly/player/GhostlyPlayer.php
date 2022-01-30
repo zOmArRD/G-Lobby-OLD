@@ -20,6 +20,7 @@ use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\scheduler\ClosureTask;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\item\ItemManager;
@@ -40,6 +41,17 @@ class GhostlyPlayer extends Player
 	private bool $loaded = false, $scoreboard = true;
 	private Scoreboard $scoreboard_session;
 	private ItemManager $itemManager;
+	private bool $canInteractItem = true;
+
+	public function setCanInteractItem(bool $canInteractItem = true): void
+	{
+		$this->canInteractItem = $canInteractItem;
+	}
+
+	public function canInteractItem(): bool
+	{
+		return $this->canInteractItem;
+	}
 
 	public function isScoreboard(): bool
 	{
@@ -174,24 +186,28 @@ class GhostlyPlayer extends Player
 		if (is_null($server)) {
 			$this->sendSound(LevelSoundEvent::EXPLODE);
 			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
+			$this->setCanInteractItem();
 			return;
 		}
 
 		if ($server->getName() === Ghostly::SERVER) {
 			$this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
 			$this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
+			$this->setCanInteractItem();
 			return;
 		}
 
 		if (!$server->isOnline()) {
 			$this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
 			$this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
+			$this->setCanInteractItem();
 			return;
 		}
 
 		if ($server->isWhitelist() && !$this->hasPermission(PermissionKey::GHOSTLY_SERVER_CONNECT_WHITELISTED)) {
 			$this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
 			$this->sendTranslated(LangKey::SERVER_IS_WHITELISTED);
+			$this->setCanInteractItem();
 			return;
 		}
 
@@ -247,5 +263,12 @@ class GhostlyPlayer extends Player
 			$this->onGround = false;
 			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
 		}
+	}
+
+	public function server_transfer_task(string|Server $server): void
+	{
+		Ghostly::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($server): void {
+			$this->transferTo($server);
+		}), 25);
 	}
 }

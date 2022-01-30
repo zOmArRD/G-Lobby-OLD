@@ -18,6 +18,7 @@ use JsonMapper_Exception;
 use pocketmine\entity\InvalidSkinException;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\network\mcpe\auth\ProcessLoginTask;
+use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
 use pocketmine\network\mcpe\handler\PacketHandler;
 use pocketmine\network\mcpe\JwtException;
 use pocketmine\network\mcpe\JwtUtils;
@@ -34,7 +35,6 @@ use pocketmine\Server;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 use zomarrd\ghostly\network\skin\ClientDataToSkinDataHelper;
-use zomarrd\ghostly\network\skin\SkinAdapterSingleton;
 
 final class LoginPacketHandler extends PacketHandler
 {

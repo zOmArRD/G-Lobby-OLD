@@ -17,6 +17,7 @@ use muqsit\invmenu\transaction\InvMenuTransactionResult;
 use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\item\VanillaItems;
 use zomarrd\ghostly\player\GhostlyPlayer;
+use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerItems;
 use zomarrd\ghostly\utils\menu\MenuButton;
@@ -123,10 +124,17 @@ final class ServerSelectorGui
 				return;
 			}
 
+			$player->sendTranslated(LangKey::SERVER_SEARCHING);
+			$player->setCanInteractItem(false);
 			$player->closeInventory();
-			$player->transferTo(Server::UHC_RUN);
+			$player->server_transfer_task(Server::UHC_RUN);
 			$cooldown[$player->getName()] = time();
 		}), 42);
+	}
+
+	public function send(GhostlyPlayer $player): void
+	{
+		$this->menu->send($player);
 	}
 
 	/**
