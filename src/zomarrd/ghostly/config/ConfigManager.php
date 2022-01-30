@@ -33,17 +33,12 @@ final class ConfigManager
 		$this->init();
 	}
 
-	public static function getInstance(): ConfigManager
-	{
-		return self::$instance;
-	}
-
 	public function init(): void
 	{
 		/** This can be erased? */
-        if (!@mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-        }
+		if (!@mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
+			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+		}
 
 		foreach ($this->files as $file => $version) {
 			$this->saveResource($file);
@@ -77,23 +72,30 @@ final class ConfigManager
 			$this->getWorldManager()->loadWorld($levelName);
 		}
 
-		$lobby = new Lobby(
-			Server::getInstance()->getWorldManager()->getWorldByName($levelName),
-			$data["pos"]["x"],
-			$data["pos"]["y"],
-			$data["pos"]["z"],
-			$data["pos"]["yaw"],
-			$data["pos"]["pitch"],
-			$data["world"]["min-void"]
-		);
+		if ($this->getWorldManager()->isWorldLoaded($levelName)) {
+			$lobby = new Lobby(
+				Server::getInstance()->getWorldManager()->getWorldByName($levelName),
+				$data["pos"]["x"],
+				$data["pos"]["y"],
+				$data["pos"]["z"],
+				$data["pos"]["yaw"],
+				$data["pos"]["pitch"],
+				$data["world"]["min-void"]
+			);
 
-		$lobby->getWorld()->stopTime();
-		$lobby->getWorld()->setTime(12800);
+			$lobby->getWorld()->stopTime();
+			$lobby->getWorld()->setTime(12800);
+		}
 	}
 
 	public function getDataFolder(): string
 	{
 		return Ghostly::getInstance()->getDataFolder();
+	}
+
+	public function saveResource(string $file, bool $replace = false): void
+	{
+		Ghostly::getInstance()->saveResource($file, $replace);
 	}
 
 	public function getFile(string $file): Config
@@ -106,13 +108,13 @@ final class ConfigManager
 		return self::$server_config;
 	}
 
-	public function saveResource(string $file, bool $replace = false): void
-	{
-		Ghostly::getInstance()->saveResource($file, $replace);
-	}
-
 	public function getWorldManager(): WorldManager
 	{
 		return Server::getInstance()->getWorldManager();
+	}
+
+	public static function getInstance(): ConfigManager
+	{
+		return self::$instance;
 	}
 }

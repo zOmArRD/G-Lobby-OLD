@@ -28,16 +28,6 @@ final class GlobalMuteCommand extends BaseCommand
 		parent::__construct($plugin, $name, 'Activates/Deactivates the global mute', ['glm']);
 	}
 
-	/**
-	 * @throws ArgumentOrderException
-	 */
-	protected function prepare(): void
-	{
-		$this->registerArgument(0, new BooleanArgument('value'));
-		$this->registerArgument(1, new RawStringArgument('type'));
-
-	}
-
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		$value = $args["value"];
@@ -54,7 +44,17 @@ final class GlobalMuteCommand extends BaseCommand
 			$sender->sendMessage("§cYou cannot deactivate the global mute, apparently it is already deactivated!");
 			return;
 		}
-		
+
 		Ghostly::setGlobalMute($value);
+	}
+
+	/**
+	 * @throws ArgumentOrderException
+	 */
+	protected function prepare(): void
+	{
+		$this->registerArgument(0, new BooleanArgument('value'));
+		$this->registerArgument(1, new RawStringArgument('type'));
+
 	}
 }

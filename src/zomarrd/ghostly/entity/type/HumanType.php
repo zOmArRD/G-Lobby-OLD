@@ -195,9 +195,9 @@ final class HumanType extends Human
 				$slot = $item->getByte("Slot");
 				if ($slot >= 0 && $slot < 9) { //Hotbar
 					//Old hotbar saving stuff, ignore it
-				} elseif ($slot >= 100 && $slot < 104) { //Armor
+				} else if ($slot >= 100 && $slot < 104) { //Armor
 					$this->armorInventory->setItem($slot - 100, Item::nbtDeserialize($item));
-				} elseif ($slot >= 9 && $slot < $this->inventory->getSize() + 9) {
+				} else if ($slot >= 9 && $slot < $this->inventory->getSize() + 9) {
 					$this->inventory->setItem($slot - 9, Item::nbtDeserialize($item));
 				}
 			}

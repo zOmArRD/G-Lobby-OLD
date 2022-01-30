@@ -23,10 +23,10 @@ final class MojangAdapter implements SkinAdapter
 {
 	private array $personaSkins = [];
 
-    /**
-     * @throws JsonException
-     */
-    public function toSkinData(Skin $skin): SkinData
+	/**
+	 * @throws JsonException
+	 */
+	public function toSkinData(Skin $skin): SkinData
 	{
 		if (!isset($this->personaSkins[$skin->getSkinId()])) {
 			$capeData = $skin->getCapeData();
@@ -56,6 +56,10 @@ final class MojangAdapter implements SkinAdapter
 	}
 
 
+	/**
+	 * @throws \JsonException
+	 * @throws \Exception
+	 */
 	public function fromSkinData(SkinData $data): Skin
 	{
 		$capeData = $data->getCapeImage()->getData();

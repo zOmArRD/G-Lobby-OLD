@@ -19,13 +19,13 @@ use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
 final class Server
 {
 	public function __construct(
-		private string $server_name,
-		private int    $players,
-		private int    $max_players,
-		private bool   $online,
-		private bool   $whitelist,
+		private string      $server_name,
+		private int         $players,
+		private int         $max_players,
+		private bool        $online,
+		private bool        $whitelist,
 		private null|string $category
-	){}
+	) {}
 
 	/**
 	 * @return string PLAYERS | WHITELISTED | OFFLINE

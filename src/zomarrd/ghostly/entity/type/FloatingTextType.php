@@ -49,14 +49,14 @@ final class FloatingTextType extends Entity
 		return false;
 	}
 
-	public function setTextId(string $textId): void
-	{
-		$this->textId = $textId;
-	}
-
 	public function getTextId(): string
 	{
 		return $this->textId;
+	}
+
+	public function setTextId(string $textId): void
+	{
+		$this->textId = $textId;
 	}
 
 	public function saveNBT(): CompoundTag
@@ -96,16 +96,17 @@ final class FloatingTextType extends Entity
 		return new EntitySizeInfo(0.001, 0.001, 0.001);
 	}
 
-	protected function initEntity(CompoundTag $nbt) : void{
+	protected function initEntity(CompoundTag $nbt): void
+	{
 		$this->fireTicks = $nbt->getShort("Fire", 0);
 		$this->onGround = $nbt->getByte("OnGround", 0) !== 0;
 		$this->fallDistance = $nbt->getFloat("FallDistance", 0.0);
 		$this->textId = $nbt->getString("TextId");
-		if(($customNameTag = $nbt->getTag("CustomName")) instanceof StringTag){
+		if (($customNameTag = $nbt->getTag("CustomName")) instanceof StringTag) {
 			$this->setNameTag($customNameTag->getValue());
-			if(($customNameVisibleTag = $nbt->getTag("CustomNameVisible")) instanceof StringTag){
+			if (($customNameVisibleTag = $nbt->getTag("CustomNameVisible")) instanceof StringTag) {
 				$this->setNameTagVisible($customNameVisibleTag->getValue() !== "");
-			}else{
+			} else {
 				$this->setNameTagVisible($nbt->getByte("CustomNameVisible", 1) !== 0);
 			}
 		}

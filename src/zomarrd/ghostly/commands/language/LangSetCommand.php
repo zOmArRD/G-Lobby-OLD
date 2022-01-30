@@ -25,15 +25,6 @@ final class LangSetCommand extends BaseSubCommand
 {
 
 	/**
-	 * @throws ArgumentOrderException
-	 */
-	protected function prepare(): void
-	{
-		$this->registerArgument(0, new RawStringArgument('language|player', false));
-		$this->registerArgument(1, new RawStringArgument('language', true));
-	}
-
-	/**
 	 * @todo Update the language of the player in the database?
 	 */
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
@@ -97,5 +88,14 @@ final class LangSetCommand extends BaseSubCommand
 			$isPlayer->setLanguage($newLang);
 			$isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $isPlayer->getLang()->getLocale()]);
 		}
+	}
+
+	/**
+	 * @throws ArgumentOrderException
+	 */
+	protected function prepare(): void
+	{
+		$this->registerArgument(0, new RawStringArgument('language|player', false));
+		$this->registerArgument(1, new RawStringArgument('language', true));
 	}
 }

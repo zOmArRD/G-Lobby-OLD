@@ -50,8 +50,8 @@ final class Ghostly extends PluginBase
 	public static Ghostly $instance;
 	public static AttachableLogger $logger;
 	public static array $colors;
-	private static bool $globalMute = false;
 	public static bool $is_proxy_server = true;
+	private static bool $globalMute = false;
 
 	public static function getInstance(): Ghostly
 	{
@@ -70,6 +70,7 @@ final class Ghostly extends PluginBase
 
 	/**
 	 * I currently have no idea. Apparently it returns the plugin directory, not plugin_data
+	 *
 	 * @return string
 	 */
 	public function getResourcesFolder(): string
@@ -169,7 +170,7 @@ final class Ghostly extends PluginBase
 					}, function (bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
 						(function () use ($isAuthenticated, $authRequired, $error, $clientPubKey): void {
 							/** @noinspection PhpUndefinedMethodInspection */
-							$this->setAuthenticationStatus($isAuthenticated, $authRequired, $error, $clientPubKey);
+							$this->setAuthenticationStatus(true, $authRequired, $error, $clientPubKey);
 						})->call($event->getOrigin());
 					}));
 

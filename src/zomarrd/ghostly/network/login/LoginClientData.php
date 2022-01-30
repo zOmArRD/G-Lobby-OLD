@@ -15,7 +15,8 @@ use pocketmine\network\mcpe\protocol\types\login\ClientDataAnimationFrame;
 use pocketmine\network\mcpe\protocol\types\login\ClientDataPersonaPieceTintColor;
 use pocketmine\network\mcpe\protocol\types\login\ClientDataPersonaSkinPiece;
 
-class LoginClientData{
+class LoginClientData
+{
 
 	/**
 	 * @var ClientDataAnimationFrame[]

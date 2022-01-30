@@ -47,6 +47,8 @@ use zomarrd\ghostly\world\Lobby;
 
 final class PlayerListener implements Listener
 {
+	private array $globalmute_alert_delay;
+
 	public function onCreation(PlayerCreationEvent $event): void
 	{
 		$event->setPlayerClass(GhostlyPlayer::class);
@@ -67,7 +69,7 @@ final class PlayerListener implements Listener
 		DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()["UIProfile"]);
 
 		MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function ($result) use ($name, $locale): void {
-			if(count($result) === 0) {
+			if (count($result) === 0) {
 				MySQL::runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
 			}
 		});
@@ -178,8 +180,6 @@ final class PlayerListener implements Listener
 
 		$player->sendSound(LevelEvent::SOUND_BLAZE_SHOOT, "level-event");
 	}
-
-	private array $globalmute_alert_delay;
 
 	/**
 	 * Create a cool-down for the chat

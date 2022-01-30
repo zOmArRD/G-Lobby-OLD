@@ -41,11 +41,6 @@ class GhostlyPlayer extends Player
 	private Scoreboard $scoreboard_session;
 	private ItemManager $itemManager;
 
-	public function getUIProfile(): int
-	{
-		return DeviceData::getUIProfile($this->getName());
-	}
-
 	public function isScoreboard(): bool
 	{
 		return $this->scoreboard;
@@ -59,6 +54,11 @@ class GhostlyPlayer extends Player
 	public function hasClassicProfile(): bool
 	{
 		return $this->getUIProfile() === UIProfile::CLASSIC;
+	}
+
+	public function getUIProfile(): int
+	{
+		return DeviceData::getUIProfile($this->getName());
 	}
 
 	public function hasDifferentLocale(): bool
@@ -75,16 +75,6 @@ class GhostlyPlayer extends Player
 	public function getLangHandler(): LangHandler
 	{
 		return LangHandler::getInstance();
-	}
-
-	public function sendTranslated(string $string, array $replaceable = []): void
-	{
-		$this->sendMessage($this->getTranslation($string, $replaceable));
-	}
-
-	public function getTranslation(string $string, array $replaceable = []): string
-	{
-		return $this->getLang()->getMessage($string, $replaceable);
 	}
 
 	public function onUpdate(int $currentTick): bool
@@ -155,6 +145,15 @@ class GhostlyPlayer extends Player
 		return $this->itemManager;
 	}
 
+	public function teleport_to_lobby(): void
+	{
+		$lobby = Lobby::getInstance();
+
+		if ($lobby !== null) {
+			$this->teleport($lobby->getSpawnPosition(), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
+		}
+	}
+
 	public function isOp(): bool
 	{
 		return Ghostly::getInstance()->getServer()->isOp($this->getName());
@@ -200,35 +199,6 @@ class GhostlyPlayer extends Player
 		$this->transfer($server->getName(), 0, "Transfer to {$server->getName()}");
 	}
 
-	public function teleport_to_lobby(): void
-	{
-		$lobby = Lobby::getInstance();
-
-		if ($lobby !== null) {
-			$this->teleport($lobby->getSpawnPosition(), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
-		}
-	}
-
-	protected function internalSetGameMode(GameMode $gameMode) : void{
-		$this->gamemode = $gameMode;
-
-		$this->allowFlight = true;
-		$this->hungerManager->setEnabled(false);
-
-		if(!$this->isSpectator()) {
-			if ($this->isSurvival()) {
-				$this->setFlying(false);
-			}
-			$this->setSilent(false);
-			$this->checkGroundState(0, 0, 0, 0, 0, 0);
-		} else {
-			$this->setFlying(true);
-			$this->setSilent();
-			$this->onGround = false;
-			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
-		}
-	}
-
 	public function sendSound(int $sound, string $type = "level-sound"): void
 	{
 		switch ($type) {
@@ -241,10 +211,41 @@ class GhostlyPlayer extends Player
 		}
 	}
 
+	public function sendTranslated(string $string, array $replaceable = []): void
+	{
+		$this->sendMessage($this->getTranslation($string, $replaceable));
+	}
+
+	public function getTranslation(string $string, array $replaceable = []): string
+	{
+		return $this->getLang()->getMessage($string, $replaceable);
+	}
+
 	public function closeInventory(): void
 	{
 		$this->sendSound(LevelSoundEvent::DROP_SLOT);
 		$session = InvMenuHandler::getPlayerManager()->get($this);
 		$session->removeCurrentMenu();
+	}
+
+	protected function internalSetGameMode(GameMode $gameMode): void
+	{
+		$this->gamemode = $gameMode;
+
+		$this->allowFlight = true;
+		$this->hungerManager->setEnabled(false);
+
+		if (!$this->isSpectator()) {
+			if ($this->isSurvival()) {
+				$this->setFlying(false);
+			}
+			$this->setSilent(false);
+			$this->checkGroundState(0, 0, 0, 0, 0, 0);
+		} else {
+			$this->setFlying(true);
+			$this->setSilent();
+			$this->onGround = false;
+			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
+		}
 	}
 }

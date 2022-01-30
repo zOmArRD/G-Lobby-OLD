@@ -21,14 +21,14 @@ class UpdateRowQuery extends Query
 		private string $conditionKey,
 		private string $conditionValue,
 		private string $table
-	){}
+	) {}
 
 	public function query(mysqli $mysqli): void
 	{
 		$updates = [];
 		foreach (unserialize($this->updates, array([])) as $key => $value) {
-            $updates[] = "$key='$value'";
-        }
+			$updates[] = "$key='$value'";
+		}
 
 		$mysqli->query("UPDATE $this->table SET " . implode(',', $updates) . " WHERE $this->conditionKey='$this->conditionValue';");
 	}

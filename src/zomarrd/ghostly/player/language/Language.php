@@ -34,7 +34,12 @@ class Language
 		private array  $messages,
 		private array  $item_names,
 		private string $authors
-	){}
+	) {}
+
+	public static function openLangForm(GhostlyPlayer $player): LangForm
+	{
+		return new LangForm($player);
+	}
 
 	public function getNames(): array
 	{
@@ -111,10 +116,5 @@ class Language
 	public function getAuthors(): string
 	{
 		return $this->authors;
-	}
-
-	public static function openLangForm(GhostlyPlayer $player): LangForm
-	{
-		return new LangForm($player);
 	}
 }

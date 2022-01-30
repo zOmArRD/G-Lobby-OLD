@@ -20,26 +20,6 @@ use zomarrd\ghostly\server\ServerManager;
 
 final class LobbySelectorForm
 {
-	public function addServerButton(Server $server, SimpleForm $form): void
-	{
-		$currentServer = ServerManager::getInstance()->getCurrentServer();
-		$text = "§r";
-
-		if ($server->getName() === Ghostly::SERVER) {
-			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}§7]\n§cYou are already connected here!";
-		}
-
-		if ($server->isOnline()) {
-			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§eClick to transfer!";
-		}
-
-		if ($server->isWhitelist()) {
-			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cWHITELISTED";
-		}
-
-		$form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
-	}
-
 	public function build(GhostlyPlayer $player): void
 	{
 		$form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
@@ -71,5 +51,25 @@ final class LobbySelectorForm
 
 		$form->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
 		$player->sendForm($form);
+	}
+
+	public function addServerButton(Server $server, SimpleForm $form): void
+	{
+		$currentServer = ServerManager::getInstance()->getCurrentServer();
+		$text = "§r";
+
+		if ($server->getName() === Ghostly::SERVER) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}§7]\n§cYou are already connected here!";
+		}
+
+		if ($server->isOnline()) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§eClick to transfer!";
+		}
+
+		if ($server->isWhitelist()) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cWHITELISTED";
+		}
+
+		$form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
 	}
 }

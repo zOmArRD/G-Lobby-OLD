@@ -19,7 +19,7 @@ final class InsertQuery extends Query
 
 	public function __construct(
 		private string $query
-	){}
+	) {}
 
 	public function query(mysqli $mysqli): void
 	{

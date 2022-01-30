@@ -36,11 +36,11 @@ final class EntityCreateCommand extends BaseSubCommand
 				Entity::ENTITY()->entity_discord($sender);
 				break;
 			case "store":
-			Entity::ENTITY()->entity_store($sender);
+				Entity::ENTITY()->entity_store($sender);
 				break;
 			case "zomarrd":
 				Entity::ENTITY()->spawn_zOmArRD($sender);
-			break;
+				break;
 			case "lucy":
 				Entity::ENTITY()->spawn_Lucy($sender);
 				break;
@@ -51,16 +51,16 @@ final class EntityCreateCommand extends BaseSubCommand
 				Entity::ENTITY()->npc_practice($sender);
 				break;
 			case "uhc":
-			Entity::ENTITY()->npc_uhc($sender);
+				Entity::ENTITY()->npc_uhc($sender);
 				break;
 			case "uhcrun":
 				Entity::ENTITY()->npc_uhc_run($sender);
 				break;
 			case "hcf":
-			Entity::ENTITY()->npc_hcf($sender);
+				Entity::ENTITY()->npc_hcf($sender);
 				break;
 			case "kitmap":
-			Entity::ENTITY()->npc_kitmap($sender);
+				Entity::ENTITY()->npc_kitmap($sender);
 				break;
 			default:
 				$sender->sendMessage(PREFIX . "§cThis entity does not exist!");

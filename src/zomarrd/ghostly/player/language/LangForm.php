@@ -18,12 +18,15 @@ final class LangForm
 {
 	public function __construct(
 		private GhostlyPlayer $player
-	){$this->showForm();}
+	)
+	{
+		$this->showForm();
+	}
 
 	public function showForm(): void
 	{
 		$player = $this->getPlayer();
-		$form = new SimpleForm(static function(Ghostlyplayer $player, $data) {
+		$form = new SimpleForm(static function (Ghostlyplayer $player, $data) {
 			if (isset($data)) {
 				if ($data === 'close') {
 					return;
@@ -48,7 +51,7 @@ final class LangForm
 		$form->setTitle($player->getTranslation(LangKey::SET_LANGUAGE));
 		$form->setContent($player->getTranslation(LangKey::AVAILABLE_LANGUAGE));
 
-		foreach($player->getLangHandler()->getLanguages() as $lang) {
+		foreach ($player->getLangHandler()->getLanguages() as $lang) {
 			$form->addButton('§9' . $lang->getName(), $form::IMAGE_TYPE_NULL, '', $lang->getLocale() . "-{$lang->getName()}");
 		}
 

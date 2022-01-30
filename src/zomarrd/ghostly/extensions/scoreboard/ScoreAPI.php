@@ -7,7 +7,7 @@
  *
  * Copyright © 2021 GhostlyMC Network - All Rights Reserved.
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace zomarrd\ghostly\extensions\scoreboard;
 
@@ -29,11 +29,6 @@ abstract class ScoreAPI extends IPlayer
 	{
 		$this->displayPacket = new SetDisplayObjectivePacket();
 		parent::__construct($player);
-	}
-
-	public function getDisplayPacket(): SetDisplayObjectivePacket
-	{
-		return $this->displayPacket;
 	}
 
 	public function removeObjectiveName(): void
@@ -71,6 +66,11 @@ abstract class ScoreAPI extends IPlayer
 	public function getObjectiveName(): string
 	{
 		return $this->objectiveName[$this->getPlayerName()];
+	}
+
+	public function getDisplayPacket(): SetDisplayObjectivePacket
+	{
+		return $this->displayPacket;
 	}
 
 	public function setObjectiveName(string $objectiveName): void

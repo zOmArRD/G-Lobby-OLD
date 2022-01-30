@@ -19,11 +19,6 @@ use zomarrd\ghostly\player\language\LangKey;
 
 final class LangListCommand extends BaseSubCommand
 {
-	protected function prepare(): void
-	{
-		// NOOP :)
-	}
-
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		$line = str_repeat('-----', 3);
@@ -41,5 +36,10 @@ final class LangListCommand extends BaseSubCommand
 		}
 
 		$sender->sendMessage($line . $line);
+	}
+
+	protected function prepare(): void
+	{
+		// NOOP :)
 	}
 }

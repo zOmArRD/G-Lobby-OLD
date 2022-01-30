@@ -33,21 +33,6 @@ final class ServerManager
 		$this->init();
 	}
 
-	public static function getInstance(): ServerManager
-	{
-		return self::$instance;
-	}
-
-	public function getCurrentServer(): ?Server
-	{
-		return $this->current_server;
-	}
-
-	public function getServers(): array
-	{
-		return $this->servers;
-	}
-
 	public function init(): void
 	{
 		$cServerName = $this->getCurrentServerName();
@@ -71,7 +56,6 @@ final class ServerManager
 		return Ghostly::SERVER;
 	}
 
-
 	public function reloadServers(GhostlyPlayer $player = null): void
 	{
 		$this->servers = [];
@@ -92,6 +76,21 @@ final class ServerManager
 					$player?->sendMessage(PREFIX . "The server ({$server->getName()}) has been registered in the database!");
 				}
 			});
+	}
+
+	public function getCurrentServer(): ?Server
+	{
+		return $this->current_server;
+	}
+
+	public function getServers(): array
+	{
+		return $this->servers;
+	}
+
+	public static function getInstance(): ServerManager
+	{
+		return self::$instance;
 	}
 
 	public function getServerByName(string $name): ?Server
