@@ -15,7 +15,7 @@ use pocketmine\scheduler\Task;
 use zomarrd\ghostly\entity\Entity;
 use zomarrd\ghostly\menu\Menu;
 
-final class GlobalTask extends Task
+final class  GlobalTask extends Task
 {
 	/*protected $int = 0;
 	private array $armors;*/

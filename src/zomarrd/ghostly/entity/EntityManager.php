@@ -30,6 +30,8 @@ use zomarrd\ghostly\world\Lobby;
 
 final class EntityManager
 {
+	private int $count = 0;
+
 	public function register(): void
 	{
 		EntityFactory::getInstance()->register(HumanType::class, function (World $world, CompoundTag $tag): HumanType {
@@ -91,6 +93,24 @@ final class EntityManager
 			$entity->kill();
 			$this->kill_text($npcId);
 			$this->kill_text($npcId . Entity::EXTRA);
+		}
+	}
+
+	public function kill_text(string $textId): void
+	{
+		$lobby = Lobby::getInstance();
+		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
+
+		if (!isset($world)) {
+			return;
+		}
+
+		foreach ($world->getEntities() as $entity) {
+			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
+				continue;
+			}
+
+			$entity->kill();
 		}
 	}
 
@@ -436,8 +456,6 @@ final class EntityManager
 		}
 	}
 
-	private int $count = 0;
-
 	public function update_server_status(): void
 	{
 		$lobby = Lobby::getInstance();
@@ -664,24 +682,6 @@ final class EntityManager
 		}
 
 		$this->count++;
-	}
-
-	public function kill_text(string $textId): void
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-
-		if (!isset($world)) {
-			return;
-		}
-
-		foreach ($world->getEntities() as $entity) {
-			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
-				continue;
-			}
-
-			$entity->kill();
-		}
 	}
 
 	public function exist_text(string $textId): bool

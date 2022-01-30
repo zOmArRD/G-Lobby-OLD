@@ -38,6 +38,27 @@ class LobbySelectorGUI extends Chest
 		parent::build($player);
 	}
 
+	public function addLobbyServers(): void
+	{
+		$slot = 10;
+		$servers = $this->getServerManager()->getServers();
+		$current = $this->getServerManager()->getCurrentServer();
+
+		if (isset($current)) {
+			$this->addServer($current, $slot);
+			$slot++;
+		}
+
+		foreach ($servers as $server) {
+			if ($server->getCategory() !== "Lobby") {
+				continue;
+			}
+
+			$this->addServer($server, $slot);
+			$slot++;
+		}
+	}
+
 	/**
 	 * @param Server $server
 	 * @param int    $slot
@@ -67,26 +88,5 @@ class LobbySelectorGUI extends Chest
 			$player->closeInventory();
 			$player->transferTo($server);
 		}), $slot);
-	}
-
-	public function addLobbyServers(): void
-	{
-		$slot = 10;
-		$servers = $this->getServerManager()->getServers();
-		$current = $this->getServerManager()->getCurrentServer();
-
-		if (isset($current)) {
-			$this->addServer($current, $slot);
-			$slot++;
-		}
-
-		foreach ($servers as $server) {
-			if ($server->getCategory() !== "Lobby") {
-				continue;
-			}
-
-			$this->addServer($server, $slot);
-			$slot++;
-		}
 	}
 }

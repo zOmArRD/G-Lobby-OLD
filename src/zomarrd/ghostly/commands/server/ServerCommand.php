@@ -26,15 +26,15 @@ final class ServerCommand extends BaseCommand
 		parent::__construct($plugin, 'server', 'Server Administration');
 	}
 
-	protected function prepare(): void
-	{
-		// TODO: Implement prepare() method.
-	}
-
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		if ($sender instanceof GhostlyPlayer) {
 			Menu::SERVER_MANAGER_FORM()->build($sender);
 		}
+	}
+
+	protected function prepare(): void
+	{
+		// TODO: Implement prepare() method.
 	}
 }

@@ -27,9 +27,30 @@ final class Lobby
 		private float|int $spawnYaw,
 		private float|int $spawnPitch,
 		private int       $minVoid
-	){
+	)
+	{
 		self::$instance = $this;
 		$this->spawn = new Position($this->getSpawnX(), $this->getSpawnY(), $this->getSpawnZ(), $this->getWorld());
+	}
+
+	public function getSpawnX(): float|int
+	{
+		return $this->spawnX;
+	}
+
+	public function getSpawnY(): float|int
+	{
+		return $this->spawnY;
+	}
+
+	public function getSpawnZ(): float|int
+	{
+		return $this->spawnZ;
+	}
+
+	public function getWorld(): World
+	{
+		return $this->world;
 	}
 
 	/**
@@ -43,11 +64,6 @@ final class Lobby
 	public function getDisplayName(): string
 	{
 		return $this->getWorld()->getDisplayName();
-	}
-
-	public function getWorld(): World
-	{
-		return $this->world;
 	}
 
 	public function getFolderName(): string
@@ -73,20 +89,5 @@ final class Lobby
 	public function getSpawnPosition(): Position
 	{
 		return $this->spawn;
-	}
-
-	public function getSpawnX(): float|int
-	{
-		return $this->spawnX;
-	}
-
-	public function getSpawnY(): float|int
-	{
-		return $this->spawnY;
-	}
-
-	public function getSpawnZ(): float|int
-	{
-		return $this->spawnZ;
 	}
 }

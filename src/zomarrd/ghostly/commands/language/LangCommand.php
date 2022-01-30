@@ -25,6 +25,16 @@ final class LangCommand extends BaseCommand
 		parent::__construct($plugin, $name, "Change language", ['idioma', 'language']);
 	}
 
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
+	{
+		if ($sender instanceof GhostlyPlayer && count($args) === 0) {
+			Language::openLangForm($sender);
+			return;
+		}
+
+		$this->sendUsage();
+	}
+
 	protected function prepare(): void
 	{
 		$this->registerSubCommand(
@@ -40,15 +50,5 @@ final class LangCommand extends BaseCommand
 				"Set your language, or someone else's"
 			)
 		);
-	}
-
-	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
-	{
-		if ($sender instanceof GhostlyPlayer && count($args) === 0) {
-			Language::openLangForm($sender);
-			return;
-		}
-
-		$this->sendUsage();
 	}
 }

@@ -39,17 +39,17 @@ class Scoreboard extends ScoreAPI
 		$this->count++;
 	}
 
+	private function getConfig()
+	{
+		return ConfigManager::getServerConfig()?->get('scoreboard');
+	}
+
 	private function updateScoreboard(): void
 	{
 		foreach ($this->getConfig()['lines'] as $line => $string) {
 			$msg = $this->replaceData($line, (string)$string);
 			$this->setLine($line, $msg);
 		}
-	}
-
-	private function getConfig()
-	{
-		return ConfigManager::getServerConfig()?->get('scoreboard');
 	}
 
 	public function replaceData(int $line, string $string): string

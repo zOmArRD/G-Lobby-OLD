@@ -21,15 +21,17 @@ use pocketmine\network\mcpe\protocol\types\skin\SkinData;
 use pocketmine\network\mcpe\protocol\types\skin\SkinImage;
 use zomarrd\ghostly\network\login\LoginClientData;
 
-class ClientDataToSkinDataHelper{
+class ClientDataToSkinDataHelper
+{
 
 	/**
 	 * @throws \InvalidArgumentException
 	 */
-	public static function fromClientData(LoginClientData $clientData) : SkinData{
+	public static function fromClientData(LoginClientData $clientData): SkinData
+	{
 		/** @var SkinAnimation[] $animations */
 		$animations = [];
-		foreach($clientData->AnimatedImageData as $k => $animation){
+		foreach ($clientData->AnimatedImageData as $k => $animation) {
 			$animations[] = new SkinAnimation(
 				new SkinImage(
 					$animation->ImageHeight,
@@ -55,10 +57,10 @@ class ClientDataToSkinDataHelper{
 			null,
 			$clientData->ArmSize,
 			$clientData->SkinColor,
-			array_map(static function(ClientDataPersonaSkinPiece $piece) : PersonaSkinPiece{
+			array_map(static function (ClientDataPersonaSkinPiece $piece): PersonaSkinPiece {
 				return new PersonaSkinPiece($piece->PieceId, $piece->PieceType, $piece->PackId, $piece->IsDefault, $piece->ProductId);
 			}, $clientData->PersonaPieces),
-			array_map(static function(ClientDataPersonaPieceTintColor $tint) : PersonaPieceTintColor{
+			array_map(static function (ClientDataPersonaPieceTintColor $tint): PersonaPieceTintColor {
 				return new PersonaPieceTintColor($tint->PieceType, $tint->Colors);
 			}, $clientData->PieceTintColors),
 			true,
@@ -72,9 +74,10 @@ class ClientDataToSkinDataHelper{
 	/**
 	 * @throws \InvalidArgumentException
 	 */
-	private static function safeB64Decode(string $base64, string $context) : string{
+	private static function safeB64Decode(string $base64, string $context): string
+	{
 		$result = base64_decode($base64, true);
-		if($result === false){
+		if ($result === false) {
 			throw new InvalidArgumentException("$context: Malformed base64, cannot be decoded");
 		}
 		return $result;

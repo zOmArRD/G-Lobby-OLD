@@ -85,7 +85,7 @@ final class LangHandler
 			if (!$language->hasName($name, $locale)) {
 				continue;
 			}
-			
+
 			return $language;
 		}
 

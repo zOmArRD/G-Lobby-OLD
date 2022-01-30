@@ -80,6 +80,30 @@ final class ItemInteractListener implements Listener
 		}
 	}
 
+	public function handleInteract(GhostlyPlayer $player, Item $item): void
+	{
+		$itemManager = $player->getItemManager();
+		$itemId = $item->getNamedTag()->getString("itemId", "");
+		switch ($itemId) {
+			case "item-lobby":
+				if ($player->hasClassicProfile()) {
+					Menu::LOBBY_SELECTOR_GUI()->build($player);
+				} else {
+					Menu::LOBBY_SELECTOR_FORM()->build($player);
+				}
+				$player->sendSound(LevelSoundEvent::DROP_SLOT);
+				break;
+			case "item-servers":
+				if ($player->hasClassicProfile()) {
+					Menu::SERVER_SELECTOR_GUI()->send($player);
+				} else {
+					/*TODO SEND THE MENU IN FORM EDITION*/
+				}
+				$player->sendSound(LevelSoundEvent::DROP_SLOT);
+				break;
+		}
+	}
+
 	public function slot_change(InventoryTransactionEvent $event): void
 	{
 		$player = $event->getTransaction()->getSource();
@@ -122,29 +146,5 @@ final class ItemInteractListener implements Listener
 		$this->handleInteract($player, $item);
 
 		$this->item_cooldown[$pn] = time();
-	}
-
-	public function handleInteract(GhostlyPlayer $player, Item $item): void
-	{
-		$itemManager = $player->getItemManager();
-		$itemId = $item->getNamedTag()->getString("itemId", "");
-		switch ($itemId) {
-			case "item-lobby":
-				if ($player->hasClassicProfile()) {
-					Menu::LOBBY_SELECTOR_GUI()->build($player);
-				} else {
-					Menu::LOBBY_SELECTOR_FORM()->build($player);
-				}
-				$player->sendSound(LevelSoundEvent::DROP_SLOT);
-				break;
-			case "item-servers":
-				if ($player->hasClassicProfile()) {
-					Menu::SERVER_SELECTOR_GUI()->send($player);
-				} else {
-					/*TODO SEND THE MENU IN FORM EDITION*/
-				}
-				$player->sendSound(LevelSoundEvent::DROP_SLOT);
-				break;
-		}
 	}
 }

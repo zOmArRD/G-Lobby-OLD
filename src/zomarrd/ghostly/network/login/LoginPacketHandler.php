@@ -86,9 +86,8 @@ final class LoginPacketHandler extends PacketHandler
 		$property = $class->getProperty("ip");
 		$property->setAccessible(true);
 
-		if (isset($clientData->Waterdog_IP, $clientData->Waterdog_XUID)) {
+		if (isset($clientData->Waterdog_IP, $clientData->Waterdog_XUID, $extraData->XUID)) {
 			$property->setValue($this->session, $clientData->Waterdog_IP);
-			$xuid = $clientData->Waterdog_XUID;
 		} else {
 			$this->session->disconnect(PREFIX . "Login without proxy is not allowed!");
 			return true;
