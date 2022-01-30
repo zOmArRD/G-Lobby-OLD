@@ -24,6 +24,7 @@ use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\network\mcpe\raklib\RakLibInterface;
 use pocketmine\player\PlayerInfo;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use zomarrd\ghostly\commands\entity\EntityCommand;
 use zomarrd\ghostly\commands\language\LangCommand;
@@ -52,6 +53,7 @@ final class Ghostly extends PluginBase
 	public static array $colors;
 	public static bool $is_proxy_server = true;
 	private static bool $globalMute = false;
+	public static Config $server_items;
 
 	public static function getInstance(): Ghostly
 	{
@@ -86,6 +88,7 @@ final class Ghostly extends PluginBase
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
 		self::$colors = json_decode(file_get_contents($this->getFile() . "resources/colors.json"), true, 512, JSON_THROW_ON_ERROR);
+		self::$server_items = new Config($this->getFile() . "resources/servers_items.yml");
 
 		if (!extension_loaded('mysqli')) {
 			throw new ExtensionMissing("mysqli");

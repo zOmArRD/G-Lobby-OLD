@@ -20,7 +20,7 @@ if (file_exists($file_phar)) {
 $files = [];
 $dir = getcwd() . DIRECTORY_SEPARATOR;
 
-$exclusions = ["vendor", ".target", "make-phar.php", "github", ".gitignore", "composer.json", "composer.lock", "build", ".git", ".lib", ".poggit.yml", ".idea", "README.md"];
+$exclusions = ["vendor", ".target", "make-phar.php", "github", ".gitignore", "composer.json", "composer.lock", "buildclass", ".git", ".lib", ".poggit.yml", ".idea", "README.md"];
 
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir)) as $path => $file) {
     $bool = true;

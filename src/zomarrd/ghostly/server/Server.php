@@ -18,6 +18,13 @@ use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
 
 final class Server
 {
+	public const PRACTICE = "Practice";
+	public const COMBO = "Combo";
+	public const UHC = "UHC";
+	public const UHC_RUN = "UHC_RUN";
+	public const HCF = "HCF";
+	public const KITMAP = "KITMAP";
+
 	public function __construct(
 		private string      $server_name,
 		private int         $players,

@@ -15,10 +15,10 @@ use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
 use muqsit\invmenu\transaction\InvMenuTransactionResult;
 use muqsit\invmenu\type\InvMenuTypeIds;
-use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use zomarrd\ghostly\player\GhostlyPlayer;
-use zomarrd\ghostly\server\ServerManager;
+use zomarrd\ghostly\server\Server;
+use zomarrd\ghostly\server\ServerItems;
 use zomarrd\ghostly\utils\menu\MenuButton;
 
 final class ServerSelectorGui
@@ -68,363 +68,65 @@ final class ServerSelectorGui
 	{
 		$cooldown = $this->item_cooldown;
 
-		$this->addButton(new MenuButton($this->getFormattedItem('Practice', VanillaItems::DIAMOND_SWORD()), function (GhostlyPlayer $player) use ($cooldown): void {
+		$this->addButton(new MenuButton(ServerItems::get(Server::PRACTICE, VanillaItems::DIAMOND_SWORD()), function (GhostlyPlayer $player) use ($cooldown): void {
 			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
 			$player->closeInventory();
-			$player->transferTo('Practice');
+			$player->transferTo(Server::PRACTICE);
 			$cooldown[$player->getName()] = time();
 		}), 12);
 
-		$this->addButton(new MenuButton($this->getFormattedItem('Combo', VanillaItems::ENDER_PEARL()), function (GhostlyPlayer $player): void {
+		$this->addButton(new MenuButton(ServerItems::get(Server::COMBO, VanillaItems::ENDER_PEARL()), function (GhostlyPlayer $player): void {
 			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
 			$player->closeInventory();
-			$player->transferTo('Combo');
+			$player->transferTo(Server::COMBO);
 			$cooldown[$player->getName()] = time();
 		}), 14);
 
-		$this->addButton(new MenuButton($this->getFormattedItem('HCF', VanillaItems::DIAMOND_PICKAXE()), function (GhostlyPlayer $player): void {
+		$this->addButton(new MenuButton(ServerItems::get(Server::HCF, VanillaItems::DIAMOND_PICKAXE()), function (GhostlyPlayer $player): void {
 			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
 			$player->closeInventory();
-			$player->transferTo('HCF');
+			$player->transferTo(Server::HCF);
 			$cooldown[$player->getName()] = time();
 		}), 38);
 
-		$this->addButton(new MenuButton($this->getFormattedItem('KITMAP', VanillaItems::GOLDEN_PICKAXE()), function (GhostlyPlayer $player): void {
+		$this->addButton(new MenuButton(ServerItems::get(Server::KITMAP, VanillaItems::GOLDEN_PICKAXE()), function (GhostlyPlayer $player): void {
 			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
 			$player->closeInventory();
-			$player->transferTo('KITMAP');
+			$player->transferTo(Server::KITMAP);
 			$cooldown[$player->getName()] = time();
 		}), 39);
 
-		$this->addButton(new MenuButton($this->getFormattedItem('UHC', VanillaItems::GOLDEN_APPLE()), function (GhostlyPlayer $player): void {
+		$this->addButton(new MenuButton(ServerItems::get(Server::UHC, VanillaItems::GOLDEN_APPLE()), function (GhostlyPlayer $player): void {
 			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
 			$player->closeInventory();
-			$player->transferTo('UHC');
+			$player->transferTo(Server::UHC);
 			$cooldown[$player->getName()] = time();
 		}), 41);
 
-		$this->addButton(new MenuButton($this->getFormattedItem('UHC_RUN', VanillaItems::APPLE()), function (GhostlyPlayer $player): void {
+		$this->addButton(new MenuButton(ServerItems::get(Server::UHC_RUN, VanillaItems::APPLE()), function (GhostlyPlayer $player): void {
 			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
 				return;
 			}
 
 			$player->closeInventory();
-			$player->transferTo('UHC_RUN');
+			$player->transferTo(Server::UHC_RUN);
 			$cooldown[$player->getName()] = time();
 		}), 42);
-	}
-
-	/**
-	 * @param string $server_name
-	 * @param Item   $item
-	 *
-	 * @return Item
-	 * @todo Create the items in a more optimal way in the future!
-	 */
-	public function getFormattedItem(string $server_name, Item $item): Item
-	{
-		$items = [];
-		$server = ServerManager::getInstance()->getServerByName($server_name);
-
-		$item->setCustomName("§r§c§l" . $server_name);
-
-		$item->setLore(
-			[
-				"§r§8Competitive \n\n" .
-				"§cThis server is currently in development!"
-			]
-		);
-
-		if (!isset($server)) {
-			return $item;
-		}
-		$br = "\n";
-
-		switch ($server->getName()) {
-			case "Practice":
-				$item->setCustomName("§r§l§c" . "Practice");
-
-				if (!$server->isOnline()) {
-					$item->setLore(
-						[
-							"§r§8Competitive $br$br" .
-							"§f· Ranked & UnRanked Matches $br" .
-							"· Leaderboard Prize $br" .
-							"· Tournaments & Events $br" .
-							"· Parties & HCF Team Fight $br$br" .
-							"§6#1 §7Global ELO: §f$?? USD §9Pay§bPal$br" .
-							"#2 §7Global ELO: §f??? §6G-Coins$br" .
-							"#3 §7Global ELO: §f??? §6G-Coins$br$br" .
-							"§c" . "This server is currently offline!"
-						]
-					);
-					break;
-				}
-
-				if ($server->isWhitelist()) {
-					$item->setLore(
-						[
-							"§r§8Competitive $br$br" .
-							"§f· Ranked & UnRanked Matches $br" .
-							"· Leaderboard Prize $br" .
-							"· Tournaments & Events $br" .
-							"· Parties & HCF Team Fight $br$br" .
-							"§6#1 §7Global ELO: §f$?? USD §9Pay§bPal$br" .
-							"#2 §7Global ELO: §f??? §6G-Coins$br" .
-							"#3 §7Global ELO: §f??? §6G-Coins$br$br" .
-							"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-							"§cWHITELISTED"
-						]
-					);
-					break;
-				}
-
-				$item->setLore(
-					[
-						"§r§8Competitive $br$br" .
-						"§f· Ranked & UnRanked Matches $br" .
-						"· Leaderboard Prize $br" .
-						"· Tournaments & Events $br" .
-						"· Parties & HCF Team Fight $br$br" .
-						"§6#1 §7Global ELO: §f$?? USD §9Pay§bPal$br" .
-						"#2 §7Global ELO: §f1000 §6G-Coins$br" .
-						"#3 §7Global ELO: §f500 §6G-Coins$br$br" .
-						"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-						"§eClick to join to Practice."
-					]
-				);
-				break;
-
-			case "Combo":
-				$item->setCustomName("§r§l§c" . "Combo");
-
-				if (!$server->isOnline()) {
-					$item->setLore(
-						[
-							"§r§8Competitive $br$br" .
-							"§f· Custom Kits $br" .
-							"· Leaderboard $br" .
-							"· Kill-Streak & Bounties $br$br" .
-							"§6#1 §7Top Kills: 1000 §6G-Coins$br$br" .
-							"§c" . "This server is currently offline!"
-						]
-					);
-					break;
-				}
-
-				if ($server->isWhitelist()) {
-					$item->setLore(
-						[
-							"§r§8Competitive $br$br" .
-							"§f· Custom Kits $br" .
-							"· Leaderboard $br" .
-							"· Kill-Streak & Bounties $br$br" .
-							"§6#1 §7Top Kills: 1000 §6G-Coins$br$br" .
-							"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-							"§cWHITELISTED"
-						]
-					);
-					break;
-				}
-
-				$item->setLore(
-					[
-						"§r§8Competitive $br$br" .
-						"§f· Custom Kits $br" .
-						"· Leaderboard $br" .
-						"· Kill-Streak & Bounties $br$br" .
-						"§6#1 §7Top Kills: 1000 §6G-Coins$br$br" .
-						"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-						"§eClick to join to Practice."
-					]
-				);
-				break;
-
-			case "HCF":
-				$item->setCustomName("§r§l§c" . "HCF");
-
-				if (!$server->isOnline()) {
-					$item->setLore(
-						[
-							"§r§8Hardcore $br$br" .
-							"§7Map Information:§f$br" .
-							"· 20 Members, 0 Ally$br" .
-							"· Sharpness I, Protection I, Power III$br$br" .
-							"§aSOTW: §f01/??/2022 §7| 17:00pm CENTRAL TIME$br" .
-							"§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME$br$br" .
-							"§6#1 §7F-Top: §f5000 §6G-Coins$br" .
-							"§6#1 §7Top Kills: §f30000 §6G-Coins$br$br" .
-							"§c" . "This server is currently offline!"
-						]
-					);
-					break;
-				}
-
-				if ($server->isWhitelist()) {
-					$item->setLore(
-						[
-							"§r§8Hardcore $br$br" .
-							"§7Map Information:§f$br" .
-							"· 20 Members, 0 Ally$br" .
-							"· Sharpness I, Protection I, Power III$br$br" .
-							"§aSOTW: §f01/??/2022 §7| 17:00pm CENTRAL TIME$br" .
-							"§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME$br$br" .
-							"§6#1 §7F-Top: §f5000 §6G-Coins$br" .
-							"§6#1 §7Top Kills: §f30000 §6G-Coins$br$br" .
-							"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-							"§cWHITELISTED"
-						]
-					);
-					break;
-				}
-
-				$item->setLore(
-					[
-						"§r§8Hardcore $br$br" .
-						"§7Map Information:§f$br" .
-						"· 20 Members, 0 Ally$br" .
-						"· Sharpness I, Protection I, Power III$br$br" .
-						"§aSOTW: §f01/??/2022 §7| 17:00pm CENTRAL TIME$br" .
-						"§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME$br$br" .
-						"§6#1 §7F-Top: §f5000 §6G-Coins$br" .
-						"§6#1 §7Top Kills: §f2000 §6G-Coins$br$br" .
-						"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-						"§eClick to join to Practice."
-					]
-				);
-				break;
-
-			case "KITMAP":
-				$item->setCustomName("§r§l§c" . "KitMap");
-
-				if (!$server->isOnline()) {
-					$item->setLore(
-						[
-							"§r§8Competitive $br$br" .
-							"§7Map Information:§f$br" .
-							"· 20 Members, 1 Ally$br" .
-							"· Sharpness I, Protection I, Power III$br$br" .
-							"§aSOTW: §f01/??/2022 §7| 17:00pm CENTRAL TIME$br" .
-							"§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME$br$br" .
-							"§6#1 §7F-Top: §f3500 §6G-Coins$br" .
-							"§6#1 §7Top Kills: §f2000 §6G-Coins$br$br" .
-							"§c" . "This server is currently offline!"
-						]
-					);
-					break;
-				}
-
-				if ($server->isWhitelist()) {
-					$item->setLore(
-						[
-							"§r§8Competitive $br$br" .
-							"§7Map Information:§f$br" .
-							"· 20 Members, 1 Ally$br" .
-							"· Sharpness I, Protection I, Power III$br$br" .
-							"§aSOTW: §f01/??/2022 §7| 17:00pm CENTRAL TIME$br" .
-							"§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME$br$br" .
-							"§6#1 §7F-Top: §f3500 §6G-Coins$br" .
-							"§6#1 §7Top Kills: §f2000 §6G-Coins$br$br" .
-							"§cWHITELISTED"
-						]
-					);
-					break;
-				}
-
-				$item->setLore(
-					[
-						"§r§8Competitive $br$br" .
-						"§7Map Information:§f$br" .
-						"· 20 Members, 1 Ally$br" .
-						"· Sharpness I, Protection I, Power III$br$br" .
-						"§aSOTW: §f01/??/2022 §7| 17:00pm CENTRAL TIME$br" .
-						"§4EOTW: §f24/??/2022 §7| 17:00pm CENTRAL TIME$br$br" .
-						"§6#1 §7F-Top: §f3500 §6G-Coins$br" .
-						"§6#1 §7Top Kills: §f2000 §6G-Coins$br$br" .
-						"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-						"§eClick to join to Practice."
-					]
-				);
-				break;
-
-			case "UHC":
-				$item->setCustomName("§r§l§c" . "UHC");
-
-				if (!$server->isOnline()) {
-					$item->setLore(
-						[
-							"§r§8Hardcore $br$br" .
-							"§f· Cool scenarios (+??)$br" .
-							"· Leaderboard Prize $br" .
-							"· FFA & Teams games $br$br" .
-							"§6#1 §7Top Kills: 4000 §6G-Coins$br$br" .
-							"§c" . "This server is currently offline!"
-						]
-					);
-					break;
-				}
-
-				if ($server->isWhitelist()) {
-					$item->setLore(
-						[
-							"§r§8Hardcore $br$br" .
-							"§f· Cool scenarios (+??)$br" .
-							"· Leaderboard Prize $br" .
-							"· FFA & Teams games $br$br" .
-							"§6#1 §7Top Kills: 4000 §6G-Coins$br$br" .
-							"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-							"§cWHITELISTED"
-						]
-					);
-					break;
-				}
-
-				$item->setLore(
-					[
-						"§r§8Hardcore $br$br" .
-						"§f· Cool scenarios (+??)$br" .
-						"· Leaderboard Prize $br" .
-						"· FFA & Teams games $br$br" .
-						"§6#1 §7Top Kills: 4000 §6G-Coins$br$br" .
-						"§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()} $br$br" .
-						"§eClick to join to Practice."
-					]
-				);
-				break;
-
-			case "UHC_RUN":
-				$item->setCustomName("§r§l§c" . "UHC Run");
-
-				$item->setLore(
-					[
-						"§r§8Competitive $br$br" .
-						"§cThis server is currently in development!"
-					]
-				);
-				break;
-		}
-
-		return $item;
-	}
-
-	public function send(GhostlyPlayer $player): void
-	{
-		$this->getMenu()->send($player);
 	}
 
 	/**
