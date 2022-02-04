@@ -23,32 +23,33 @@ final class ServerManagerForm
 	public function build(GhostlyPlayer $player): void
 	{
 		$form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
-			if (isset($data)) {
-				switch ($data) {
-					case "reload_servers":
-						ServerManager::getInstance()->reloadServers($player);
-						$player->sendMessage(PREFIX . "Servers have been reloaded from the database!");
-						break;
-					case "proxy_detect":
-						$form = new CustomForm(function (GhostlyPlayer $player, $data): void {
-							$value = $data[0];
-							$default_value = ConfigManager::getServerConfig()->get('proxy_detect');
-							if ($default_value === $value) {
-								$player->sendMessage(sprintf("%s§cThis option seems to be already activated!", PREFIX));
-								return;
-							}
+			if (!isset($data)) {
+				return;
+			}
 
-							$player->sendMessage(sprintf("%sProxy Detector is enabled: §a %s", PREFIX, $value ? "true" : "false"));
-							ConfigManager::getServerConfig()->set('proxy_detect', $value);
-							ConfigManager::getServerConfig()->save();
-						});
-						$form->setTitle("Proxy Detector");
-						$form->addToggle("is enabled?", ConfigManager::getServerConfig()->get('proxy_detect'));
-						$player->sendForm($form);
-						break;
-					default:
-						return;
-				}
+			switch ($data) {
+				case "reload_servers":
+					ServerManager::getInstance()->reloadServers($player);
+					$player->sendMessage(PREFIX . "Servers have been reloaded from the database!");
+					break;
+				case "proxy_detect":
+					$form = new CustomForm(function (GhostlyPlayer $player, $data): void {
+						$value = $data[0];
+						$default_value = ConfigManager::getServerConfig()->get('proxy_detect');
+						if ($default_value === $value) {
+							$player->sendMessage(sprintf("%s§cThis option seems to be already activated!", PREFIX));
+							return;
+						}
+
+						$player->sendMessage(sprintf("%sProxy Detector is enabled: §a %s", PREFIX, $value ? "true" : "false"));
+						ConfigManager::getServerConfig()->set('proxy_detect', $value);
+						ConfigManager::getServerConfig()->save();
+					});
+
+					$form->setTitle("Proxy Detector");
+					$form->addToggle("is enabled?", ConfigManager::getServerConfig()->get('proxy_detect'));
+					$player->sendForm($form);
+					break;
 			}
 		});
 

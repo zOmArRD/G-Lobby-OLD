@@ -139,7 +139,7 @@ final class ItemInteractListener implements Listener
 		$item = $event->getItem();
 		$block = $event->getBlock();
 
-		if (isset($this->item_cooldown[$pn]) && time() - $this->item_cooldown[$pn] < 2) {
+		if ($player->hasCooldown(2)) {
 			return;
 		}
 
@@ -149,6 +149,6 @@ final class ItemInteractListener implements Listener
 
 		$this->handleInteract($player, $item);
 
-		$this->item_cooldown[$pn] = time();
+		$player->setCooldown();
 	}
 }

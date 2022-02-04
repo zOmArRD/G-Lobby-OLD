@@ -68,7 +68,7 @@ final class AntiProxy extends AsyncTask
 		$xuid = $this->getPlayer()->getXuid();
 
 		if (!$this->getPlayer()->hasPermission(PermissionKey::GHOSTLY_PROXY_BYPASS)) {
-			if ($security->vpn || $security->tor || $security->relay || $security->proxy) {
+			if ($security->vpn || $security->tor || $security->proxy) {
 				$this->getPlayer()->disconnect(PREFIX . "We do not accept VPN on our network, if you want to enter with VPN buy rank!");
 			}
 		}
@@ -89,8 +89,7 @@ final class AntiProxy extends AsyncTask
 								"region" => $location->region,
 								"country" => $location->country,
 								"continent" => $location->continent
-							]),
-							"xuid", $xuid, "player_location")
+							]), "xuid", $xuid, "player_location")
 					);
 				}
 			}

@@ -29,8 +29,6 @@ final class ServerSelectorGui
 	/** @var array<int, MenuButton> */
 	private array $buttons = [];
 
-	private array $item_cooldown = [];
-
 	public function register(): void
 	{
 		$this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName("Server Selector")
@@ -67,69 +65,37 @@ final class ServerSelectorGui
 
 	public function prepare(): void
 	{
-		$cooldown = $this->item_cooldown;
-
-		$this->addButton(new MenuButton(ServerItems::get(Server::PRACTICE, VanillaItems::DIAMOND_SWORD()), function (GhostlyPlayer $player) use ($cooldown): void {
-			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
-				return;
-			}
-
-			$player->closeInventory();
-			$player->transferTo(Server::PRACTICE);
-			$cooldown[$player->getName()] = time();
+		$this->addButton(new MenuButton(ServerItems::get(Server::PRACTICE, VanillaItems::DIAMOND_SWORD()), function (GhostlyPlayer $player): void {
+			$this->callable($player, Server::PRACTICE);
 		}), 12);
 
 		$this->addButton(new MenuButton(ServerItems::get(Server::COMBO, VanillaItems::ENDER_PEARL()), function (GhostlyPlayer $player): void {
-			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
-				return;
-			}
-
-			$player->closeInventory();
-			$player->transferTo(Server::COMBO);
-			$cooldown[$player->getName()] = time();
+			$this->callable($player, Server::COMBO);
 		}), 14);
 
 		$this->addButton(new MenuButton(ServerItems::get(Server::HCF, VanillaItems::DIAMOND_PICKAXE()), function (GhostlyPlayer $player): void {
-			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
-				return;
-			}
-
-			$player->closeInventory();
-			$player->transferTo(Server::HCF);
-			$cooldown[$player->getName()] = time();
+			$this->callable($player, Server::HCF);
 		}), 38);
 
 		$this->addButton(new MenuButton(ServerItems::get(Server::KITMAP, VanillaItems::GOLDEN_PICKAXE()), function (GhostlyPlayer $player): void {
-			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
-				return;
-			}
-
-			$player->closeInventory();
-			$player->transferTo(Server::KITMAP);
-			$cooldown[$player->getName()] = time();
+			$this->callable($player, Server::KITMAP);
 		}), 39);
 
 		$this->addButton(new MenuButton(ServerItems::get(Server::UHC, VanillaItems::GOLDEN_APPLE()), function (GhostlyPlayer $player): void {
-			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
-				return;
-			}
-
-			$player->closeInventory();
-			$player->transferTo(Server::UHC);
-			$cooldown[$player->getName()] = time();
+			$this->callable($player, Server::UHC);
 		}), 41);
 
 		$this->addButton(new MenuButton(ServerItems::get(Server::UHC_RUN, VanillaItems::APPLE()), function (GhostlyPlayer $player): void {
-			if (isset($cooldown[$player->getName()]) && time() - $cooldown[$player->getName()] < 1.5) {
-				return;
-			}
-
-			$player->sendTranslated(LangKey::SERVER_SEARCHING);
-			$player->setCanInteractItem(false);
-			$player->closeInventory();
-			$player->server_transfer_task(Server::UHC_RUN);
-			$cooldown[$player->getName()] = time();
+			$this->callable($player, Server::UHC_RUN);
 		}), 42);
+	}
+
+	public function callable(GhostlyPlayer $player, Server|string $server): void
+	{
+		$player->sendTranslated(LangKey::SERVER_SEARCHING);
+		$player->setCanInteractItem(false);
+		$player->closeInventory();
+		$player->server_transfer_task($server);
 	}
 
 	public function send(GhostlyPlayer $player): void

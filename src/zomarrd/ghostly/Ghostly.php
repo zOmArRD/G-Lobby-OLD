@@ -54,8 +54,8 @@ final class Ghostly extends PluginBase
 	public static AttachableLogger $logger;
 	public static array $colors;
 	public static bool $is_proxy_server = true;
-	private static bool $globalMute = false;
 	public static Config $server_items;
+	private static bool $globalMute = false;
 
 	public static function getInstance(): Ghostly
 	{

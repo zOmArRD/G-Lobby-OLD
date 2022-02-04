@@ -37,16 +37,12 @@ use zomarrd\ghostly\world\Lobby;
  */
 class GhostlyPlayer extends Player
 {
+	public int|float $cooldown = 0;
 	private string $currentLang = Language::ENGLISH_US;
 	private bool $loaded = false, $scoreboard = true;
 	private Scoreboard $scoreboard_session;
 	private ItemManager $itemManager;
 	private bool $canInteractItem = true;
-
-	public function setCanInteractItem(bool $canInteractItem = true): void
-	{
-		$this->canInteractItem = $canInteractItem;
-	}
 
 	public function canInteractItem(): bool
 	{
@@ -139,7 +135,7 @@ class GhostlyPlayer extends Player
 	public function getLobbyItems(): void
 	{
 		$this->getInventory()?->clearAll();
-		foreach (['item-servers' => 0, 'item-cosmetics' => 4, 'item-lobby' => 8] as $item => $index) {
+		foreach (['item-servers' => 0, 'item-cosmetics' => 4, 'item-lobby' => 7, 'item-config' => 8] as $item => $index) {
 			$this->setItem($index, $this->getItemManager()->get($item));
 		}
 	}
@@ -169,6 +165,32 @@ class GhostlyPlayer extends Player
 	public function isOp(): bool
 	{
 		return Ghostly::getInstance()->getServer()->isOp($this->getName());
+	}
+
+	public function closeInventory(): void
+	{
+		$this->sendSound(LevelSoundEvent::DROP_SLOT);
+		$session = InvMenuHandler::getPlayerManager()->get($this);
+		$session->removeCurrentMenu();
+	}
+
+	public function sendSound(int $sound, string $type = "level-sound"): void
+	{
+		switch ($type) {
+			case "level-event":
+				$this->getNetworkSession()->sendDataPacket(LevelEventPacket::create($sound, 0, $this->getLocation()->asVector3()));
+				break;
+			case "level-sound":
+				$this->getNetworkSession()->sendDataPacket(LevelSoundEventPacket::create($sound, $this->getLocation()->asVector3(), -1, ":", false, false));
+				break;
+		}
+	}
+
+	public function server_transfer_task(string|Server $server): void
+	{
+		Ghostly::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($server): void {
+			$this->transferTo($server);
+		}), 25);
 	}
 
 	/**
@@ -215,18 +237,6 @@ class GhostlyPlayer extends Player
 		$this->transfer($server->getName(), 0, "Transfer to {$server->getName()}");
 	}
 
-	public function sendSound(int $sound, string $type = "level-sound"): void
-	{
-		switch ($type) {
-			case "level-event":
-				$this->getNetworkSession()->sendDataPacket(LevelEventPacket::create($sound, 0, $this->getLocation()->asVector3()));
-				break;
-			case "level-sound":
-				$this->getNetworkSession()->sendDataPacket(LevelSoundEventPacket::create($sound, $this->getLocation()->asVector3(), -1, ":", false, false));
-				break;
-		}
-	}
-
 	public function sendTranslated(string $string, array $replaceable = []): void
 	{
 		$this->sendMessage($this->getTranslation($string, $replaceable));
@@ -237,11 +247,19 @@ class GhostlyPlayer extends Player
 		return $this->getLang()->getMessage($string, $replaceable);
 	}
 
-	public function closeInventory(): void
+	public function setCanInteractItem(bool $canInteractItem = true): void
 	{
-		$this->sendSound(LevelSoundEvent::DROP_SLOT);
-		$session = InvMenuHandler::getPlayerManager()->get($this);
-		$session->removeCurrentMenu();
+		$this->canInteractItem = $canInteractItem;
+	}
+
+	public function hasCooldown(float|int $time): bool
+	{
+		return time() - $this->cooldown < $time;
+	}
+
+	public function setCooldown(): void
+	{
+		$this->cooldown = time();
 	}
 
 	protected function internalSetGameMode(GameMode $gameMode): void
@@ -263,12 +281,5 @@ class GhostlyPlayer extends Player
 			$this->onGround = false;
 			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
 		}
-	}
-
-	public function server_transfer_task(string|Server $server): void
-	{
-		Ghostly::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($server): void {
-			$this->transferTo($server);
-		}), 25);
 	}
 }
