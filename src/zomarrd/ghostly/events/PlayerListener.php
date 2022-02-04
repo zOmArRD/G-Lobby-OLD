@@ -54,12 +54,6 @@ final class PlayerListener implements Listener
 		$event->setPlayerClass(GhostlyPlayer::class);
 	}
 
-	/**
-	 * @param PlayerPreLoginEvent $event
-	 *
-	 * @return void
-	 * @todo Move this to the login packet
-	 */
 	public function PlayerPreLoginEvent(PlayerPreLoginEvent $event): void
 	{
 		$playerInfo = $event->getPlayerInfo();

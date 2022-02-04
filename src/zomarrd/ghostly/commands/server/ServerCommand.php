@@ -35,6 +35,6 @@ final class ServerCommand extends BaseCommand
 
 	protected function prepare(): void
 	{
-		// TODO: Implement prepare() method.
+		// TODO: add more SubCommand
 	}
 }
