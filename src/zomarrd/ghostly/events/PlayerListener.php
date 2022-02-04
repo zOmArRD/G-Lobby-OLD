@@ -84,7 +84,7 @@ final class PlayerListener implements Listener
 
 		$player_name = $player->getName();
 
-		MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function ($result) use ($player, $player_name): void {
+		MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function ($result) use ($player): void {
 			if (count($result) === 0) {
 				$player->transfer("ghostlymc.live");
 				return;
@@ -125,12 +125,6 @@ final class PlayerListener implements Listener
 		}
 
 		$block = $player->getWorld()->getBlock($player->getLocation()->subtract(0, -1, 0));
-
-		/*if ($block->getId() === ItemIds::WATER) {
-			$player->getNetworkProperties()->setPlayerFlag( EntityMetadataFlags::SWIMMING, true);
-		} else {
-			$player->getNetworkProperties()->setPlayerFlag( EntityMetadataFlags::SWIMMING, false);
-		}*/
 
 		$lobby = Lobby::getInstance();
 
@@ -229,10 +223,16 @@ final class PlayerListener implements Listener
 
 	public function BlockPlaceEvent(BlockPlaceEvent $event): void
 	{
-		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
-			return;
-		}
+		$item = $event->getItem();
 		$event->cancel();
+
+		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
+			$event->uncancel();
+		}
+
+		if ($item->getNamedTag()->getString("itemId") !== null) {
+			$event->cancel();
+		}
 	}
 
 	public function BlockBurnEvent(BlockBurnEvent $event): void

@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\player\language;
 
 use jojoe77777\FormAPI\SimpleForm;
+use zomarrd\ghostly\mysql\MySQL;
+use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\GhostlyPlayer;
 
 final class LangForm
@@ -46,6 +48,8 @@ final class LangForm
 
 				$player->setLanguage($lang[0]);
 				$player->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $lang[1]]);
+				MySQL::runAsync(new UpdateRowQuery(serialize(["lang" => $lang[0]]), "player", $player->getName(), "player_config"));
+				$player->getLobbyItems();
 			}
 		});
 		$form->setTitle($player->getTranslation(LangKey::SET_LANGUAGE));

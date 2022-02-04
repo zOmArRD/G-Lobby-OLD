@@ -16,6 +16,8 @@ use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
+use zomarrd\ghostly\mysql\MySQL;
+use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
@@ -23,10 +25,6 @@ use zomarrd\ghostly\player\permission\PermissionKey;
 
 final class LangSetCommand extends BaseSubCommand
 {
-
-	/**
-	 * @todo Update the language of the player in the database?
-	 */
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
 	{
 		if ((count($args) === 1) && isset($args["language|player"])) {
@@ -41,7 +39,9 @@ final class LangSetCommand extends BaseSubCommand
 					}
 
 					$sender->setLanguage($target);
-					$sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $sender->getLocale()]);
+					$sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $target]);
+					MySQL::runAsync(new UpdateRowQuery(serialize(["lang" => $target]), "player", $sender->getName(), "player_config"));
+					$sender->getLobbyItems();
 				}
 			}
 		}
@@ -86,7 +86,9 @@ final class LangSetCommand extends BaseSubCommand
 			}
 
 			$isPlayer->setLanguage($newLang);
-			$isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $isPlayer->getLang()->getLocale()]);
+			$isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $newLang]);
+			MySQL::runAsync(new UpdateRowQuery(serialize(["lang" => $newLang]), "player", $isPlayer->getName(), "player_config"));
+			$isPlayer->getLobbyItems();
 		}
 	}
 
