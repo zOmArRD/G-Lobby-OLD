@@ -53,7 +53,6 @@ final class ItemInteractListener implements Listener
 				$i1 = $trData->getActionType();
 				if ($i1 === UseItemTransactionData::ACTION_CLICK_AIR || $i1 === UseItemTransactionData::ACTION_CLICK_BLOCK) {
 					$item = $player->getInventory()->getItemInHand();
-					$itemManager = $player->getItemManager();
 
 					if (!isset($this->item_cooldown[$pn]) || time() - $this->item_cooldown[$pn] >= 2) {
 						$this->handleInteract($player, $item);
@@ -82,7 +81,6 @@ final class ItemInteractListener implements Listener
 
 	public function handleInteract(GhostlyPlayer $player, Item $item): void
 	{
-		$itemManager = $player->getItemManager();
 		$itemId = $item->getNamedTag()->getString("itemId", "");
 		switch ($itemId) {
 			case "item-lobby":
@@ -135,7 +133,6 @@ final class ItemInteractListener implements Listener
 			$event->cancel();
 		}
 
-		$pn = $player->getName();
 		$item = $event->getItem();
 		$block = $event->getBlock();
 

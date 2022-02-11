@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\server;
 
+use JetBrains\PhpStorm\Pure;
 use pocketmine\scheduler\ClosureTask;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\mysql\MySQL;
@@ -93,7 +94,7 @@ final class ServerManager
 		return self::$instance;
 	}
 
-	public function getServerByName(string $name): ?Server
+	#[Pure] public function getServerByName(string $name): ?Server
 	{
 		foreach ($this->getServers() as $server) {
 			if ($server->getName() !== $name) {
@@ -111,7 +112,7 @@ final class ServerManager
 	 *
 	 * @return int
 	 */
-	public function getNetworkPlayers(): int
+	#[Pure] public function getNetworkPlayers(): int
 	{
 		$players = 0;
 
@@ -124,7 +125,7 @@ final class ServerManager
 		return $players;
 	}
 
-	public function getNetworkMaxPlayers(): int
+	#[Pure] public function getNetworkMaxPlayers(): int
 	{
 		$maxPlayers = Ghostly::getInstance()->getServer()->getMaxPlayers();
 

@@ -14,7 +14,7 @@ namespace zomarrd\ghostly;
 use AttachableLogger;
 use CortexPE\Commando\exception\HookAlreadyRegistered;
 use CortexPE\Commando\PacketHooker;
-use JsonException;
+use JetBrains\PhpStorm\Pure;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\event\EventPriority;
 use pocketmine\event\Listener;
@@ -77,19 +77,16 @@ final class Ghostly extends PluginBase
 	 *
 	 * @return string
 	 */
-	public function getResourcesFolder(): string
+	#[Pure] public function getResourcesFolder(): string
 	{
 		return $this->getFile() . 'resources/';
 	}
 
-	/**
-	 * @throws JsonException
-	 */
 	protected function onLoad(): void
 	{
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
-		self::$colors = json_decode(file_get_contents($this->getFile() . "resources/colors.json"), true, 512, JSON_THROW_ON_ERROR);
+		//self::$colors = json_decode(file_get_contents($this->getFile() . "resources/colors.json"), true, 512, JSON_THROW_ON_ERROR);
 		self::$server_items = new Config($this->getFile() . "resources/servers_items.yml");
 
 		if (!extension_loaded('mysqli')) {
@@ -175,7 +172,7 @@ final class Ghostly extends PluginBase
 							$this->getLogger()->setPrefix($this->getLogPrefix());
 						})->call($event->getOrigin());
 					}, function (bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
-						(function () use ($isAuthenticated, $authRequired, $error, $clientPubKey): void {
+						(function () use ($authRequired, $error, $clientPubKey): void {
 							/** @noinspection PhpUndefinedMethodInspection */
 							$this->setAuthenticationStatus(true, $authRequired, $error, $clientPubKey);
 						})->call($event->getOrigin());

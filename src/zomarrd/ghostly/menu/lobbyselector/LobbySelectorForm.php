@@ -55,7 +55,6 @@ final class LobbySelectorForm
 
 	public function addServerButton(Server $server, SimpleForm $form): void
 	{
-		$currentServer = ServerManager::getInstance()->getCurrentServer();
 		$text = "§r";
 
 		if ($server->getName() === Ghostly::SERVER) {

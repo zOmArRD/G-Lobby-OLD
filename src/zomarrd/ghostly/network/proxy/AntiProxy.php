@@ -31,7 +31,7 @@ final class AntiProxy extends AsyncTask
 
 	public function onRun(): void
 	{
-		$url = "http://vpnapi.io/api/" . $this->getIp() . "?key=368a3b3454284459a204f5808e02f581";
+		$url = "https://vpnapi.io/api/" . $this->getIp() . "?key=368a3b3454284459a204f5808e02f581";
 
 		try {
 			$this->setResult(json_decode(file_get_contents($url), false, 512, JSON_THROW_ON_ERROR));

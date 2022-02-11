@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\player;
 
+use JetBrains\PhpStorm\Pure;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
@@ -80,7 +81,7 @@ class GhostlyPlayer extends Player
 		return $fromLocale ? $locale : $this->getLangHandler()->getLanguage($this->currentLang);
 	}
 
-	public function getLangHandler(): LangHandler
+	#[Pure] public function getLangHandler(): LangHandler
 	{
 		return LangHandler::getInstance();
 	}

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\server;
 
+use JetBrains\PhpStorm\Pure;
 use pocketmine\item\Item;
 use zomarrd\ghostly\Ghostly;
 
@@ -36,7 +37,7 @@ final class ServerItems
 		return $item;
 	}
 
-	public static function getServer(string $server): ?Server
+	#[Pure] public static function getServer(string $server): ?Server
 	{
 		return ServerManager::getInstance()->getServerByName($server);
 	}

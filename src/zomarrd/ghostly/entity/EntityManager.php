@@ -49,7 +49,6 @@ final class EntityManager
 		$nbt->setString("npcId", Entity::DISCORD);
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::DISCORD);
 
@@ -140,7 +139,6 @@ final class EntityManager
 		$nbt->setString("npcId", Entity::STORE);
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::STORE);
 
@@ -169,7 +167,6 @@ final class EntityManager
 		$nbt->setString("npcId", Entity::OMAR);
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::OMAR);
 
@@ -216,7 +213,6 @@ final class EntityManager
 		$nbt->setString("server_name", "Combo");
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::COMBO);
 
@@ -255,7 +251,6 @@ final class EntityManager
 		$nbt->setString("server_name", "Practice");
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::PRACTICE);
 
@@ -294,7 +289,6 @@ final class EntityManager
 		$nbt->setString("server_name", "UHC");
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::UHC);
 
@@ -333,7 +327,6 @@ final class EntityManager
 		$nbt->setString("server_name", "UHC_RUN");
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::UHC_RUN);
 
@@ -372,7 +365,6 @@ final class EntityManager
 		$nbt->setString("server_name", "HCF");
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::HCF);
 
@@ -411,7 +403,6 @@ final class EntityManager
 		$nbt->setString("server_name", "KITMAP");
 
 		$location = $player->getLocation();
-		$skin = $player->getSkin();
 
 		$this->remove_entity(Entity::KITMAP);
 

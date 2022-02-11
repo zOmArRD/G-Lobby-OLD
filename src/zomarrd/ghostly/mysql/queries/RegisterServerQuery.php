@@ -26,8 +26,8 @@ final class RegisterServerQuery extends Query
 	{
 		$result = $mysqli->query("SELECT * FROM ghostly_servers WHERE server_name = '$this->serverName';");
 		if ($result !== false) {
-			$assco = $result->fetch_assoc();
-			if (is_array($assco)) {
+			$assoc = $result->fetch_assoc();
+			if (is_array($assoc)) {
 				$mysqli->query("UPDATE ghostly_servers SET online = 1 WHERE server_name = '$this->serverName';");
 			} else {
 				$category = Ghostly::CATEGORY;

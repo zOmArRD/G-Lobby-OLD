@@ -70,7 +70,7 @@ final class EntityCreateCommand extends BaseSubCommand
 	}
 
 	/**
-	 * This is where all the arguments, permissions, sub-commands, etc would be registered
+	 * This is where all the arguments, permissions, sub-commands, etc. would be registered
 	 *
 	 * @throws ArgumentOrderException
 	 */

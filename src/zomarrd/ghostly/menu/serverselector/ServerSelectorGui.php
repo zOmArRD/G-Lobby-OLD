@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\menu\serverselector;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
 use muqsit\invmenu\transaction\InvMenuTransactionResult;
@@ -90,7 +91,11 @@ final class ServerSelectorGui
 		}), 42);
 	}
 
-	public function callable(GhostlyPlayer $player, Server|string $server): void
+	public function callable(
+		GhostlyPlayer $player,
+					  #[ExpectedValues([Server::HCF, Server::PRACTICE, Server::COMBO, Server::KITMAP, Server::UHC, Server::UHC_RUN])]
+					  Server|string $server
+	): void
 	{
 		$player->sendTranslated(LangKey::SERVER_SEARCHING);
 		$player->setCanInteractItem(false);

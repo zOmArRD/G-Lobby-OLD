@@ -118,8 +118,6 @@ final class PlayerListener implements Listener
 			return;
 		}
 
-		$block = $player->getWorld()->getBlock($player->getLocation()->subtract(0, -1, 0));
-
 		$lobby = Lobby::getInstance();
 
 		if (is_null($lobby)) {
@@ -177,7 +175,6 @@ final class PlayerListener implements Listener
 		$player = $event->getPlayer();
 		$player_name = $player->getName();
 		$global_mute_delay = 2;
-		$message = $event->getMessage();
 
 		if (!$player instanceof GhostlyPlayer) {
 			return;

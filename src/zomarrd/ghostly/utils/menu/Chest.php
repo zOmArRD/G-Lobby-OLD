@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\utils\menu;
 
+use JetBrains\PhpStorm\Pure;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
 use muqsit\invmenu\transaction\InvMenuTransactionResult;
 use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\event\Listener;
-use pocketmine\inventory\Inventory;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\server\ServerManager;
 
@@ -36,7 +36,7 @@ abstract class Chest implements Listener
 	)
 	{
 		$this->menu = InvMenu::create($this->identifier)->setName($this->chestName)
-			->setInventoryCloseListener(function (GhostlyPlayer $player, Inventory $inventory): void {
+			->setInventoryCloseListener(function (GhostlyPlayer $player): void {
 				$closure = $this->inventoryClose[$player->getUniqueId()->toString()] ?? null;
 
 				if ($closure !== null) {
@@ -80,7 +80,7 @@ abstract class Chest implements Listener
 		return $this->menu;
 	}
 
-	public function getServerManager(): ServerManager
+	#[Pure] public function getServerManager(): ServerManager
 	{
 		return ServerManager::getInstance();
 	}

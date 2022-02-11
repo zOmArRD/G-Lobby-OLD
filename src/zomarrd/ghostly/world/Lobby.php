@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\world;
 
+use JetBrains\PhpStorm\Pure;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 
@@ -61,12 +62,12 @@ final class Lobby
 		return self::$instance;
 	}
 
-	public function getDisplayName(): string
+	#[Pure] public function getDisplayName(): string
 	{
 		return $this->getWorld()->getDisplayName();
 	}
 
-	public function getFolderName(): string
+	#[Pure] public function getFolderName(): string
 	{
 		return $this->getWorld()->getFolderName();
 	}

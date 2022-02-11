@@ -40,7 +40,7 @@ final class LangHandler
 				continue;
 			}
 
-			$path = $resourcesFolder . "/{$file}";
+			$path = $resourcesFolder . "/$file";
 			$data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
 			$languageData = $data["language_data"];
 			$default = $languageData["default"];

@@ -11,13 +11,15 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\player;
 
+use JetBrains\PhpStorm\Pure;
+
 abstract class IPlayer
 {
 	public function __construct(
 		private GhostlyPlayer $player
 	) {}
 
-	public function getPlayerName(): string
+	#[Pure] public function getPlayerName(): string
 	{
 		return $this->getPlayer()->getName();
 	}

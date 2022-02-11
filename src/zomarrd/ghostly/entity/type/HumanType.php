@@ -168,7 +168,7 @@ final class HumanType extends Human
 			}
 		};
 		$this->inventory->getListeners()->add(new CallbackInventoryListener(
-			function (Inventory $unused, int $slot, Item $unused2) use ($syncHeldItem): void {
+			function (int $slot) use ($syncHeldItem): void {
 				if ($slot === $this->inventory->getHeldItemIndex()) {
 					$syncHeldItem();
 				}
@@ -193,9 +193,7 @@ final class HumanType extends Human
 			/** @var CompoundTag $item */
 			foreach ($inventoryTag as $i => $item) {
 				$slot = $item->getByte("Slot");
-				if ($slot >= 0 && $slot < 9) { //Hotbar
-					//Old hotbar saving stuff, ignore it
-				} else if ($slot >= 100 && $slot < 104) { //Armor
+				if ($slot >= 100 && $slot < 104) { //Armor
 					$this->armorInventory->setItem($slot - 100, Item::nbtDeserialize($item));
 				} else if ($slot >= 9 && $slot < $this->inventory->getSize() + 9) {
 					$this->inventory->setItem($slot - 9, Item::nbtDeserialize($item));
@@ -226,7 +224,7 @@ final class HumanType extends Human
 		}
 
 		$this->inventory->setHeldItemIndex($nbt->getInt("SelectedInventorySlot", 0));
-		$this->inventory->getHeldItemIndexChangeListeners()->add(function (int $oldIndex): void {
+		$this->inventory->getHeldItemIndexChangeListeners()->add(function (): void {
 			foreach ($this->getViewers() as $viewer) {
 				$viewer->getNetworkSession()->onMobMainHandItemChange($this);
 			}

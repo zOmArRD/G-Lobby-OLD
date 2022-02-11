@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\extensions\scoreboard;
 
+use JetBrains\PhpStorm\Pure;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
@@ -25,7 +26,7 @@ abstract class ScoreAPI extends IPlayer
 
 	private SetDisplayObjectivePacket $displayPacket;
 
-	public function __construct(GhostlyPlayer $player)
+	#[Pure] public function __construct(GhostlyPlayer $player)
 	{
 		$this->displayPacket = new SetDisplayObjectivePacket();
 		parent::__construct($player);
@@ -51,7 +52,7 @@ abstract class ScoreAPI extends IPlayer
 		$this->getPlayer()->getNetworkSession()->sendDataPacket($this->getDisplayPacket());
 	}
 
-	public function isObjectiveName(): bool
+	#[Pure] public function isObjectiveName(): bool
 	{
 		return isset($this->objectiveName[$this->getPlayer()->getName()]);
 	}
@@ -63,7 +64,7 @@ abstract class ScoreAPI extends IPlayer
 		$this->getPlayer()->getNetworkSession()->sendDataPacket($packet);
 	}
 
-	public function getObjectiveName(): string
+	#[Pure] public function getObjectiveName(): string
 	{
 		return $this->objectiveName[$this->getPlayerName()];
 	}

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\server;
 
+use JetBrains\PhpStorm\Pure;
 use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\mysql\queries\SelectQuery;
@@ -37,7 +38,7 @@ final class Server
 	/**
 	 * @return string PLAYERS | WHITELISTED | OFFLINE
 	 */
-	public function getStatus(): string
+	#[Pure] public function getStatus(): string
 	{
 		if (!$this->isOnline()) {
 			return '§r§c' . 'OFFLINE';
