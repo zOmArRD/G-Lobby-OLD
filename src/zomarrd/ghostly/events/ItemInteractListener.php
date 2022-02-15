@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\events;
 
+use pocketmine\block\Anvil;
 use pocketmine\block\DoublePlant;
 use pocketmine\block\Flower;
 use pocketmine\block\FlowerPot;
@@ -140,7 +141,7 @@ final class ItemInteractListener implements Listener
 			return;
 		}
 
-		if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot || $block instanceof DoublePlant) {
+		if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot || $block instanceof DoublePlant || $block instanceof Anvil) {
 			return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
 		}
 

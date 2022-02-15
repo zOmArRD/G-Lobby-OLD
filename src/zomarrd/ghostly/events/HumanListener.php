@@ -29,14 +29,17 @@ final class HumanListener implements Listener
 
 		if ($i === Entity::OMAR) {
 			$player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
+			return;
 		}
 
 		if ($i === Entity::DISCORD) {
 			$player->sendTranslated(LangKey::DISCORD_INVITATION_MESSAGE);
+			return;
 		}
 
 		if ($i === Entity::STORE) {
 			$player->sendTranslated(LangKey::STORE_LINK_MESSAGE);
+			return;
 		}
 
 		if ($i === Entity::COMBO || $i === Entity::PRACTICE || $i === Entity::UHC || $i === Entity::UHC_RUN || $i === Entity::KITMAP || $i === Entity::HCF) {

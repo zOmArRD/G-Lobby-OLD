@@ -77,8 +77,11 @@ class GhostlyPlayer extends Player
 
 	public function getLang(bool $fromLocale = false): Language
 	{
-		$locale = $this->getLangHandler()->getLanguage($this->locale);
-		return $fromLocale ? $locale : $this->getLangHandler()->getLanguage($this->currentLang);
+		if ($fromLocale === true) {
+			return $this->getLangHandler()->getLanguage($this->locale);
+		}
+
+		return $this->getLangHandler()->getLanguage($this->currentLang);
 	}
 
 	#[Pure] public function getLangHandler(): LangHandler
@@ -89,7 +92,6 @@ class GhostlyPlayer extends Player
 	public function onUpdate(int $currentTick): bool
 	{
 		if (!$this->isLoaded()) {
-			$this->setLanguage($this->locale);
 			$this->scoreboard_session = new Scoreboard($this);
 			$this->itemManager = new ItemManager($this);
 			$this->setLoaded();

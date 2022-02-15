@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\mysql;
 
+use mysqli;
 use pocketmine\Server;
-use zomarrd\ghostly\mysql\queries\InsertQuery;
 
 final class MySQL
 {
@@ -34,7 +34,7 @@ final class MySQL
 	public static function createTables(): void
 	{
 		foreach ([self::CREATE_TABLE_SERVERS, self::CREATE_PLAYER_CONFIG, self::CREATE_PLAYER_LOCATION] as $query) {
-			self::runAsync(new InsertQuery($query));
+			self::run($query);
 		}
 	}
 
@@ -48,5 +48,22 @@ final class MySQL
 
 		self::$callbacks[spl_object_hash($query)] = $callable;
 		Server::getInstance()->getAsyncPool()->submitTask($query);
+	}
+
+	/**
+	 * @param string $query
+	 *
+	 * @return void
+	 * @see MySQL::runAsync() for a query in async
+	 */
+	public static function run(string $query): void
+	{
+		$mysqli = new mysqli(MySQL['host'], MySQL['user'], MySQL['password'], MySQL['database']);
+		if ($mysqli->connect_errno) {
+			die(PREFIX . 'Could not connect to the database!');
+		}
+
+		$mysqli->query($query);
+		$mysqli->close();
 	}
 }

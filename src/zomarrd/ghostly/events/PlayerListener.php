@@ -84,7 +84,6 @@ final class PlayerListener implements Listener
 				return;
 			}
 			$data = $result[0];
-
 			$player->setLanguage($data->lang);
 			$player->setScoreboard((bool)$data->scoreboard);
 		});

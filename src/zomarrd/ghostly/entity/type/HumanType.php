@@ -168,12 +168,12 @@ final class HumanType extends Human
 			}
 		};
 		$this->inventory->getListeners()->add(new CallbackInventoryListener(
-			function (int $slot) use ($syncHeldItem): void {
+			function (Inventory $inventory, int $slot) use ($syncHeldItem): void {
 				if ($slot === $this->inventory->getHeldItemIndex()) {
 					$syncHeldItem();
 				}
 			},
-			function (Inventory $unused, array $oldItems) use ($syncHeldItem): void {
+			function (Inventory $inventory, array $oldItems) use ($syncHeldItem): void {
 				if (array_key_exists($this->inventory->getHeldItemIndex(), $oldItems)) {
 					$syncHeldItem();
 				}
