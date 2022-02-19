@@ -42,6 +42,7 @@ use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\network\login\LoginPacketHandler;
 use zomarrd\ghostly\network\skin\MojangAdapter;
 use zomarrd\ghostly\player\language\LangHandler;
+use zomarrd\ghostly\security\ChatHandler;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\task\GlobalTask;
 
@@ -107,6 +108,7 @@ final class Ghostly extends PluginBase
 
 		new ServerManager();
 		new LangHandler();
+		new ChatHandler();
 
 		SkinAdapterSingleton::set(new MojangAdapter());
 

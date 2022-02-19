@@ -29,6 +29,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
@@ -43,6 +44,7 @@ use zomarrd\ghostly\player\DeviceData;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\permission\PermissionKey;
+use zomarrd\ghostly\security\ChatHandler;
 use zomarrd\ghostly\world\Lobby;
 
 final class PlayerListener implements Listener
@@ -168,6 +170,7 @@ final class PlayerListener implements Listener
 
 	/**
 	 * Create a cool-down for the chat
+	 * @todo Create the filters in the proxy, for better performance.
 	 */
 	public function PlayerChatEvent(PlayerChatEvent $event): void
 	{
@@ -178,6 +181,23 @@ final class PlayerListener implements Listener
 		if (!$player instanceof GhostlyPlayer) {
 			return;
 		}
+
+		foreach (ChatHandler::$filter->get('domains') as $domain) {
+			if (strpos($event->getMessage(), $domain)) {
+				$event->cancel();
+
+				foreach (ChatHandler::$filter->get('allowedIps') as $allowed) {
+					if (strpos($event->getMessage(), $allowed)) {
+						$event->uncancel();
+						return;
+					}
+				}
+
+				$player->sendMessage(PREFIX . "§cYou have tried to send an ip address, which is not allowed in our network, be careful, you can be sanctioned!");
+			}
+		}
+
+		$event->setMessage(ChatHandler::getUncensoredMessage($event->getMessage()));
 
 		/* global mute stuff */
 		if (!Ghostly::isGlobalMute() || ($player->hasPermission(PermissionKey::GHOSTLY_GLOBAL_MUTE_BYPASS) && $player->isOp())) {
@@ -234,16 +254,27 @@ final class PlayerListener implements Listener
 	{
 		$packets = $event->getPackets();
 		foreach ($packets as $packet) {
-			if (!$packet instanceof AvailableCommandsPacket) {
-				continue;
-			}
+			if ($packet instanceof AvailableCommandsPacket) {
+				$targets = $event->getTargets();
 
-			$targets = $event->getTargets();
-			foreach ($targets as $target) {
-				if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "zOmArRD") {
-					$packet->commandData = array_intersect_key($packet->commandData, ["help"]);
+				foreach ($targets as $target) {
+					if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "zOmArRD") {
+						$packet->commandData = array_intersect_key($packet->commandData, ["help"]);
+					}
 				}
 			}
+
+			/*if ($packet instanceof TextPacket) {
+				if ($packet->type !== TextPacket::TYPE_TRANSLATION) {
+					$packet->message = ChatHandler::getUncensoredMessage($packet->message);
+				}
+
+				$count = 0;
+				foreach ($packet->parameters as $parameter) {
+					$packet->parameters[$count] = ChatHandler::getUncensoredMessage((string)$parameter);
+					$count++;
+				}
+			}*/
 		}
 	}
 }
