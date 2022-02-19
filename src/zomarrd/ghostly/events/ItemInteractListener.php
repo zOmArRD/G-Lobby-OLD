@@ -33,9 +33,6 @@ use zomarrd\ghostly\player\GhostlyPlayer;
 
 final class ItemInteractListener implements Listener
 {
-	private array $item_cooldown;
-	private array $entity_cooldown;
-
 	public function npc_listener_handler(DataPacketReceiveEvent $event): void
 	{
 		$player = $event->getOrigin()->getPlayer();
@@ -55,10 +52,12 @@ final class ItemInteractListener implements Listener
 				if ($i1 === UseItemTransactionData::ACTION_CLICK_AIR || $i1 === UseItemTransactionData::ACTION_CLICK_BLOCK) {
 					$item = $player->getInventory()->getItemInHand();
 
-					if (!isset($this->item_cooldown[$pn]) || time() - $this->item_cooldown[$pn] >= 2) {
-						$this->handleInteract($player, $item);
-						$this->item_cooldown[$pn] = time();
+					if ($player->hasCooldown(2)) {
+						return;
 					}
+
+					$this->handleInteract($player, $item);
+					$player->setCooldown();
 				}
 			}
 
@@ -67,13 +66,14 @@ final class ItemInteractListener implements Listener
 				if (($i === UseItemOnEntityTransactionData::ACTION_INTERACT) || ($i === UseItemOnEntityTransactionData::ACTION_ATTACK)) {
 					$target = $player->getWorld()->getEntity($trData->getActorRuntimeId());
 
-					if ($target instanceof HumanType && (!isset($this->entity_cooldown[$pn]) || time() - $this->entity_cooldown[$pn] >= 1.5)) {
+					if ($target instanceof HumanType && !$player->hasCooldown(1.5)) {
 						$interactEvent = new HumanInteractEvent($target, $player);
+
 						if (!$interactEvent->isCancelled()) {
 							$interactEvent->call();
 						}
 
-						$this->entity_cooldown[$pn] = time();
+						$player->setCooldown();
 					}
 				}
 			}
@@ -94,9 +94,9 @@ final class ItemInteractListener implements Listener
 				break;
 			case "item-servers":
 				if ($player->hasClassicProfile()) {
-					Menu::SERVER_SELECTOR_GUI()->send($player);
+					Menu::SERVER_SELECTOR_GUI()->sendType($player);
 				} else {
-					/*TODO SEND THE MENU IN FORM EDITION*/
+					Menu::SERVER_SELECTOR_GUI()->sendType($player, Menu::FORM_TYPE);
 				}
 				$player->sendSound(LevelSoundEvent::DROP_SLOT);
 				break;

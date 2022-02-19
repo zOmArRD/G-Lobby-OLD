@@ -63,6 +63,8 @@ final class LobbySelectorForm
 
 		if ($server->isOnline()) {
 			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§eClick to transfer!";
+		} else {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cOFFLINE";
 		}
 
 		if ($server->isWhitelist()) {
