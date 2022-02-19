@@ -12,18 +12,22 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\menu\serverselector;
 
 use JetBrains\PhpStorm\ExpectedValues;
+use jojoe77777\FormAPI\SimpleForm;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
 use muqsit\invmenu\transaction\InvMenuTransactionResult;
 use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\item\VanillaItems;
+use zomarrd\ghostly\Ghostly;
+use zomarrd\ghostly\menu\Menu;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerItems;
+use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\utils\menu\MenuButton;
 
-final class ServerSelectorGui
+final class ServerSelector
 {
 	private InvMenu $menu;
 
@@ -32,7 +36,7 @@ final class ServerSelectorGui
 
 	public function register(): void
 	{
-		$this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName("Server Selector")
+		$this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName("§l§cGhostly §f» §r§6Server Selector")
 			->setListener(
 				function (InvMenuTransaction $transaction): InvMenuTransactionResult {
 					$player = $transaction->getPlayer();
@@ -103,16 +107,60 @@ final class ServerSelectorGui
 		$player->server_transfer_task($server);
 	}
 
-	public function send(GhostlyPlayer $player): void
+	public function sendType(GhostlyPlayer $player, string $type = Menu::GUI_TYPE): void
 	{
-		$this->menu->send($player);
+		if ($type === Menu::GUI_TYPE) {
+			$this->menu->send($player);
+		} else {
+			$form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
+				if (isset($data)) {
+					if ($data === "close") {
+						return;
+					}
+
+					$player->transferTo($data);
+				}
+			});
+
+			$form->setTitle("§l§cGhostly §f» §r§6Server Selector");
+			$servers = ServerManager::getInstance()->getServers();
+
+			foreach ($servers as $server) {
+				if ($server->getCategory() === "Lobby") {
+					continue;
+				}
+
+				$this->addServerButton($server, $form);
+			}
+
+			$form->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
+			$player->sendForm($form);
+		}
 	}
 
-	/**
-	 * @return InvMenu
-	 */
 	public function getMenu(): InvMenu
 	{
 		return $this->menu;
+	}
+
+	public function addServerButton(Server $server, SimpleForm $form): void
+	{
+		$text = "§r";
+
+		if ($server->getName() === Ghostly::SERVER) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}§7]\n§cYou are already connected here!";
+		}
+
+		if ($server->isOnline()) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§eClick to transfer!";
+		} else {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cOFFLINE";
+		}
+
+		if ($server->isWhitelist()) {
+			$text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cWHITELISTED";
+		}
+
+		$form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
 	}
 }

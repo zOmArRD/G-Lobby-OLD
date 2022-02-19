@@ -15,16 +15,19 @@ use pocketmine\utils\EnumTrait;
 use zomarrd\ghostly\menu\lobbyselector\LobbySelectorForm;
 use zomarrd\ghostly\menu\lobbyselector\LobbySelectorGUI;
 use zomarrd\ghostly\menu\server\ServerManagerForm;
-use zomarrd\ghostly\menu\serverselector\ServerSelectorGui;
+use zomarrd\ghostly\menu\serverselector\ServerSelector;
 
 /**
  * @method static LobbySelectorGUI LOBBY_SELECTOR_GUI()
  * @method static LobbySelectorForm LOBBY_SELECTOR_FORM()
  * @method static ServerManagerForm SERVER_MANAGER_FORM()
- * @method static ServerSelectorGui SERVER_SELECTOR_GUI()
+ * @method static ServerSelector SERVER_SELECTOR_GUI()
  */
 class Menu
 {
+	public const GUI_TYPE = 'gui';
+	public const FORM_TYPE = 'form';
+
 	use EnumTrait;
 
 	protected static function setup(): void
@@ -32,6 +35,6 @@ class Menu
 		self::_registryRegister('lobby_selector_gui', new LobbySelectorGUI());
 		self::_registryRegister('lobby_selector_form', new LobbySelectorForm());
 		self::_registryRegister('server_manager_form', new ServerManagerForm());
-		self::_registryRegister('server_selector_gui', new ServerSelectorGui());
+		self::_registryRegister('server_selector_gui', new ServerSelector());
 	}
 }
