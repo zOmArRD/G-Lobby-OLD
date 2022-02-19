@@ -96,6 +96,10 @@ final class ServerManager
 
 	#[Pure] public function getServerByName(string $name): ?Server
 	{
+		if ($name === Ghostly::SERVER) {
+			return $this->getCurrentServer();
+		}
+
 		foreach ($this->getServers() as $server) {
 			if ($server->getName() !== $name) {
 				continue;

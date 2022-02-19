@@ -37,7 +37,8 @@ final class  GlobalTask extends Task
 		}
 
 		if ($currentTick % 50 === 0) {
-			Menu::SERVER_SELECTOR_GUI()->prepare();
+			Menu::SERVER_SELECTOR()->prepare();
+			Menu::LOBBY_SELECTOR()->prepare();
 		}
 
 		/*$armors = array_map(function (Armor $armor): Armor {

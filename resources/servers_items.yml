@@ -116,3 +116,13 @@ UHC_RUN:
     - ""
   offline:
     - ""
+# Lobby:
+Lobby:
+  online:
+    - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
+    - "§r§eClick to change Lobby."
+  already-connected:
+    - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
+    - "§r§cYou are already connected here!"
+  offline:
+    - "§r§cThis server is currently offline!"

@@ -26,9 +26,7 @@ final class ServerItems
 
 		if (isset($final)) {
 			if ($final->isOnline()) {
-				if ($final->isWhitelist()) {
-					$item->setLore(Ghostly::$server_items->get($server)['online']);
-				}
+				$item->setLore(Ghostly::$server_items->get($server)['online']);
 			} else {
 				$item->setLore(Ghostly::$server_items->get($server)['offline']);
 			}

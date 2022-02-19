@@ -86,18 +86,20 @@ final class ItemInteractListener implements Listener
 		switch ($itemId) {
 			case "item-lobby":
 				if ($player->hasClassicProfile()) {
-					Menu::LOBBY_SELECTOR_GUI()->build($player);
+					Menu::LOBBY_SELECTOR()->sendType($player);
 				} else {
-					Menu::LOBBY_SELECTOR_FORM()->build($player);
+					Menu::LOBBY_SELECTOR()->sendType($player, Menu::FORM_TYPE);
 				}
+
 				$player->sendSound(LevelSoundEvent::DROP_SLOT);
 				break;
 			case "item-servers":
 				if ($player->hasClassicProfile()) {
-					Menu::SERVER_SELECTOR_GUI()->sendType($player);
+					Menu::SERVER_SELECTOR()->sendType($player);
 				} else {
-					Menu::SERVER_SELECTOR_GUI()->sendType($player, Menu::FORM_TYPE);
+					Menu::SERVER_SELECTOR()->sendType($player, Menu::FORM_TYPE);
 				}
+
 				$player->sendSound(LevelSoundEvent::DROP_SLOT);
 				break;
 		}

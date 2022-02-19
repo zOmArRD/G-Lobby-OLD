@@ -118,7 +118,8 @@ final class Ghostly extends PluginBase
 			InvMenuHandler::register($this);
 		}
 
-		Menu::SERVER_SELECTOR_GUI()->register();
+		Menu::SERVER_SELECTOR()->register();
+		Menu::LOBBY_SELECTOR()->register();
 
 		$this->registerEvents([
 			new PlayerListener(),
