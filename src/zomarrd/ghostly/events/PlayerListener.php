@@ -14,7 +14,10 @@ namespace zomarrd\ghostly\events;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockBurnEvent;
+use pocketmine\event\block\BlockFormEvent;
+use pocketmine\event\block\BlockGrowEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\event\block\LeavesDecayEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
@@ -29,7 +32,6 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
-use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
@@ -49,232 +51,234 @@ use zomarrd\ghostly\world\Lobby;
 
 final class PlayerListener implements Listener
 {
-	private array $globalmute_alert_delay;
+    private array $globalMuteAlertDelay;
 
-	public function onCreation(PlayerCreationEvent $event): void
-	{
-		$event->setPlayerClass(GhostlyPlayer::class);
-	}
+    public function onCreation(PlayerCreationEvent $event): void
+    {
+        $event->setPlayerClass(GhostlyPlayer::class);
+    }
 
-	public function PlayerPreLoginEvent(PlayerPreLoginEvent $event): void
-	{
-		$playerInfo = $event->getPlayerInfo();
-		$name = $playerInfo->getUsername();
-		$locale = $playerInfo->getLocale();
+    public function PlayerPreLoginEvent(PlayerPreLoginEvent $event): void
+    {
+        $playerInfo = $event->getPlayerInfo();
+        $name = $playerInfo->getUsername();
+        $locale = $playerInfo->getLocale();
 
-		DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()["UIProfile"]);
+        DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()["UIProfile"]);
 
-		MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function ($result) use ($name, $locale): void {
-			if (count($result) === 0) {
-				MySQL::runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
-			}
-		});
-	}
+        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function ($result) use ($name, $locale): void {
+            if (count($result) === 0) {
+                MySQL::runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
+            }
+        });
+    }
 
-	public function PlayerLoginEvent(PlayerLoginEvent $event): void
-	{
-		$player = $event->getPlayer();
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
+    public function PlayerLoginEvent(PlayerLoginEvent $event): void
+    {
+        $player = $event->getPlayer();
+        if (!$player instanceof GhostlyPlayer) {
+            return;
+        }
 
-		$player_name = $player->getName();
+        $player_name = $player->getName();
 
-		MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function ($result) use ($player): void {
-			if (count($result) === 0) {
-				$player->transfer("ghostlymc.live");
-				return;
-			}
-			$data = $result[0];
-			$player->setLanguage($data->lang);
-			$player->setScoreboard((bool)$data->scoreboard);
-		});
-	}
+        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function ($result) use ($player): void {
+            if (count($result) === 0) {
+                $player->transfer("ghostlymc.live");
+                return;
+            }
+            $data = $result[0];
+            $player->setLanguage($data->lang);
+            $player->setScoreboard((bool)$data->scoreboard);
+        });
+    }
 
-	public function PlayerJoinEvent(PlayerJoinEvent $event): void
-	{
-		$player = $event->getPlayer();
+    public function PlayerJoinEvent(PlayerJoinEvent $event): void
+    {
+        $event->setJoinMessage("");
+        $player = $event->getPlayer();
 
-		if ($player instanceof GhostlyPlayer) {
-			$player->onJoin();
+        if ($player instanceof GhostlyPlayer) {
+            $player->onJoin();
 
-			if (ConfigManager::getServerConfig()->get('proxy_detect')) {
-				Server::getInstance()->getAsyncPool()->submitTask(new AntiProxy($player->getName(), $player->getNetworkSession()->getIp()));
-			}
-		}
-	}
+            if (ConfigManager::getServerConfig()->get('proxy_detect')) {
+                Server::getInstance()->getAsyncPool()->submitTask(new AntiProxy($player->getName(), $player->getNetworkSession()->getIp()));
+            }
+        }
+    }
 
-	public function PlayerQuitEvent(PlayerQuitEvent $event): void
-	{
-		$player = $event->getPlayer();
-		if ($player instanceof GhostlyPlayer) {
-			$player->teleport_to_lobby();
-		}
-	}
+    public function PlayerQuitEvent(PlayerQuitEvent $event): void
+    {
+        $event->setQuitMessage("");
+        $player = $event->getPlayer();
+        if ($player instanceof GhostlyPlayer) {
+            $player->teleport_to_lobby();
+        }
+    }
 
-	public function PlayerMoveEvent(PlayerMoveEvent $event): void
-	{
-		$player = $event->getPlayer();
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
+    public function PlayerMoveEvent(PlayerMoveEvent $event): void
+    {
+        $player = $event->getPlayer();
+        if (!$player instanceof GhostlyPlayer) {
+            return;
+        }
 
-		$lobby = Lobby::getInstance();
+        $lobby = Lobby::getInstance();
 
-		if (is_null($lobby)) {
-			return;
-		}
+        if (is_null($lobby)) {
+            return;
+        }
 
-		$motion = $player->getMotion();
-		$location = $player->getLocation();
+        $motion = $player->getMotion();
+        $location = $player->getLocation();
 
-		if ($lobby->getWorld()->getBlock($player->getLocation()->floor()->subtract(0, 1, 0))->getId() === BlockLegacyIds::SLIME) {
-			$x = -sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI);
-			$z = cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI);
-			$player->setMotion($motion->add($x * 2, 1.20, $z * 2));
-			$player->sendSound(LevelSoundEvent::LAUNCH);
-		}
+        if ($lobby->getWorld()->getBlock($player->getLocation()->floor()->subtract(0, 1, 0))->getId() === BlockLegacyIds::SLIME) {
+            $x = -sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI);
+            $z = cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI);
+            $player->setMotion($motion->add($x * 2, 1.20, $z * 2));
+            $player->sendSound(LevelSoundEvent::LAUNCH);
+        }
 
-		if ($location->getY() <= $lobby->getMinVoid()) {
-			$player->teleport_to_lobby();
-		}
-	}
+        if ($location->getY() <= $lobby->getMinVoid()) {
+            $player->teleport_to_lobby();
+        }
+    }
 
-	public function PlayerExhaustEvent(PlayerExhaustEvent $event): void
-	{
-		$event->cancel();
-	}
+    public function PlayerExhaustEvent(PlayerExhaustEvent $event): void
+    {
+        $event->cancel();
+    }
 
-	public function PlayerToggleFlightEvent(PlayerToggleFlightEvent $event): void
-	{
-		$player = $event->getPlayer();
-		$location = $player->getLocation();
-		$motion = $player->getMotion();
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
+    public function PlayerToggleFlightEvent(PlayerToggleFlightEvent $event): void
+    {
+        $player = $event->getPlayer();
+        $location = $player->getLocation();
+        $motion = $player->getMotion();
+        if (!$player instanceof GhostlyPlayer) {
+            return;
+        }
 
-		if ($player->getGamemode() === GameMode::CREATIVE()) {
-			return;
-		}
+        if ($player->getGamemode() === GameMode::CREATIVE()) {
+            return;
+        }
 
-		$event->cancel();
-		$player->setMotion($motion->add(
-			-sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI),
-			$motion->y + 0.75,
-			cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI))
-		);
+        $event->cancel();
+        $player->setMotion($motion->add(-sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI), $motion->y + 0.75, cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI)));
 
-		$player->sendSound(LevelEvent::SOUND_BLAZE_SHOOT, "level-event");
-	}
+        $player->sendSound(LevelEvent::SOUND_BLAZE_SHOOT, "level-event");
+    }
 
-	/**
-	 * Create a cool-down for the chat
-	 * @todo Create the filters in the proxy, for better performance.
-	 */
-	public function PlayerChatEvent(PlayerChatEvent $event): void
-	{
-		$player = $event->getPlayer();
-		$player_name = $player->getName();
-		$global_mute_delay = 2;
+    /**
+     * Create a cool-down for the chat
+     *
+     * @todo Create the filters in the proxy, for better performance.
+     */
+    public function PlayerChatEvent(PlayerChatEvent $event): void
+    {
+        $player = $event->getPlayer();
+        $player_name = $player->getName();
+        $global_mute_delay = 2;
 
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
+        if (!$player instanceof GhostlyPlayer) {
+            return;
+        }
 
-		foreach (ChatHandler::$filter->get('domains') as $domain) {
-			if (strpos($event->getMessage(), $domain)) {
-				$event->cancel();
+        foreach (ChatHandler::$filter->get('domains') as $domain) {
+            if (strpos($event->getMessage(), $domain)) {
+                $event->cancel();
 
-				foreach (ChatHandler::$filter->get('allowedIps') as $allowed) {
-					if (strpos($event->getMessage(), $allowed)) {
-						$event->uncancel();
-						return;
-					}
-				}
+                foreach (ChatHandler::$filter->get('allowedIps') as $allowed) {
+                    if (strpos($event->getMessage(), $allowed)) {
+                        $event->uncancel();
+                        return;
+                    }
+                }
 
-				$player->sendMessage(PREFIX . "§cYou have tried to send an ip address, which is not allowed in our network, be careful, you can be sanctioned!");
-			}
-		}
+                $player->sendMessage(PREFIX . "§cYou have tried to send an ip address, which is not allowed in our network, be careful, you can be sanctioned!");
+            }
+        }
 
-		$event->setMessage(ChatHandler::getUncensoredMessage($event->getMessage()));
+        $event->setMessage(ChatHandler::getUncensoredMessage($event->getMessage()));
 
-		/* global mute stuff */
-		if (!Ghostly::isGlobalMute() || ($player->hasPermission(PermissionKey::GHOSTLY_GLOBAL_MUTE_BYPASS) && $player->isOp())) {
-			return;
-		}
+        /* global mute stuff */
+        if (!Ghostly::isGlobalMute() || ($player->hasPermission(PermissionKey::GHOSTLY_GLOBAL_MUTE_BYPASS) && $player->isOp())) {
+            return;
+        }
 
-		$event->cancel();
+        $event->cancel();
 
-		if (!isset($this->globalmute_alert_delay[$player_name]) || time() - $this->globalmute_alert_delay[$player_name] >= $global_mute_delay) {
-			$player->sendTranslated(LangKey::GLOBAL_MUTE_IS_ENABLED);
-			$this->globalmute_alert_delay[$player_name] = time();
-		}
-		/** end */
-	}
+        if (!isset($this->globalMuteAlertDelay[$player_name]) || time() - $this->globalMuteAlertDelay[$player_name] >= $global_mute_delay) {
+            $player->sendTranslated(LangKey::GLOBAL_MUTE_IS_ENABLED);
+            $this->globalMuteAlertDelay[$player_name] = time();
+        }
+        /** end */
+    }
 
-	public function LeavesDecayEvent(LeavesDecayEvent $event): void
-	{
-		$event->cancel();
-	}
+    public function LeavesDecayEvent(LeavesDecayEvent $event): void
+    {
+        $event->cancel();
+    }
 
-	public function EntityDamageEvent(EntityDamageEvent $event): void
-	{
-		$event->cancel();
-	}
+    public function EntityDamageEvent(EntityDamageEvent $event): void
+    {
+        $event->cancel();
+    }
 
-	public function BlockBreakEvent(BlockBreakEvent $event): void
-	{
-		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
-			return;
-		}
-		$event->cancel();
-	}
+    public function BlockBreakEvent(BlockBreakEvent $event): void
+    {
+        if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
+            return;
+        }
+        $event->cancel();
+    }
 
-	public function BlockPlaceEvent(BlockPlaceEvent $event): void
-	{
-		$item = $event->getItem();
-		$event->cancel();
+    public function BlockPlaceEvent(BlockPlaceEvent $event): void
+    {
+        $item = $event->getItem();
+        $event->cancel();
 
-		if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
-			$event->uncancel();
-		}
+        if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
+            $event->uncancel();
+        }
 
-		if ($item->getNamedTag()->getString("itemId") !== null) {
-			$event->cancel();
-		}
-	}
+        if ($item->getNamedTag()->getString("itemId", "") !== "") {
+            $event->cancel();
+        }
+    }
 
-	public function BlockBurnEvent(BlockBurnEvent $event): void
-	{
-		$event->cancel();
-	}
+    public function BlockBurnEvent(BlockBurnEvent $event): void
+    {
+        $event->cancel();
+    }
 
-	public function DataPacketSendEvent(DataPacketSendEvent $event): void
-	{
-		$packets = $event->getPackets();
-		foreach ($packets as $packet) {
-			if ($packet instanceof AvailableCommandsPacket) {
-				$targets = $event->getTargets();
+    public function DataPacketSendEvent(DataPacketSendEvent $event): void
+    {
+        $packets = $event->getPackets();
+        foreach ($packets as $packet) {
+            if ($packet instanceof AvailableCommandsPacket) {
+                $targets = $event->getTargets();
 
-				foreach ($targets as $target) {
-					if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "zOmArRD") {
-						$packet->commandData = array_intersect_key($packet->commandData, ["help"]);
-					}
-				}
-			}
+                foreach ($targets as $target) {
+                    if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "zOmArRD") {
+                        $packet->commandData = array_intersect_key($packet->commandData, ["help"]);
+                    }
+                }
+            }
+        }
+    }
 
-			/*if ($packet instanceof TextPacket) {
-				if ($packet->type !== TextPacket::TYPE_TRANSLATION) {
-					$packet->message = ChatHandler::getUncensoredMessage($packet->message);
-				}
+    public function BlockSpreadEvent(BlockSpreadEvent $event): void
+    {
+        $event->cancel();
+    }
 
-				$count = 0;
-				foreach ($packet->parameters as $parameter) {
-					$packet->parameters[$count] = ChatHandler::getUncensoredMessage((string)$parameter);
-					$count++;
-				}
-			}*/
-		}
-	}
+    public function BlockGrowEvent(BlockGrowEvent $event): void
+    {
+        $event->cancel();
+    }
+
+    public function BlockFormEvent(BlockFormEvent $event): void
+    {
+        $event->cancel();
+    }
 }

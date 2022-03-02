@@ -43,7 +43,7 @@
 	"player-spawn": {
 		"is_enabled": true,
 		"world": {
-			"name": "lobby",
+			"name": "ghostlylobby",
 			"min-void": 85
 		},
 		"pos": {

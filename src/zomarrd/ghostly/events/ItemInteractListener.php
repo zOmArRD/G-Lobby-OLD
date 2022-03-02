@@ -12,9 +12,12 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\events;
 
 use pocketmine\block\Anvil;
+use pocketmine\block\Chest;
+use pocketmine\block\CraftingTable;
 use pocketmine\block\DoublePlant;
 use pocketmine\block\Flower;
 use pocketmine\block\FlowerPot;
+use pocketmine\block\Hopper;
 use pocketmine\block\TallGrass;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
@@ -33,122 +36,130 @@ use zomarrd\ghostly\player\GhostlyPlayer;
 
 final class ItemInteractListener implements Listener
 {
-	public function npc_listener_handler(DataPacketReceiveEvent $event): void
-	{
-		$player = $event->getOrigin()->getPlayer();
-		$packet = $event->getPacket();
+    public function npc_listener_handler(DataPacketReceiveEvent $event): void
+    {
+        $player = $event->getOrigin()->getPlayer();
+        $packet = $event->getPacket();
 
-		if ($packet instanceof InventoryTransactionPacket || $player instanceof GhostlyPlayer) {
-			$pn = $player->getName();
+        if ($packet instanceof InventoryTransactionPacket || $player instanceof GhostlyPlayer) {
+            $pn = $player->getName();
 
-			if (!isset($packet->trData)) {
-				return;
-			}
+            if (!isset($packet->trData)) {
+                return;
+            }
 
-			$trData = $packet->trData;
+            $trData = $packet->trData;
 
-			if ($trData instanceof UseItemTransactionData) {
-				$i1 = $trData->getActionType();
-				if ($i1 === UseItemTransactionData::ACTION_CLICK_AIR || $i1 === UseItemTransactionData::ACTION_CLICK_BLOCK) {
-					$item = $player->getInventory()->getItemInHand();
+            if ($trData instanceof UseItemTransactionData) {
+                $i1 = $trData->getActionType();
+                if ($i1 === UseItemTransactionData::ACTION_CLICK_AIR || $i1 === UseItemTransactionData::ACTION_CLICK_BLOCK) {
+                    $item = $player->getInventory()->getItemInHand();
 
-					if ($player->hasCooldown(2)) {
-						return;
-					}
+                    if ($player->hasCooldown(2)) {
+                        return;
+                    }
 
-					$this->handleInteract($player, $item);
-					$player->setCooldown();
-				}
-			}
+                    $this->handleInteract($player, $item);
+                    $player->setCooldown();
+                }
+            }
 
-			if ($trData instanceof UseItemOnEntityTransactionData) {
-				$i = $trData->getActionType();
-				if (($i === UseItemOnEntityTransactionData::ACTION_INTERACT) || ($i === UseItemOnEntityTransactionData::ACTION_ATTACK)) {
-					$target = $player->getWorld()->getEntity($trData->getActorRuntimeId());
+            if ($trData instanceof UseItemOnEntityTransactionData) {
+                $i = $trData->getActionType();
+                if (($i === UseItemOnEntityTransactionData::ACTION_INTERACT) || ($i === UseItemOnEntityTransactionData::ACTION_ATTACK)) {
+                    $target = $player->getWorld()->getEntity($trData->getActorRuntimeId());
 
-					if ($target instanceof HumanType && !$player->hasCooldown(1.5)) {
-						$interactEvent = new HumanInteractEvent($target, $player);
+                    if ($target instanceof HumanType && !$player->hasCooldown(1.5)) {
+                        $interactEvent = new HumanInteractEvent($target, $player);
 
-						if (!$interactEvent->isCancelled()) {
-							$interactEvent->call();
-						}
+                        if (!$interactEvent->isCancelled()) {
+                            $interactEvent->call();
+                        }
 
-						$player->setCooldown();
-					}
-				}
-			}
-		}
-	}
+                        $player->setCooldown();
+                    }
+                }
+            }
+        }
+    }
 
-	public function handleInteract(GhostlyPlayer $player, Item $item): void
-	{
-		$itemId = $item->getNamedTag()->getString("itemId", "");
-		switch ($itemId) {
-			case "item-lobby":
-				if ($player->hasClassicProfile()) {
-					Menu::LOBBY_SELECTOR()->sendType($player);
-				} else {
-					Menu::LOBBY_SELECTOR()->sendType($player, Menu::FORM_TYPE);
-				}
+    public function handleInteract(GhostlyPlayer $player, Item $item): void
+    {
+        $itemId = $item->getNamedTag()->getString("itemId", "");
+        switch ($itemId) {
+            case "item-lobby":
+                if ($player->hasClassicProfile()) {
+                    Menu::LOBBY_SELECTOR()->sendType($player);
+                } else {
+                    Menu::LOBBY_SELECTOR()->sendType($player, Menu::FORM_TYPE);
+                }
 
-				$player->sendSound(LevelSoundEvent::DROP_SLOT);
-				break;
-			case "item-servers":
-				if ($player->hasClassicProfile()) {
-					Menu::SERVER_SELECTOR()->sendType($player);
-				} else {
-					Menu::SERVER_SELECTOR()->sendType($player, Menu::FORM_TYPE);
-				}
+                $player->sendSound(LevelSoundEvent::DROP_SLOT);
+                break;
+            case "item-servers":
+                if ($player->hasClassicProfile()) {
+                    Menu::SERVER_SELECTOR()->sendType($player);
+                } else {
+                    Menu::SERVER_SELECTOR()->sendType($player, Menu::FORM_TYPE);
+                }
 
-				$player->sendSound(LevelSoundEvent::DROP_SLOT);
-				break;
-		}
-	}
+                $player->sendSound(LevelSoundEvent::DROP_SLOT);
+                break;
+        }
+    }
 
-	public function slot_change(InventoryTransactionEvent $event): void
-	{
-		$player = $event->getTransaction()->getSource();
+    public function slot_change(InventoryTransactionEvent $event): void
+    {
+        $player = $event->getTransaction()->getSource();
 
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
+        if (!$player instanceof GhostlyPlayer) {
+            return;
+        }
 
-		foreach ($event->getTransaction()->getActions() as $action) {
-			if (($action instanceof SlotChangeAction) && !$player->isOp()) {
-				$event->cancel();
-			}
-		}
-	}
+        foreach ($event->getTransaction()->getActions() as $action) {
+            if (($action instanceof SlotChangeAction) && !$player->isOp()) {
+                $event->cancel();
+            }
+        }
+    }
 
-	public function onInteract(PlayerInteractEvent $event): void
-	{
-		$player = $event->getPlayer();
+    public function onInteract(PlayerInteractEvent $event): void
+    {
+        $player = $event->getPlayer();
+        $item = $event->getItem();
+        $block = $event->getBlock();
 
-		if (!$player instanceof GhostlyPlayer) {
-			return;
-		}
+        switch (true) {
+            case $block instanceof TallGrass:
+            case $block instanceof Flower:
+            case $block instanceof FlowerPot:
+            case $block instanceof DoublePlant:
+            case $block instanceof Anvil:
+            case $block instanceof Chest:
+            case $block instanceof CraftingTable:
+            case $block instanceof Hopper:
+                $event->cancel();
+                break;
+        }
 
-		if (!$player->canInteractItem()) {
-			return;
-		}
+        if (!$player instanceof GhostlyPlayer) {
+            return;
+        }
 
-		if (!$player->isOp()) {
-			$event->cancel();
-		}
+        if (!$player->canInteractItem()) {
+            return;
+        }
 
-		$item = $event->getItem();
-		$block = $event->getBlock();
+        if (!$player->isOp()) {
+            $event->cancel();
+        }
 
-		if ($player->hasCooldown(2)) {
-			return;
-		}
+        if ($player->hasCooldown(2)) {
+            return;
+        }
 
-		if ($block instanceof TallGrass || $block instanceof Flower || $block instanceof FlowerPot || $block instanceof DoublePlant || $block instanceof Anvil) {
-			return; // SMALL HACK TO AVOID THE BUG OF THE GUI MENUS!
-		}
+        $this->handleInteract($player, $item);
 
-		$this->handleInteract($player, $item);
-
-		$player->setCooldown();
-	}
+        $player->setCooldown();
+    }
 }

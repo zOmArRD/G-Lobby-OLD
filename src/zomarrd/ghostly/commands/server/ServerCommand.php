@@ -20,21 +20,21 @@ use zomarrd\ghostly\player\permission\PermissionKey;
 
 final class ServerCommand extends BaseCommand
 {
-	public function __construct(Plugin $plugin)
-	{
-		$this->setPermission(PermissionKey::GHOSTLY_COMMAND_SERVER);
-		parent::__construct($plugin, 'server', 'Server Administration');
-	}
+    public function __construct(Plugin $plugin)
+    {
+        $this->setPermission(PermissionKey::GHOSTLY_COMMAND_SERVER);
+        parent::__construct($plugin, 'server', 'Server Administration');
+    }
 
-	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
-	{
-		if ($sender instanceof GhostlyPlayer) {
-			Menu::SERVER_MANAGER_FORM()->build($sender);
-		}
-	}
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
+    {
+        if ($sender instanceof GhostlyPlayer) {
+            Menu::SERVER_MANAGER_FORM()->build($sender);
+        }
+    }
 
-	protected function prepare(): void
-	{
-		// TODO: add more SubCommand
-	}
+    protected function prepare(): void
+    {
+        $this->registerSubCommand(new ServerReloadCommand('reload', 'Reload servers from database'));
+    }
 }

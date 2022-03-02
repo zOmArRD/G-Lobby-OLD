@@ -18,24 +18,22 @@ use zomarrd\ghostly\mysql\Query;
 
 final class RegisterServerQuery extends Query
 {
-	public function __construct(
-		private string $serverName
-	) {}
+    public function __construct(private string $serverName) { }
 
-	public function query(mysqli $mysqli): void
-	{
-		$result = $mysqli->query("SELECT * FROM ghostly_servers WHERE server_name = '$this->serverName';");
-		if ($result !== false) {
-			$assoc = $result->fetch_assoc();
-			if (is_array($assoc)) {
-				$mysqli->query("UPDATE ghostly_servers SET online = 1 WHERE server_name = '$this->serverName';");
-			} else {
-				$category = Ghostly::CATEGORY;
+    public function query(mysqli $mysqli): void
+    {
+        $result = $mysqli->query("SELECT * FROM ghostly_servers WHERE server_name = '$this->serverName';");
+        if ($result !== false) {
+            $assoc = $result->fetch_assoc();
+            if (is_array($assoc)) {
+                $mysqli->query("UPDATE ghostly_servers SET online = 1 WHERE server_name = '$this->serverName';");
+            } else {
+                $category = Ghostly::CATEGORY;
 
-				$mysqli->query("INSERT INTO ghostly_servers(server_name, players, max_players, online, whitelist, category) VALUES ('$this->serverName', 0, 0, true, true, '$category');");
-			}
-		} else {
-			MySQL::runAsync(new RegisterServerQuery($this->serverName));
-		}
-	}
+                $mysqli->query("INSERT INTO ghostly_servers(server_name, players, max_players, online, whitelist, category) VALUES ('$this->serverName', 0, 0, true, true, '$category');");
+            }
+        } else {
+            MySQL::runAsync(new RegisterServerQuery($this->serverName));
+        }
+    }
 }

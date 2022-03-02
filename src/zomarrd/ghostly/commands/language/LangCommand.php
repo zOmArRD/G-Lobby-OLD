@@ -20,35 +20,25 @@ use zomarrd\ghostly\player\language\Language;
 final class LangCommand extends BaseCommand
 {
 
-	public function __construct(Plugin $plugin, string $name)
-	{
-		parent::__construct($plugin, $name, "Change language", ['idioma', 'language']);
-	}
+    public function __construct(Plugin $plugin, string $name)
+    {
+        parent::__construct($plugin, $name, "Change language", ['idioma', 'language']);
+    }
 
-	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
-	{
-		if ($sender instanceof GhostlyPlayer && count($args) === 0) {
-			Language::openLangForm($sender);
-			return;
-		}
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
+    {
+        if ($sender instanceof GhostlyPlayer && count($args) === 0) {
+            Language::openLangForm($sender);
+            return;
+        }
 
-		$this->sendUsage();
-	}
+        $this->sendUsage();
+    }
 
-	protected function prepare(): void
-	{
-		$this->registerSubCommand(
-			new LangListCommand(
-				'list',
-				"List of available languages"
-			)
-		);
+    protected function prepare(): void
+    {
+        $this->registerSubCommand(new LangListCommand('list', "List of available languages"));
 
-		$this->registerSubCommand(
-			new LangSetCommand(
-				'set',
-				"Set your language, or someone else's"
-			)
-		);
-	}
+        $this->registerSubCommand(new LangSetCommand('set', "Set your language, or someone else's"));
+    }
 }

@@ -19,20 +19,17 @@ use zomarrd\ghostly\player\GhostlyPlayer;
 
 class HumanInteractEvent extends Event implements Cancellable
 {
-	use CancellableTrait;
+    use CancellableTrait;
 
-	public function __construct(
-		private HumanType     $entity,
-		private GhostlyPlayer $player
-	) {}
+    public function __construct(private HumanType $entity, private GhostlyPlayer $player) { }
 
-	public function getEntity(): HumanType
-	{
-		return $this->entity;
-	}
+    public function getEntity(): HumanType
+    {
+        return $this->entity;
+    }
 
-	public function getPlayer(): GhostlyPlayer
-	{
-		return $this->player;
-	}
+    public function getPlayer(): GhostlyPlayer
+    {
+        return $this->player;
+    }
 }

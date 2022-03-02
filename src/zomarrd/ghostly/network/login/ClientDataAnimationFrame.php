@@ -17,21 +17,21 @@ namespace zomarrd\ghostly\network\login;
 final class ClientDataAnimationFrame
 {
 
-	/** @required */
-	public int $ImageHeight;
+    /** @required */
+    public int $ImageHeight;
 
-	/** @required */
-	public int $ImageWidth;
+    /** @required */
+    public int $ImageWidth;
 
-	/** @required */
-	public float $Frames;
+    /** @required */
+    public float $Frames;
 
-	/** @required */
-	public int $Type;
+    /** @required */
+    public int $Type;
 
-	/** @required */
-	public string $Image;
+    /** @required */
+    public string $Image;
 
-	/** @required */
-	public int $AnimationExpression;
+    /** @required */
+    public int $AnimationExpression;
 }

@@ -16,20 +16,15 @@ use zomarrd\ghostly\mysql\Query;
 
 class UpdateRowQuery extends Query
 {
-	public function __construct(
-		private string $updates,
-		private string $conditionKey,
-		private string $conditionValue,
-		private string $table
-	) {}
+    public function __construct(private string $updates, private string $conditionKey, private string $conditionValue, private string $table) { }
 
-	public function query(mysqli $mysqli): void
-	{
-		$updates = [];
-		foreach (unserialize($this->updates, array([])) as $key => $value) {
-			$updates[] = "$key='$value'";
-		}
+    public function query(mysqli $mysqli): void
+    {
+        $updates = [];
+        foreach (unserialize($this->updates, array([])) as $key => $value) {
+            $updates[] = "$key='$value'";
+        }
 
-		$mysqli->query("UPDATE $this->table SET " . implode(',', $updates) . " WHERE $this->conditionKey='$this->conditionValue';");
-	}
+        $mysqli->query("UPDATE $this->table SET " . implode(',', $updates) . " WHERE $this->conditionKey='$this->conditionValue';");
+    }
 }

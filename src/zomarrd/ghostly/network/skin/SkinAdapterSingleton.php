@@ -13,14 +13,14 @@ namespace zomarrd\ghostly\network\skin;
 
 class SkinAdapterSingleton
 {
-	private static ?MojangAdapter $mojangAdapter;
+    private static ?MojangAdapter $mojangAdapter;
 
-	public static function get(): MojangAdapter
-	{
-		if (!isset(self::$mojangAdapter)) {
-			self::$mojangAdapter = new MojangAdapter();
-		}
+    public static function get(): MojangAdapter
+    {
+        if (!isset(self::$mojangAdapter)) {
+            self::$mojangAdapter = new MojangAdapter();
+        }
 
-		return self::$mojangAdapter;
-	}
+        return self::$mojangAdapter;
+    }
 }

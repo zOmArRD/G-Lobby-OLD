@@ -17,12 +17,12 @@ namespace zomarrd\ghostly\network\login;
  */
 final class ClientDataPersonaPieceTintColor
 {
-	/** @required */
-	public string $PieceType;
+    /** @required */
+    public string $PieceType;
 
-	/**
-	 * @var string[]
-	 * @required
-	 */
-	public array $Colors;
+    /**
+     * @var string[]
+     * @required
+     */
+    public array $Colors;
 }

@@ -23,15 +23,15 @@ use zomarrd\ghostly\menu\serverselector\ServerSelector;
  */
 class Menu
 {
-	public const GUI_TYPE = 'gui';
-	public const FORM_TYPE = 'form';
+    public const GUI_TYPE = 'gui';
+    public const FORM_TYPE = 'form';
 
-	use EnumTrait;
+    use EnumTrait;
 
-	protected static function setup(): void
-	{
-		self::_registryRegister('lobby_selector', new LobbySelector());
-		self::_registryRegister('server_manager_form', new ServerManagerForm());
-		self::_registryRegister('server_selector', new ServerSelector());
-	}
+    protected static function setup(): void
+    {
+        self::_registryRegister('lobby_selector', new LobbySelector());
+        self::_registryRegister('server_manager_form', new ServerManagerForm());
+        self::_registryRegister('server_selector', new ServerSelector());
+    }
 }

@@ -22,92 +22,92 @@ use zomarrd\ghostly\player\IPlayer;
 
 abstract class ScoreAPI extends IPlayer
 {
-	public array $lines = [], $objectiveName = [];
+    public array $lines = [], $objectiveName = [];
 
-	private SetDisplayObjectivePacket $displayPacket;
+    private SetDisplayObjectivePacket $displayPacket;
 
-	#[Pure] public function __construct(GhostlyPlayer $player)
-	{
-		$this->displayPacket = new SetDisplayObjectivePacket();
-		parent::__construct($player);
-	}
+    #[Pure] public function __construct(GhostlyPlayer $player)
+    {
+        $this->displayPacket = new SetDisplayObjectivePacket();
+        parent::__construct($player);
+    }
 
-	public function removeObjectiveName(): void
-	{
-		unset($this->objectiveName[$this->getPlayerName()]);
-	}
+    public function removeObjectiveName(): void
+    {
+        unset($this->objectiveName[$this->getPlayerName()]);
+    }
 
-	public function new(string $objectiveName, string $displayName): void
-	{
-		if ($this->isObjectiveName()) {
-			$this->remove();
-		}
+    public function new(string $objectiveName, string $displayName): void
+    {
+        if ($this->isObjectiveName()) {
+            $this->remove();
+        }
 
-		$this->getDisplayPacket()->objectiveName = $objectiveName;
-		$this->getDisplayPacket()->displayName = $displayName;
-		$this->getDisplayPacket()->sortOrder = 0;
-		$this->getDisplayPacket()->displaySlot = 'sidebar';
-		$this->getDisplayPacket()->criteriaName = 'dummy';
-		$this->setObjectiveName($objectiveName);
-		$this->getPlayer()->getNetworkSession()->sendDataPacket($this->getDisplayPacket());
-	}
+        $this->getDisplayPacket()->objectiveName = $objectiveName;
+        $this->getDisplayPacket()->displayName = $displayName;
+        $this->getDisplayPacket()->sortOrder = 0;
+        $this->getDisplayPacket()->displaySlot = 'sidebar';
+        $this->getDisplayPacket()->criteriaName = 'dummy';
+        $this->setObjectiveName($objectiveName);
+        $this->getPlayer()->getNetworkSession()->sendDataPacket($this->getDisplayPacket());
+    }
 
-	#[Pure] public function isObjectiveName(): bool
-	{
-		return isset($this->objectiveName[$this->getPlayer()->getName()]);
-	}
+    #[Pure] public function isObjectiveName(): bool
+    {
+        return isset($this->objectiveName[$this->getPlayer()->getName()]);
+    }
 
-	public function remove(): void
-	{
-		$packet = new RemoveObjectivePacket();
-		$packet->objectiveName = $this->getObjectiveName();
-		$this->getPlayer()->getNetworkSession()->sendDataPacket($packet);
-	}
+    public function remove(): void
+    {
+        $packet = new RemoveObjectivePacket();
+        $packet->objectiveName = $this->getObjectiveName();
+        $this->getPlayer()->getNetworkSession()->sendDataPacket($packet);
+    }
 
-	#[Pure] public function getObjectiveName(): string
-	{
-		return $this->objectiveName[$this->getPlayerName()];
-	}
+    #[Pure] public function getObjectiveName(): string
+    {
+        return $this->objectiveName[$this->getPlayerName()];
+    }
 
-	public function getDisplayPacket(): SetDisplayObjectivePacket
-	{
-		return $this->displayPacket;
-	}
+    public function getDisplayPacket(): SetDisplayObjectivePacket
+    {
+        return $this->displayPacket;
+    }
 
-	public function setObjectiveName(string $objectiveName): void
-	{
-		$this->objectiveName[$this->getPlayerName()] = $objectiveName;
-	}
+    public function setObjectiveName(string $objectiveName): void
+    {
+        $this->objectiveName[$this->getPlayerName()] = $objectiveName;
+    }
 
-	public function setLine(int $score, string $message): void
-	{
-		if ($this->isObjectiveName()) {
-			if ($score > 15 || $score < 0) {
-				Ghostly::$logger->error("Score must be between the value of 0-15. $score out of range.");
-				return;
-			}
+    public function setLine(int $score, string $message): void
+    {
+        if ($this->isObjectiveName()) {
+            if ($score > 15 || $score < 0) {
+                Ghostly::$logger->error("Score must be between the value of 0-15. $score out of range.");
+                return;
+            }
 
-			$entry = new ScorePacketEntry();
-			$entry->objectiveName = $this->getObjectiveName();
-			$entry->type = $entry::TYPE_FAKE_PLAYER;
+            $entry = new ScorePacketEntry();
+            $entry->objectiveName = $this->getObjectiveName();
+            $entry->type = $entry::TYPE_FAKE_PLAYER;
 
-			if (isset($this->lines[$score])) {
-				$packet1 = new SetScorePacket();
-				$packet1->entries[] = $this->lines[$score];
-				$packet1->type = $packet1::TYPE_REMOVE;
-				$this->getPlayer()->getNetworkSession()->sendDataPacket($packet1);
-				unset($this->lines[$score]);
-			}
+            if (isset($this->lines[$score])) {
+                $packet1 = new SetScorePacket();
+                $packet1->entries[] = $this->lines[$score];
+                $packet1->type = $packet1::TYPE_REMOVE;
+                $this->getPlayer()->getNetworkSession()->sendDataPacket($packet1);
+                unset($this->lines[$score]);
+            }
 
-			$entry->score = $score;
-			$entry->scoreboardId = $score;
-			$entry->customName = $message;
-			$this->lines[$score] = $entry;
+            $entry->score = $score;
+            $entry->scoreboardId = $score;
+            $entry->customName = $message;
+            $this->lines[$score] = $entry;
 
-			$packet2 = new SetScorePacket();
-			$packet2->entries[] = $entry;
-			$packet2->type = $packet2::TYPE_CHANGE;
-			$this->getPlayer()->getNetworkSession()->sendDataPacket($packet2);
-		}
-	}
+            $packet2 = new SetScorePacket();
+            $packet2->entries[] = $entry;
+            $packet2->type = $packet2::TYPE_CHANGE;
+            $this->getPlayer()->getNetworkSession()->sendDataPacket($packet2);
+        }
+    }
 }

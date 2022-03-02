@@ -16,31 +16,29 @@ use zomarrd\ghostly\mysql\Query;
 
 class SelectQuery extends Query
 {
-	public mixed $rows;
+    public mixed $rows;
 
-	public function __construct(
-		private string $query
-	) {}
+    public function __construct(private string $query) { }
 
-	public function query(mysqli $mysqli): void
-	{
-		$result = $mysqli->query($this->query);
-		$rows = [];
+    public function query(mysqli $mysqli): void
+    {
+        $result = $mysqli->query($this->query);
+        $rows = [];
 
-		if ($result !== false) {
-			while ($row = $result->fetch_assoc()) {
-				$rows[] = $row;
-			}
+        if ($result !== false) {
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
 
-			$this->rows = serialize($rows);
-		}
-	}
+            $this->rows = serialize($rows);
+        }
+    }
 
-	public function onCompletion(): void
-	{
-		if ($this->rows !== null) {
-			$this->rows = unserialize($this->rows, array([]));
-			parent::onCompletion();
-		}
-	}
+    public function onCompletion(): void
+    {
+        if ($this->rows !== null) {
+            $this->rows = unserialize($this->rows, array([]));
+            parent::onCompletion();
+        }
+    }
 }

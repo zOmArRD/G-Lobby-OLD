@@ -14,34 +14,36 @@ namespace zomarrd\ghostly\server;
 use JetBrains\PhpStorm\Pure;
 use pocketmine\item\Item;
 use zomarrd\ghostly\Ghostly;
+use zomarrd\ghostly\utils\Utils;
 
 final class ServerItems
 {
-	public static function get(string $server, Item $item): Item
-	{
-		$final = self::getServer($server);
+    public static function get(string $server, Item $item): Item
+    {
+        $final = self::getServer($server);
+        $item->setCustomName('§r§l§c' . $server);
+        self::setDefaultLore($item);
 
-		$item->setCustomName('§r§l§c' . $server);
-		self::setDefaultLore($item);
+        if (isset($final)) {
+            if ($final->isOnline()) {
+                $array = Ghostly::$server_items->get($server)['online'];
+                $final = Utils::array_replace_values($array, "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n", "§r§7Players: §f{$final->getPlayers()}§7/§f{$final->getMaxPlayers()}\n");
+                $item->setLore($final);
+            } else {
+                $item->setLore(Ghostly::$server_items->get($server)['offline']);
+            }
+        }
 
-		if (isset($final)) {
-			if ($final->isOnline()) {
-				$item->setLore(Ghostly::$server_items->get($server)['online']);
-			} else {
-				$item->setLore(Ghostly::$server_items->get($server)['offline']);
-			}
-		}
+        return $item;
+    }
 
-		return $item;
-	}
+    #[Pure] public static function getServer(string $server): ?Server
+    {
+        return ServerManager::getInstance()->getServerByName($server);
+    }
 
-	#[Pure] public static function getServer(string $server): ?Server
-	{
-		return ServerManager::getInstance()->getServerByName($server);
-	}
-
-	public static function setDefaultLore(Item $item): void
-	{
-		$item->setLore(Ghostly::$server_items->get('no-exist'));
-	}
+    public static function setDefaultLore(Item $item): void
+    {
+        $item->setLore(Ghostly::$server_items->get('no-exist'));
+    }
 }

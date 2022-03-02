@@ -17,69 +17,69 @@ use zomarrd\ghostly\utils\Utils;
 
 final class ChatHandler
 {
-	private static array $contents = [];
-	public static Config $filter;
+    public static Config $filter;
+    private static array $contents = [];
 
-	public function __construct()
-	{
-		$contents = file(Ghostly::getInstance()->getResourcesFolder() . 'spam/bad-words.txt');
-		self::$filter = new Config(Ghostly::getInstance()->getResourcesFolder() . 'spam/filter.yml');
+    public function __construct()
+    {
+        $contents = file(Ghostly::getInstance()->getResourcesFolder() . 'spam/bad-words.txt');
+        self::$filter = new Config(Ghostly::getInstance()->getResourcesFolder() . 'spam/filter.yml');
 
-		foreach ($contents as $content) {
-			$content = strtolower(trim($content));
-			self::$contents[$content] = true;
-		}
-	}
+        foreach ($contents as $content) {
+            $content = strtolower(trim($content));
+            self::$contents[$content] = true;
+        }
+    }
 
-	public static function getUncensoredMessage(string $msg): string
-	{
-		$result = $msg;
+    public static function getUncensoredMessage(string $msg): string
+    {
+        $result = $msg;
 
-		if (self::hasCensoredWords($msg)) {
-			$words = self::getCensoredWordsIn($msg);
-			$replacedWords = [];
+        if (self::hasCensoredWords($msg)) {
+            $words = self::getCensoredWordsIn($msg);
+            $replacedWords = [];
 
-			foreach ($words as $word) {
-				$key = (string)$word;
-				$val = '';
-				$replacedWords[$key] = $val;
-			}
+            foreach ($words as $word) {
+                $key = (string)$word;
+                $val = '';
+                $replacedWords[$key] = $val;
+            }
 
-			$result = Utils::str_replace($result, $replacedWords);
-		}
+            $result = Utils::str_replace($result, $replacedWords);
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
-	public static function hasCensoredWords(string $msg): bool
-	{
-		$censoredWords = self::getCensoredWordsIn($msg);
-		return count($censoredWords) > 0;
-	}
+    public static function hasCensoredWords(string $msg): bool
+    {
+        $censoredWords = self::getCensoredWordsIn($msg);
+        return count($censoredWords) > 0;
+    }
 
-	public static function getCensoredWordsIn(string $msg): array
-	{
-		$result = [];
-		$lowerCaseMsg = strtolower($msg);
-		$words = explode(" ", $lowerCaseMsg);
+    public static function getCensoredWordsIn(string $msg): array
+    {
+        $result = [];
+        $lowerCaseMsg = strtolower($msg);
+        $words = explode(" ", $lowerCaseMsg);
 
-		foreach ($words as $word) {
-			$lowerCaseWord = strtolower($word);
+        foreach ($words as $word) {
+            $lowerCaseWord = strtolower($word);
 
-			if (isset(self::$contents[$lowerCaseWord])) {
-				$len = strlen($lowerCaseWord);
-				$indexes = Utils::str_indexes($lowerCaseWord, $lowerCaseMsg);
+            if (isset(self::$contents[$lowerCaseWord])) {
+                $len = strlen($lowerCaseWord);
+                $indexes = Utils::str_indexes($lowerCaseWord, $lowerCaseMsg);
 
-				foreach ($indexes as $index) {
-					$str = substr($msg, $index, $len);
+                foreach ($indexes as $index) {
+                    $str = substr($msg, $index, $len);
 
-					if (!Utils::arr_contains_value($str, $result)) {
-						$result[] = $str;
-					}
-				}
-			}
-		}
+                    if (!Utils::arr_contains_value($str, $result)) {
+                        $result[] = $str;
+                    }
+                }
+            }
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 }

@@ -16,44 +16,44 @@ use zomarrd\ghostly\utils\Utils;
 
 class Scoreboard extends ScoreAPI
 {
-	/** @var string[] This is to replace blanks */
-	private const EMPTY_CACHE = ["§0\e", "§1\e", "§2\e", "§3\e", "§4\e", "§5\e", "§6\e", "§7\e", "§8\e", "§9\e", "§a\e", "§b\e", "§c\e", "§d\e", "§e\e"];
+    /** @var string[] This is to replace blanks */
+    private const EMPTY_CACHE = ["§0\e", "§1\e", "§2\e", "§3\e", "§4\e", "§5\e", "§6\e", "§7\e", "§8\e", "§9\e", "§a\e", "§b\e", "§c\e", "§d\e", "§e\e"];
 
-	private int $count = 0;
+    private int $count = 0;
 
-	public function setScoreboard(): void
-	{
-		if (!$this->getPlayer()->isScoreboard()) {
-			if ($this->isObjectiveName()) {
-				$this->remove();
-			}
-			return;
-		}
+    public function setScoreboard(): void
+    {
+        if (!$this->getPlayer()->isScoreboard()) {
+            if ($this->isObjectiveName()) {
+                $this->remove();
+            }
+            return;
+        }
 
-		if ($this->count > 14) {
-			$this->count = 0;
-		}
+        if ($this->count > 14) {
+            $this->count = 0;
+        }
 
-		$this->new('ghostly.lobby', $this->getConfig()['display'][$this->count]);
-		$this->updateScoreboard();
-		$this->count++;
-	}
+        $this->new('ghostly.lobby', $this->getConfig()['display'][$this->count]);
+        $this->updateScoreboard();
+        $this->count++;
+    }
 
-	private function getConfig()
-	{
-		return ConfigManager::getServerConfig()?->get('scoreboard');
-	}
+    private function getConfig()
+    {
+        return ConfigManager::getServerConfig()?->get('scoreboard');
+    }
 
-	private function updateScoreboard(): void
-	{
-		foreach ($this->getConfig()['lines'] as $line => $string) {
-			$msg = $this->replaceData($line, (string)$string);
-			$this->setLine($line, $msg);
-		}
-	}
+    private function updateScoreboard(): void
+    {
+        foreach ($this->getConfig()['lines'] as $line => $string) {
+            $msg = $this->replaceData($line, (string)$string);
+            $this->setLine($line, $msg);
+        }
+    }
 
-	public function replaceData(int $line, string $string): string
-	{
-		return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : Utils::checkStrings($string);
-	}
+    public function replaceData(int $line, string $string): string
+    {
+        return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : Utils::checkStrings($string);
+    }
 }

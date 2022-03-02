@@ -21,32 +21,32 @@ use zomarrd\ghostly\entity\Entity;
 
 final class EntityKillCommand extends BaseSubCommand
 {
-	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
-	{
-		if (count($args) < 0) {
-			$this->sendError(BaseCommand::ERR_INSUFFICIENT_ARGUMENTS);
-			return;
-		}
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
+    {
+        if (count($args) < 0) {
+            $this->sendError(BaseCommand::ERR_INSUFFICIENT_ARGUMENTS);
+            return;
+        }
 
-		if (isset($args["isAll"]) && $args["isAll"] === true) {
-			Entity::ENTITY()->purge_all();
-			$sender->sendMessage(PREFIX . 'you have purged all entities!');
-			return;
-		}
+        if (isset($args["isAll"]) && $args["isAll"] === true) {
+            Entity::ENTITY()->purge_all();
+            $sender->sendMessage(PREFIX . 'you have purged all entities!');
+            return;
+        }
 
-		Entity::ENTITY()->remove_entity($args["EntityId"]);
-		$sender->sendMessage(PREFIX . "you have purged the entity {$args["EntityId"]}!");
-	}
+        Entity::ENTITY()->remove_entity($args["EntityId"]);
+        $sender->sendMessage(PREFIX . "you have purged the entity {$args["EntityId"]}!");
+    }
 
-	/**
-	 * This is where all the arguments, permissions, sub-commands, etc. would be registered
-	 */
-	protected function prepare(): void
-	{
-		try {
-			$this->registerArgument(0, new BooleanArgument("isAll", true));
-			$this->registerArgument(0, new RawStringArgument("EntityId", true));
-		} catch (Exception) {
-		}
-	}
+    /**
+     * This is where all the arguments, permissions, sub-commands, etc. would be registered
+     */
+    protected function prepare(): void
+    {
+        try {
+            $this->registerArgument(0, new BooleanArgument("isAll", true));
+            $this->registerArgument(0, new RawStringArgument("EntityId", true));
+        } catch (Exception) {
+        }
+    }
 }

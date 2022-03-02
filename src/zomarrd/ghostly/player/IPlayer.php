@@ -15,17 +15,15 @@ use JetBrains\PhpStorm\Pure;
 
 abstract class IPlayer
 {
-	public function __construct(
-		private GhostlyPlayer $player
-	) {}
+    public function __construct(private GhostlyPlayer $player) { }
 
-	#[Pure] public function getPlayerName(): string
-	{
-		return $this->getPlayer()->getName();
-	}
+    #[Pure] public function getPlayerName(): string
+    {
+        return $this->getPlayer()->getName();
+    }
 
-	public function getPlayer(): GhostlyPlayer
-	{
-		return $this->player;
-	}
+    public function getPlayer(): GhostlyPlayer
+    {
+        return $this->player;
+    }
 }

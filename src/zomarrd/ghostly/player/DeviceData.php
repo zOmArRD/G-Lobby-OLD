@@ -13,15 +13,15 @@ namespace zomarrd\ghostly\player;
 
 final class DeviceData extends IPlayer
 {
-	private static array $UIProfiles;
+    private static array $UIProfiles;
 
-	public static function saveUIProfile(string $player_name, int $profile): void
-	{
-		self::$UIProfiles[$player_name] = $profile;
-	}
+    public static function saveUIProfile(string $player_name, int $profile): void
+    {
+        self::$UIProfiles[$player_name] = $profile;
+    }
 
-	public static function getUIProfile(string $player_name): int
-	{
-		return self::$UIProfiles[$player_name];
-	}
+    public static function getUIProfile(string $player_name): int
+    {
+        return self::$UIProfiles[$player_name];
+    }
 }

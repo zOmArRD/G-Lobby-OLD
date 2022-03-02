@@ -17,20 +17,17 @@ use zomarrd\ghostly\player\GhostlyPlayer;
 
 class MenuButton
 {
-	public function __construct(
-		private Item     $item,
-		private ?Closure $closure = null
-	) {}
+    public function __construct(private Item $item, private ?Closure $closure = null) { }
 
-	public function getItem(): Item
-	{
-		return $this->item;
-	}
+    public function getItem(): Item
+    {
+        return $this->item;
+    }
 
-	public function click(GhostlyPlayer $player): void
-	{
-		if ($this->closure !== null) {
-			($this->closure)($player);
-		}
-	}
+    public function click(GhostlyPlayer $player): void
+    {
+        if ($this->closure !== null) {
+            ($this->closure)($player);
+        }
+    }
 }

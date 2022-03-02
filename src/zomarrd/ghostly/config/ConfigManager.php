@@ -14,6 +14,7 @@ namespace zomarrd\ghostly\config;
 use JetBrains\PhpStorm\Pure;
 use pocketmine\Server;
 use pocketmine\utils\Config;
+use pocketmine\world\World;
 use pocketmine\world\WorldManager;
 use RuntimeException;
 use zomarrd\ghostly\Ghostly;
@@ -21,101 +22,91 @@ use zomarrd\ghostly\world\Lobby;
 
 final class ConfigManager
 {
-	public static ConfigManager $instance;
-	private static Config $server_config;
+    public static ConfigManager $instance;
+    private static Config $server_config;
 
-	private array $files = [
-		'server_config.json' => 4.0
-	];
+    private array $files = ['server_config.json' => 4.0];
 
-	public function __construct()
-	{
-		self::$instance = $this;
-		$this->init();
-	}
+    public function __construct()
+    {
+        self::$instance = $this;
+        $this->init();
+    }
 
-	public function init(): void
-	{
-		/** This can be erased? */
-		if (!@mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
-			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-		}
+    public function init(): void
+    {
+        /** This can be erased? */
+        if (!@mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        }
 
-		foreach ($this->files as $file => $version) {
-			$this->saveResource($file);
-			$tempFile = $this->getFile($file);
+        foreach ($this->files as $file => $version) {
+            $this->saveResource($file);
+            $tempFile = $this->getFile($file);
 
-			if ($tempFile->get('version') !== $version) {
-				Ghostly::$logger->error("The $file aren't compatible with the current version, the old file are in " . $this->getDataFolder() . "$file.old");
-				rename($this->getDataFolder() . $file, $this->getDataFolder() . $file . '.old');
-				$this->saveResource($file, true);
-			}
+            if ($tempFile->get('version') !== $version) {
+                Ghostly::$logger->error("The $file aren't compatible with the current version, the old file are in " . $this->getDataFolder() . "$file.old");
+                rename($this->getDataFolder() . $file, $this->getDataFolder() . $file . '.old');
+                $this->saveResource($file, true);
+            }
 
-			unset($tempFile);
-		}
+            unset($tempFile);
+        }
 
-		self::$server_config = $this->getFile('server_config.json');
+        self::$server_config = $this->getFile('server_config.json');
 
-		Ghostly::$is_proxy_server = self::getServerConfig()->get('is_proxy_server');
+        Ghostly::$is_proxy_server = self::getServerConfig()->get('is_proxy_server');
 
-		define('PREFIX', self::getServerConfig()?->get('prefix'));
-		define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
+        define('PREFIX', self::getServerConfig()?->get('prefix'));
+        define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
 
-		$data = self::$server_config->get("player-spawn");
+        $data = self::$server_config->get("player-spawn");
 
-		if (!$data["is_enabled"]) {
-			return;
-		}
+        if (!$data["is_enabled"]) {
+            return;
+        }
 
-		$levelName = $data["world"]["name"];
+        $levelName = $data["world"]["name"];
 
-		if (!$this->getWorldManager()->isWorldLoaded($levelName)) {
-			$this->getWorldManager()->loadWorld($levelName);
-		}
+        if (!$this->getWorldManager()->isWorldLoaded($levelName)) {
+            $this->getWorldManager()->loadWorld($levelName);
+        }
 
-		if ($this->getWorldManager()->isWorldLoaded($levelName)) {
-			$lobby = new Lobby(
-				Server::getInstance()->getWorldManager()->getWorldByName($levelName),
-				$data["pos"]["x"],
-				$data["pos"]["y"],
-				$data["pos"]["z"],
-				$data["pos"]["yaw"],
-				$data["pos"]["pitch"],
-				$data["world"]["min-void"]
-			);
+        if ($this->getWorldManager()->isWorldLoaded($levelName)) {
+            $lobby = new Lobby(Server::getInstance()->getWorldManager()->getWorldByName($levelName), $data["pos"]["x"], $data["pos"]["y"], $data["pos"]["z"], $data["pos"]["yaw"], $data["pos"]["pitch"], $data["world"]["min-void"]);
 
-			$lobby->getWorld()->stopTime();
-			$lobby->getWorld()->setTime(12800);
-		}
-	}
+            $lobby->getWorld()->stopTime();
+            $lobby->getWorld()->setTime(World::TIME_DAY);
+        }
+    }
 
-	#[Pure] public function getDataFolder(): string
-	{
-		return Ghostly::getInstance()->getDataFolder();
-	}
+    #[Pure] public function getDataFolder(): string
+    {
+        return Ghostly::getInstance()->getDataFolder();
+    }
 
-	public function saveResource(string $file, bool $replace = false): void
-	{
-		Ghostly::getInstance()->saveResource($file, $replace);
-	}
+    public function saveResource(string $file, bool $replace = false): void
+    {
+        Ghostly::getInstance()->saveResource($file, $replace);
+    }
 
-	public function getFile(string $file): Config
-	{
-		return new Config($this->getDataFolder() . $file);
-	}
+    public function getFile(string $file): Config
+    {
+        return new Config($this->getDataFolder() . $file);
+    }
 
-	public static function getServerConfig(): Config
-	{
-		return self::$server_config;
-	}
+    public static function getServerConfig(): Config
+    {
+        return self::$server_config;
+    }
 
-	public function getWorldManager(): WorldManager
-	{
-		return Server::getInstance()->getWorldManager();
-	}
+    public function getWorldManager(): WorldManager
+    {
+        return Server::getInstance()->getWorldManager();
+    }
 
-	public static function getInstance(): ConfigManager
-	{
-		return self::$instance;
-	}
+    public static function getInstance(): ConfigManager
+    {
+        return self::$instance;
+    }
 }

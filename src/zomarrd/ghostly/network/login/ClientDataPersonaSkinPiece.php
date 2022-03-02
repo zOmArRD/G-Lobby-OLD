@@ -17,18 +17,18 @@ namespace zomarrd\ghostly\network\login;
  */
 final class ClientDataPersonaSkinPiece
 {
-	/** @required */
-	public string $PieceId;
+    /** @required */
+    public string $PieceId;
 
-	/** @required */
-	public string $PieceType;
+    /** @required */
+    public string $PieceType;
 
-	/** @required */
-	public string $PackId;
+    /** @required */
+    public string $PackId;
 
-	/** @required */
-	public bool $IsDefault;
+    /** @required */
+    public bool $IsDefault;
 
-	/** @required */
-	public string $ProductId;
+    /** @required */
+    public string $ProductId;
 }

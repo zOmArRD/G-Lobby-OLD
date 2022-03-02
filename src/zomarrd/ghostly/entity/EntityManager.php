@@ -30,686 +30,676 @@ use zomarrd\ghostly\world\Lobby;
 
 final class EntityManager
 {
-	private int $count = 0;
-
-	public function register(): void
-	{
-		EntityFactory::getInstance()->register(HumanType::class, function (World $world, CompoundTag $tag): HumanType {
-			return new HumanType(EntityDataHelper::parseLocation($tag, $world), HumanType::parseSkinNBT($tag), $tag);
-		}, ["HumanType"]);
-
-		EntityFactory::getInstance()->register(FloatingTextType::class, function (World $world, CompoundTag $tag): FloatingTextType {
-			return new FloatingTextType(EntityDataHelper::parseLocation($tag, $world), $tag);
-		}, ["FloatingTextType"]);
-	}
-
-	public function entity_discord(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::DISCORD);
-
-		$location = $player->getLocation();
-
-		$this->remove_entity(Entity::DISCORD);
-
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNpcId(Entity::DISCORD);
-		$entity->setNameTag("§r§eClick to join our Discord server!");
-		$entity->spawnToAll();
-
-		$eLocation = $entity->getLocation();
-
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
-
-		foreach ([
-					 "§l§9Discord Server" => 3.80,
-					 "Join our Discord community to keep" => 3.40,
-					 "up-to-date about recent updates," => 3.00,
-					 "giveaways, suggest us ideas or" => 2.60,
-					 "appeal a punishment." => 2.20
-				 ] as $text => $mY) {
-			$this->floating_text($text, Entity::DISCORD, new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
-		}
-	}
-
-	public function remove_entity(string $npcId): void
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-
-		if (!isset($world)) {
-			return;
-		}
-
-		foreach ($world->getEntities() as $entity) {
-
-			if (!$entity instanceof HumanType || $entity->getNpcId() !== $npcId) {
-				continue;
-			}
-
-			$entity->kill();
-			$this->kill_text($npcId);
-			$this->kill_text($npcId . Entity::EXTRA);
-		}
-	}
+    private int $count = 0;
+
+    public function register(): void
+    {
+        EntityFactory::getInstance()->register(HumanType::class, function (World $world, CompoundTag $tag): HumanType {
+            return new HumanType(EntityDataHelper::parseLocation($tag, $world), HumanType::parseSkinNBT($tag), $tag);
+        }, ["HumanType"]);
 
-	public function kill_text(string $textId): void
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
+        EntityFactory::getInstance()->register(FloatingTextType::class, function (World $world, CompoundTag $tag): FloatingTextType {
+            return new FloatingTextType(EntityDataHelper::parseLocation($tag, $world), $tag);
+        }, ["FloatingTextType"]);
+    }
 
-		if (!isset($world)) {
-			return;
-		}
+    public function entity_discord(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::DISCORD);
 
-		foreach ($world->getEntities() as $entity) {
-			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
-				continue;
-			}
+        $location = $player->getLocation();
 
-			$entity->kill();
-		}
-	}
+        $this->remove_entity(Entity::DISCORD);
 
-	public function floating_text(string $text, string $id, Location $location, bool $spawnToAll = true, GhostlyPlayer $player = null): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("TextId", $id);
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNpcId(Entity::DISCORD);
+        $entity->setNameTag("§r§eClick to join our Discord server!");
+        $entity->spawnToAll();
 
-		$entity = new FloatingTextType($location, $nbt);
-		$entity->setNameTag("§r§7" . $text);
+        $eLocation = $entity->getLocation();
 
-		if ($spawnToAll) {
-			$entity->spawnToAll();
-			return;
-		}
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		if (!isset($player)) {
-			throw new RuntimeException("Player is NULL");
-		}
+        foreach (["§l§9Discord Server" => 3.80, "Join our Discord community to keep" => 3.40, "up-to-date about recent updates," => 3.00, "giveaways, suggest us ideas or" => 2.60, "appeal a punishment." => 2.20] as $text => $mY) {
+            $this->floating_text($text, Entity::DISCORD, new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
+        }
+    }
 
-		$entity->spawnTo($player);
-	}
+    public function remove_entity(string $npcId): void
+    {
+        $lobby = Lobby::getInstance();
+        $world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
 
-	public function entity_store(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::STORE);
+        if (!isset($world)) {
+            return;
+        }
 
-		$location = $player->getLocation();
+        foreach ($world->getEntities() as $entity) {
 
-		$this->remove_entity(Entity::STORE);
+            if (!$entity instanceof HumanType || $entity->getNpcId() !== $npcId) {
+                continue;
+            }
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§r§eClick to view store!");
-		$entity->spawnToAll();
+            $entity->kill();
+            $this->kill_text($npcId);
+            $this->kill_text($npcId . Entity::EXTRA);
+        }
+    }
 
-		$eLocation = $entity->getLocation();
+    public function kill_text(string $textId): void
+    {
+        $lobby = Lobby::getInstance();
+        $world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        if (!isset($world)) {
+            return;
+        }
 
-		foreach ([
-					 "§l§aStore" => 3.10,
-					 "You can purchase G-Coins, ranks" => 2.70,
-					 "and tags on our store!." => 2.30
-				 ] as $text => $mY) {
-			$this->floating_text($text, Entity::STORE, new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
-		}
-	}
+        foreach ($world->getEntities() as $entity) {
+            if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
+                continue;
+            }
 
-	public function spawn_zOmArRD(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::OMAR);
+            $entity->kill();
+        }
+    }
 
-		$location = $player->getLocation();
+    public function floating_text(string $text, string $id, Location $location, bool $spawnToAll = true, GhostlyPlayer $player = null): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("TextId", $id);
 
-		$this->remove_entity(Entity::OMAR);
+        $entity = new FloatingTextType($location, $nbt);
+        $entity->setNameTag("§r§7" . $text);
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§r§4zOmArRD");
-		$entity->spawnToAll();
+        if ($spawnToAll) {
+            $entity->spawnToAll();
+            return;
+        }
 
-		$eLocation = $entity->getLocation();
+        if (!isset($player)) {
+            throw new RuntimeException("Player is NULL");
+        }
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        $entity->spawnTo($player);
+    }
 
-		$this->floating_text("§7[§cDev§7]", Entity::OMAR, new Location($x, $y + 2.15, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+    public function entity_store(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::STORE);
 
-	public function spawn_Lucy(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", "lucy");
+        $location = $player->getLocation();
 
-		$location = $player->getLocation();
-		$skin = $player->getSkin();
+        $this->remove_entity(Entity::STORE);
 
-		$this->remove_entity("lucy");
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§r§eClick to view store!");
+        $entity->spawnToAll();
 
-		$entity = new HumanType($location, new Skin("lucy", $skin->getSkinData(), $skin->getCapeData(), $skin->getGeometryName(), $skin->getGeometryData()), $nbt);
-		$entity->setNameTag("§r§5LucyNept");
-		$entity->spawnToAll();
+        $eLocation = $entity->getLocation();
 
-		$eLocation = $entity->getLocation();
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        foreach (["§l§aStore" => 3.10, "You can purchase G-Coins, ranks" => 2.70, "and tags on our store!." => 2.30] as $text => $mY) {
+            $this->floating_text($text, Entity::STORE, new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
+        }
+    }
 
-		$this->floating_text("§7[§5Lucy§7]", "lucy", new Location($x, $y + 2.15, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+    public function spawn_zOmArRD(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::OMAR);
 
-	public function npc_combo(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::COMBO);
-		$nbt->setString("server_name", "Combo");
+        $location = $player->getLocation();
 
-		$location = $player->getLocation();
+        $this->remove_entity(Entity::OMAR);
 
-		$this->remove_entity(Entity::COMBO);
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§r§4zOmArRD");
+        $entity->spawnToAll();
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§7Players: §f??§7/§f??");
+        $eLocation = $entity->getLocation();
 
-		$enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		$item = VanillaItems::ENDER_PEARL();
-		$chest_plate = VanillaItems::DIAMOND_CHESTPLATE()->addEnchantment($enchant);
-		$leggings = VanillaItems::DIAMOND_LEGGINGS()->addEnchantment($enchant);
-		$boots = VanillaItems::DIAMOND_BOOTS()->addEnchantment($enchant);
+        $this->floating_text("§7[§cDev§7]", Entity::OMAR, new Location($x, $y + 2.15, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
 
-		$armor = $entity->getArmorInventory();
-		$armor->setChestplate($chest_plate);
-		$armor->setLeggings($leggings);
-		$armor->setBoots($boots);
+    public function spawn_Lucy(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", "lucy");
 
-		$entity->getInventory()->addItem($item);
-		$entity->spawnToAll();
+        $location = $player->getLocation();
+        $skin = $player->getSkin();
 
-		$eLocation = $entity->getLocation();
+        $this->remove_entity("lucy");
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        $entity = new HumanType($location, new Skin("lucy", $skin->getSkinData(), $skin->getCapeData(), $skin->getGeometryName(), $skin->getGeometryData()), $nbt);
+        $entity->setNameTag("§r§5LucyNept");
+        $entity->spawnToAll();
 
-		$this->floating_text("§l§cCombo", Entity::COMBO, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
-		$this->floating_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+        $eLocation = $entity->getLocation();
 
-	public function npc_practice(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::PRACTICE);
-		$nbt->setString("server_name", "Practice");
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		$location = $player->getLocation();
+        $this->floating_text("§7[§5Lucy§7]", "lucy", new Location($x, $y + 2.15, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
 
-		$this->remove_entity(Entity::PRACTICE);
+    public function npc_combo(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::COMBO);
+        $nbt->setString("server_name", "Combo");
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§7Players: §f??§7/§f??");
+        $location = $player->getLocation();
 
-		$enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
+        $this->remove_entity(Entity::COMBO);
 
-		$sword = VanillaItems::DIAMOND_SWORD()->addEnchantment($enchant);
-		$chest_plate = VanillaItems::DIAMOND_CHESTPLATE()->addEnchantment($enchant);
-		$leggings = VanillaItems::DIAMOND_LEGGINGS()->addEnchantment($enchant);
-		$boots = VanillaItems::DIAMOND_BOOTS()->addEnchantment($enchant);
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§7Players: §f??§7/§f??");
 
-		$armor = $entity->getArmorInventory();
-		$armor->setChestplate($chest_plate);
-		$armor->setLeggings($leggings);
-		$armor->setBoots($boots);
+        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
 
-		$entity->getInventory()->addItem($sword);
-		$entity->spawnToAll();
+        $item = VanillaItems::ENDER_PEARL();
+        $chest_plate = VanillaItems::DIAMOND_CHESTPLATE()->addEnchantment($enchant);
+        $leggings = VanillaItems::DIAMOND_LEGGINGS()->addEnchantment($enchant);
+        $boots = VanillaItems::DIAMOND_BOOTS()->addEnchantment($enchant);
 
-		$eLocation = $entity->getLocation();
+        $armor = $entity->getArmorInventory();
+        $armor->setChestplate($chest_plate);
+        $armor->setLeggings($leggings);
+        $armor->setBoots($boots);
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        $entity->getInventory()->addItem($item);
+        $entity->spawnToAll();
 
-		$this->floating_text("§l§cPractice", Entity::PRACTICE, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
-		$this->floating_text("§eClick to join Practice.", Entity::PRACTICE . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+        $eLocation = $entity->getLocation();
 
-	public function npc_uhc(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::UHC);
-		$nbt->setString("server_name", "UHC");
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		$location = $player->getLocation();
+        $this->floating_text("§l§cCombo", Entity::COMBO, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
+        $this->floating_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
 
-		$this->remove_entity(Entity::UHC);
+    public function npc_practice(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::PRACTICE);
+        $nbt->setString("server_name", "Practice");
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§7Players: §f??§7/§f??");
+        $location = $player->getLocation();
 
-		$enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
+        $this->remove_entity(Entity::PRACTICE);
 
-		$item = VanillaItems::GOLDEN_APPLE()->addEnchantment($enchant);
-		$chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
-		$leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
-		$boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§7Players: §f??§7/§f??");
 
-		$armor = $entity->getArmorInventory();
-		$armor->setChestplate($chest_plate);
-		$armor->setLeggings($leggings);
-		$armor->setBoots($boots);
+        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
 
-		$entity->getInventory()->addItem($item);
-		$entity->spawnToAll();
+        $sword = VanillaItems::DIAMOND_SWORD()->addEnchantment($enchant);
+        $chest_plate = VanillaItems::DIAMOND_CHESTPLATE()->addEnchantment($enchant);
+        $leggings = VanillaItems::DIAMOND_LEGGINGS()->addEnchantment($enchant);
+        $boots = VanillaItems::DIAMOND_BOOTS()->addEnchantment($enchant);
 
-		$eLocation = $entity->getLocation();
+        $armor = $entity->getArmorInventory();
+        $armor->setChestplate($chest_plate);
+        $armor->setLeggings($leggings);
+        $armor->setBoots($boots);
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        $entity->getInventory()->addItem($sword);
+        $entity->spawnToAll();
 
-		$this->floating_text("§l§cUHC", Entity::UHC, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
-		$this->floating_text("§eClick to join UHC.", Entity::UHC . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+        $eLocation = $entity->getLocation();
 
-	public function npc_uhc_run(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::UHC_RUN);
-		$nbt->setString("server_name", "UHC_RUN");
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		$location = $player->getLocation();
+        $this->floating_text("§l§cPractice", Entity::PRACTICE, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
+        $this->floating_text("§eClick to join Practice.", Entity::PRACTICE . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
 
-		$this->remove_entity(Entity::UHC_RUN);
+    public function npc_uhc(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::UHC);
+        $nbt->setString("server_name", "UHC");
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§7Players: §f??§7/§f??");
+        $location = $player->getLocation();
 
-		$enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
+        $this->remove_entity(Entity::UHC);
 
-		$item = VanillaItems::APPLE()->addEnchantment($enchant);
-		$chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
-		$leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
-		$boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§7Players: §f??§7/§f??");
 
-		$armor = $entity->getArmorInventory();
-		$armor->setChestplate($chest_plate);
-		$armor->setLeggings($leggings);
-		$armor->setBoots($boots);
+        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
 
-		$entity->getInventory()->addItem($item);
-		$entity->spawnToAll();
+        $item = VanillaItems::GOLDEN_APPLE()->addEnchantment($enchant);
+        $chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
+        $leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
+        $boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
 
-		$eLocation = $entity->getLocation();
+        $armor = $entity->getArmorInventory();
+        $armor->setChestplate($chest_plate);
+        $armor->setLeggings($leggings);
+        $armor->setBoots($boots);
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        $entity->getInventory()->addItem($item);
+        $entity->spawnToAll();
 
-		$this->floating_text("§l§cUHC Run", Entity::UHC_RUN, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
-		$this->floating_text("§eClick to join UHC Run.", Entity::UHC_RUN . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+        $eLocation = $entity->getLocation();
 
-	public function npc_hcf(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::HCF);
-		$nbt->setString("server_name", "HCF");
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		$location = $player->getLocation();
+        $this->floating_text("§l§cUHC", Entity::UHC, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
+        $this->floating_text("§eClick to join UHC.", Entity::UHC . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
 
-		$this->remove_entity(Entity::HCF);
+    public function npc_uhc_run(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::UHC_RUN);
+        $nbt->setString("server_name", "UHC_RUN");
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§7Players: §f??§7/§f??");
+        $location = $player->getLocation();
 
-		$enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
+        $this->remove_entity(Entity::UHC_RUN);
 
-		$item = VanillaItems::IRON_PICKAXE()->addEnchantment($enchant);
-		$chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
-		$leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
-		$boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§7Players: §f??§7/§f??");
 
-		$armor = $entity->getArmorInventory();
-		$armor->setChestplate($chest_plate);
-		$armor->setLeggings($leggings);
-		$armor->setBoots($boots);
+        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
 
-		$entity->getInventory()->addItem($item);
-		$entity->spawnToAll();
+        $item = VanillaItems::APPLE()->addEnchantment($enchant);
+        $chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
+        $leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
+        $boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
 
-		$eLocation = $entity->getLocation();
+        $armor = $entity->getArmorInventory();
+        $armor->setChestplate($chest_plate);
+        $armor->setLeggings($leggings);
+        $armor->setBoots($boots);
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        $entity->getInventory()->addItem($item);
+        $entity->spawnToAll();
 
-		$this->floating_text("§l§cHCF", Entity::HCF, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
-		$this->floating_text("§eClick to join HCF.", Entity::HCF . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+        $eLocation = $entity->getLocation();
 
-	public function npc_kitmap(GhostlyPlayer $player): void
-	{
-		$nbt = new CompoundTag();
-		$nbt->setString("npcId", Entity::KITMAP);
-		$nbt->setString("server_name", "KITMAP");
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-		$location = $player->getLocation();
+        $this->floating_text("§l§cUHC Run", Entity::UHC_RUN, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
+        $this->floating_text("§eClick to join UHC Run.", Entity::UHC_RUN . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
 
-		$this->remove_entity(Entity::KITMAP);
+    public function npc_hcf(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::HCF);
+        $nbt->setString("server_name", "HCF");
 
-		$entity = new HumanType($location, $player->getSkin(), $nbt);
-		$entity->setNameTag("§7Players: §f??§7/§f??");
+        $location = $player->getLocation();
 
-		$enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
+        $this->remove_entity(Entity::HCF);
 
-		$item = VanillaItems::IRON_PICKAXE()->addEnchantment($enchant);
-		$chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
-		$leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
-		$boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§7Players: §f??§7/§f??");
 
-		$armor = $entity->getArmorInventory();
-		$armor->setChestplate($chest_plate);
-		$armor->setLeggings($leggings);
-		$armor->setBoots($boots);
+        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
 
-		$entity->getInventory()->addItem($item);
-		$entity->spawnToAll();
+        $item = VanillaItems::IRON_PICKAXE()->addEnchantment($enchant);
+        $chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
+        $leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
+        $boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
 
-		$eLocation = $entity->getLocation();
+        $armor = $entity->getArmorInventory();
+        $armor->setChestplate($chest_plate);
+        $armor->setLeggings($leggings);
+        $armor->setBoots($boots);
 
-		$x = $eLocation->getX();
-		$y = $eLocation->getY();
-		$z = $eLocation->getZ();
+        $entity->getInventory()->addItem($item);
+        $entity->spawnToAll();
 
-		$this->floating_text("§l§cKitMap", Entity::KITMAP, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
-		$this->floating_text("§eClick to join KitMap.", Entity::KITMAP . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
-	}
+        $eLocation = $entity->getLocation();
 
-	public function purge_all(): void
-	{
-		foreach (Server::getInstance()->getWorldManager()->getWorlds() as $world) {
-			foreach ($world->getEntities() as $entity) {
-				if ($entity instanceof GhostlyPlayer) {
-					continue;
-				}
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
 
-				$entity->kill();
-			}
-		}
-	}
+        $this->floating_text("§l§cHCF", Entity::HCF, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
+        $this->floating_text("§eClick to join HCF.", Entity::HCF . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
 
-	public function update_server_status(): void
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-		$offline = ["§cOffline", "§cOffline.", "§cOffline..", "§cOffline..."];
+    public function npc_kitmap(GhostlyPlayer $player): void
+    {
+        $nbt = new CompoundTag();
+        $nbt->setString("npcId", Entity::KITMAP);
+        $nbt->setString("server_name", "KITMAP");
 
-		if (!isset($world)) {
-			return;
-		}
+        $location = $player->getLocation();
 
-		if ($this->count > 3) {
-			$this->count = 0;
-		}
+        $this->remove_entity(Entity::KITMAP);
 
-		foreach ($world->getEntities() as $entity) {
-			if (!$entity instanceof HumanType) {
-				continue;
-			}
-			switch ($entity->getNpcId()) {
-				case Entity::COMBO:
-					$server = ServerManager::getInstance()->getServerByName("Combo");
+        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity->setNameTag("§7Players: §f??§7/§f??");
 
-					if ($server === null) {
-						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-						$this->kill_text(Entity::COMBO . Entity::EXTRA);
-						break;
-					}
+        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
 
-					if (!$server->isOnline()) {
-						$entity->setNameTag($offline[$this->count]);
-						$this->kill_text(Entity::COMBO . Entity::EXTRA);
-						break;
-					}
-
-					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+        $item = VanillaItems::IRON_PICKAXE()->addEnchantment($enchant);
+        $chest_plate = VanillaItems::GOLDEN_CHESTPLATE()->addEnchantment($enchant);
+        $leggings = VanillaItems::GOLDEN_LEGGINGS()->addEnchantment($enchant);
+        $boots = VanillaItems::GOLDEN_BOOTS()->addEnchantment($enchant);
 
-					if (!$this->exist_text(Entity::COMBO . Entity::EXTRA)) {
-						$location = $entity->getLocation();
+        $armor = $entity->getArmorInventory();
+        $armor->setChestplate($chest_plate);
+        $armor->setLeggings($leggings);
+        $armor->setBoots($boots);
 
-						if ($server->isWhitelist()) {
-							$this->floating_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
-						$this->floating_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-						break;
-					}
-
-					if ($server->isWhitelist()) {
-						$this->update_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA);
-					} else {
-						$this->update_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA);
-					}
-					break;
-				case Entity::PRACTICE:
-					$server = ServerManager::getInstance()->getServerByName("Practice");
-
-					if ($server === null) {
-						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-						$this->kill_text(Entity::PRACTICE . Entity::EXTRA);
-						break;
-					}
-
-					if (!$server->isOnline()) {
-						$entity->setNameTag($offline[$this->count]);
-						$this->kill_text(Entity::PRACTICE . Entity::EXTRA);
-						break;
-					}
-
-					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
-
-					if (!$this->exist_text(Entity::PRACTICE . Entity::EXTRA)) {
-						$location = $entity->getLocation();
-
-						if ($server->isWhitelist()) {
-							$this->floating_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
-						$this->floating_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-						break;
-					}
-
-					if ($server->isWhitelist()) {
-						$this->update_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA);
-					} else {
-						$this->update_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA);
-					}
-					break;
-				case Entity::KITMAP:
-					$server = ServerManager::getInstance()->getServerByName("KITMAP");
-
-					if ($server === null) {
-						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-						$this->kill_text(Entity::KITMAP . Entity::EXTRA);
-						break;
-					}
-
-					if (!$server->isOnline()) {
-						$entity->setNameTag($offline[$this->count]);
-						$this->kill_text(Entity::KITMAP . Entity::EXTRA);
-						break;
-					}
-					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
-
-					if (!$this->exist_text(Entity::KITMAP . Entity::EXTRA)) {
-						$location = $entity->getLocation();
-
-						if ($server->isWhitelist()) {
-							$this->floating_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
-						$this->floating_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-						break;
-					}
-
-					if ($server->isWhitelist()) {
-						$this->update_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA);
-					} else {
-						$this->update_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA);
-					}
-					break;
-				case Entity::HCF:
-					$server = ServerManager::getInstance()->getServerByName("HCF");
-
-					if ($server === null) {
-						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-						$this->kill_text(Entity::HCF . Entity::EXTRA);
-						break;
-					}
-
-					if (!$server->isOnline()) {
-						$entity->setNameTag($offline[$this->count]);
-						$this->kill_text(Entity::HCF . Entity::EXTRA);
-						break;
-					}
-
-					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
-
-					if (!$this->exist_text(Entity::HCF . Entity::EXTRA)) {
-						$location = $entity->getLocation();
-
-						if ($server->isWhitelist()) {
-							$this->floating_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
-						$this->floating_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-						break;
-					}
-
-					if ($server->isWhitelist()) {
-						$this->update_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA);
-					} else {
-						$this->update_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA);
-					}
-					break;
-				case Entity::UHC:
-					$server = ServerManager::getInstance()->getServerByName("UHC");
-
-					if ($server === null) {
-						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-						$this->kill_text(Entity::UHC . Entity::EXTRA);
-						break;
-					}
-
-					if (!$server->isOnline()) {
-						$entity->setNameTag($offline[$this->count]);
-						$this->kill_text(Entity::UHC . Entity::EXTRA);
-						break;
-					}
-
-					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
-
-					if (!$this->exist_text(Entity::UHC . Entity::EXTRA)) {
-						$location = $entity->getLocation();
-
-						if ($server->isWhitelist()) {
-							$this->floating_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
-						$this->floating_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-						break;
-					}
-
-					if ($server->isWhitelist()) {
-						$this->update_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA);
-					} else {
-						$this->update_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA);
-					}
-					break;
-				case Entity::UHC_RUN:
-					$server = ServerManager::getInstance()->getServerByName("UHC_RUN");
-
-					if ($server === null) {
-						$entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
-						$this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
-						break;
-					}
-
-					if (!$server->isOnline()) {
-						$entity->setNameTag($offline[$this->count]);
-						$this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
-						break;
-					}
-
-					$entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
-
-					if (!$this->exist_text(Entity::UHC_RUN . Entity::EXTRA)) {
-						$location = $entity->getLocation();
-
-						if ($server->isWhitelist()) {
-							$this->floating_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-							break;
-						}
-						$this->floating_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
-						break;
-					}
-
-					if ($server->isWhitelist()) {
-						$this->update_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA);
-					} else {
-						$this->update_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA);
-					}
-					break;
-			}
-		}
-
-		$this->count++;
-	}
-
-	public function exist_text(string $textId): bool
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-
-		if (!isset($world)) {
-			return false;
-		}
-
-		foreach ($world->getEntities() as $entity) {
-			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
-				continue;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	public function update_text(string $text, string $textId): void
-	{
-		$lobby = Lobby::getInstance();
-		$world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-
-		if (!isset($world)) {
-			return;
-		}
-
-		foreach ($world->getEntities() as $entity) {
-			if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
-				continue;
-			}
-
-			$entity->setNameTag($text);
-		}
-	}
+        $entity->getInventory()->addItem($item);
+        $entity->spawnToAll();
+
+        $eLocation = $entity->getLocation();
+
+        $x = $eLocation->getX();
+        $y = $eLocation->getY();
+        $z = $eLocation->getZ();
+
+        $this->floating_text("§l§cKitMap", Entity::KITMAP, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
+        $this->floating_text("§eClick to join KitMap.", Entity::KITMAP . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
+    }
+
+    public function purge_all(): void
+    {
+        foreach (Server::getInstance()->getWorldManager()->getWorlds() as $world) {
+            foreach ($world->getEntities() as $entity) {
+                if ($entity instanceof GhostlyPlayer) {
+                    continue;
+                }
+
+                $entity->kill();
+            }
+        }
+    }
+
+    public function update_server_status(): void
+    {
+        $lobby = Lobby::getInstance();
+        $world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
+        $offline = ["§cOffline", "§cOffline.", "§cOffline..", "§cOffline..."];
+
+        if (!isset($world)) {
+            return;
+        }
+
+        if ($this->count > 3) {
+            $this->count = 0;
+        }
+
+        foreach ($world->getEntities() as $entity) {
+            if (!$entity instanceof HumanType) {
+                continue;
+            }
+            switch ($entity->getNpcId()) {
+                case Entity::COMBO:
+                    $server = ServerManager::getInstance()->getServerByName("Combo");
+
+                    if ($server === null) {
+                        $entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+                        $this->kill_text(Entity::COMBO . Entity::EXTRA);
+                        break;
+                    }
+
+                    if (!$server->isOnline()) {
+                        $entity->setNameTag($offline[$this->count]);
+                        $this->kill_text(Entity::COMBO . Entity::EXTRA);
+                        break;
+                    }
+
+                    $entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+
+                    if (!$this->exist_text(Entity::COMBO . Entity::EXTRA)) {
+                        $location = $entity->getLocation();
+
+                        if ($server->isWhitelist()) {
+                            $this->floating_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                            break;
+                        }
+                        $this->floating_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                        break;
+                    }
+
+                    if ($server->isWhitelist()) {
+                        $this->update_text("§c" . "WHITELISTED", Entity::COMBO . Entity::EXTRA);
+                    } else {
+                        $this->update_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA);
+                    }
+                    break;
+                case Entity::PRACTICE:
+                    $server = ServerManager::getInstance()->getServerByName("Practice");
+
+                    if ($server === null) {
+                        $entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+                        $this->kill_text(Entity::PRACTICE . Entity::EXTRA);
+                        break;
+                    }
+
+                    if (!$server->isOnline()) {
+                        $entity->setNameTag($offline[$this->count]);
+                        $this->kill_text(Entity::PRACTICE . Entity::EXTRA);
+                        break;
+                    }
+
+                    $entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+
+                    if (!$this->exist_text(Entity::PRACTICE . Entity::EXTRA)) {
+                        $location = $entity->getLocation();
+
+                        if ($server->isWhitelist()) {
+                            $this->floating_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                            break;
+                        }
+                        $this->floating_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                        break;
+                    }
+
+                    if ($server->isWhitelist()) {
+                        $this->update_text("§c" . "WHITELISTED", Entity::PRACTICE . Entity::EXTRA);
+                    } else {
+                        $this->update_text("§eClick to join Combo.", Entity::PRACTICE . Entity::EXTRA);
+                    }
+                    break;
+                case Entity::KITMAP:
+                    $server = ServerManager::getInstance()->getServerByName("KITMAP");
+
+                    if ($server === null) {
+                        $entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+                        $this->kill_text(Entity::KITMAP . Entity::EXTRA);
+                        break;
+                    }
+
+                    if (!$server->isOnline()) {
+                        $entity->setNameTag($offline[$this->count]);
+                        $this->kill_text(Entity::KITMAP . Entity::EXTRA);
+                        break;
+                    }
+                    $entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+
+                    if (!$this->exist_text(Entity::KITMAP . Entity::EXTRA)) {
+                        $location = $entity->getLocation();
+
+                        if ($server->isWhitelist()) {
+                            $this->floating_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                            break;
+                        }
+                        $this->floating_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                        break;
+                    }
+
+                    if ($server->isWhitelist()) {
+                        $this->update_text("§c" . "WHITELISTED", Entity::KITMAP . Entity::EXTRA);
+                    } else {
+                        $this->update_text("§eClick to join Combo.", Entity::KITMAP . Entity::EXTRA);
+                    }
+                    break;
+                case Entity::HCF:
+                    $server = ServerManager::getInstance()->getServerByName("HCF");
+
+                    if ($server === null) {
+                        $entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+                        $this->kill_text(Entity::HCF . Entity::EXTRA);
+                        break;
+                    }
+
+                    if (!$server->isOnline()) {
+                        $entity->setNameTag($offline[$this->count]);
+                        $this->kill_text(Entity::HCF . Entity::EXTRA);
+                        break;
+                    }
+
+                    $entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+
+                    if (!$this->exist_text(Entity::HCF . Entity::EXTRA)) {
+                        $location = $entity->getLocation();
+
+                        if ($server->isWhitelist()) {
+                            $this->floating_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                            break;
+                        }
+                        $this->floating_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                        break;
+                    }
+
+                    if ($server->isWhitelist()) {
+                        $this->update_text("§c" . "WHITELISTED", Entity::HCF . Entity::EXTRA);
+                    } else {
+                        $this->update_text("§eClick to join Combo.", Entity::HCF . Entity::EXTRA);
+                    }
+                    break;
+                case Entity::UHC:
+                    $server = ServerManager::getInstance()->getServerByName("UHC");
+
+                    if ($server === null) {
+                        $entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+                        $this->kill_text(Entity::UHC . Entity::EXTRA);
+                        break;
+                    }
+
+                    if (!$server->isOnline()) {
+                        $entity->setNameTag($offline[$this->count]);
+                        $this->kill_text(Entity::UHC . Entity::EXTRA);
+                        break;
+                    }
+
+                    $entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+
+                    if (!$this->exist_text(Entity::UHC . Entity::EXTRA)) {
+                        $location = $entity->getLocation();
+
+                        if ($server->isWhitelist()) {
+                            $this->floating_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                            break;
+                        }
+                        $this->floating_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                        break;
+                    }
+
+                    if ($server->isWhitelist()) {
+                        $this->update_text("§c" . "WHITELISTED", Entity::UHC . Entity::EXTRA);
+                    } else {
+                        $this->update_text("§eClick to join Combo.", Entity::UHC . Entity::EXTRA);
+                    }
+                    break;
+                case Entity::UHC_RUN:
+                    $server = ServerManager::getInstance()->getServerByName("UHC_RUN");
+
+                    if ($server === null) {
+                        $entity->setNameTag("§k§6!!§r§cCOMING SOON§k§6!!");
+                        $this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
+                        break;
+                    }
+
+                    if (!$server->isOnline()) {
+                        $entity->setNameTag($offline[$this->count]);
+                        $this->kill_text(Entity::UHC_RUN . Entity::EXTRA);
+                        break;
+                    }
+
+                    $entity->setNameTag("§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}");
+
+                    if (!$this->exist_text(Entity::UHC_RUN . Entity::EXTRA)) {
+                        $location = $entity->getLocation();
+
+                        if ($server->isWhitelist()) {
+                            $this->floating_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                            break;
+                        }
+                        $this->floating_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
+                        break;
+                    }
+
+                    if ($server->isWhitelist()) {
+                        $this->update_text("§c" . "WHITELISTED", Entity::UHC_RUN . Entity::EXTRA);
+                    } else {
+                        $this->update_text("§eClick to join Combo.", Entity::UHC_RUN . Entity::EXTRA);
+                    }
+                    break;
+            }
+        }
+
+        $this->count++;
+    }
+
+    public function exist_text(string $textId): bool
+    {
+        $lobby = Lobby::getInstance();
+        $world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
+
+        if (!isset($world)) {
+            return false;
+        }
+
+        foreach ($world->getEntities() as $entity) {
+            if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function update_text(string $text, string $textId): void
+    {
+        $lobby = Lobby::getInstance();
+        $world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
+
+        if (!isset($world)) {
+            return;
+        }
+
+        foreach ($world->getEntities() as $entity) {
+            if (!$entity instanceof FloatingTextType || $entity->getTextId() !== $textId) {
+                continue;
+            }
+
+            $entity->setNameTag($text);
+        }
+    }
 }
