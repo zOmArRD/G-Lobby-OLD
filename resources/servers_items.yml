@@ -39,7 +39,7 @@ Combo:
     - "§r§f· Kill-Streak & Bounties\n"
     - "§r§6#1 §7Top Kills: 1000 §6G-Coins\n"
     - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
-    - "§r§eClick to join to Practice."
+    - "§r§eClick to join to Combo."
   offline:
     - "§r§8Competitive\n"
     - "§r§f· Custom Kits"
@@ -59,7 +59,7 @@ HCF:
     - "§r§6#1 §7F-Top: §f5000 §6G-Coins"
     - "§r§6#1 §7Top Kills: §f3000 §6G-Coins\n"
     - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
-    - "§r§eClick to join to Practice."
+    - "§r§eClick to join to HCF."
   offline:
     - "§r§8Hardcore\n"
     - "§7Map Information:"
@@ -82,7 +82,7 @@ KITMAP:
     - "§r§6#1 §7F-Top: §f3500 §6G-Coins"
     - "§r§6#1 §7Top Kills: §f2000 §6G-Coins\n"
     - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
-    - "§r§eClick to join to Practice."
+    - "§r§eClick to join to KITMAP."
   offline:
     - "§r§8Competitive\n"
     - "§7Map Information:"
@@ -102,7 +102,7 @@ UHC:
     - "§r§f· FFA & Teams games\n"
     - "§r§6#1 §7Top Kills: 4000 §6G-Coins\n"
     - "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n"
-    - "§r§eClick to join to Practice."
+    - "§r§eClick to join to UHC."
   offline:
     - "§r§8Hardcore\n"
     - "§r§f· Cool scenarios (+??)"
