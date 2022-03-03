@@ -13,10 +13,10 @@ namespace zomarrd\ghostly\server;
 
 use JetBrains\PhpStorm\Pure;
 use pocketmine\scheduler\ClosureTask;
+use zomarrd\ghostly\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\queries\RegisterServerQuery;
+use zomarrd\ghostly\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\Ghostly;
-use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\queries\RegisterServerQuery;
-use zomarrd\ghostly\mysql\queries\SelectQuery;
 use zomarrd\ghostly\player\GhostlyPlayer;
 
 final class ServerManager

@@ -15,10 +15,10 @@ use Exception;
 use pocketmine\player\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\queries\InsertQuery;
-use zomarrd\ghostly\mysql\queries\SelectQuery;
-use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
+use zomarrd\ghostly\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\queries\InsertQuery;
+use zomarrd\ghostly\database\mysql\queries\SelectQuery;
+use zomarrd\ghostly\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\permission\PermissionKey;
 
 final class AntiProxy extends AsyncTask
@@ -51,7 +51,10 @@ final class AntiProxy extends AsyncTask
     {
         $result = $this->getResult();
 
-        if ($this->player === "zOmArRD") {
+        /**
+         * Add player can bypass
+         */
+        if ($this->player === "") {
             return;
         }
 

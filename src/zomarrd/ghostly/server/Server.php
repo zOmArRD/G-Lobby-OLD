@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\server;
 
 use JetBrains\PhpStorm\Pure;
+use zomarrd\ghostly\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\queries\SelectQuery;
+use zomarrd\ghostly\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\Ghostly;
-use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\queries\SelectQuery;
-use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
+
 
 final class Server
 {

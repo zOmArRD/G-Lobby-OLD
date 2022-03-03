@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\player\language;
 
 use jojoe77777\FormAPI\SimpleForm;
-use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
+use zomarrd\ghostly\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\GhostlyPlayer;
 
 final class LangForm
