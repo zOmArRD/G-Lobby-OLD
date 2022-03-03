@@ -11,14 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\events;
 
-use pocketmine\block\Anvil;
-use pocketmine\block\Chest;
-use pocketmine\block\CraftingTable;
-use pocketmine\block\DoublePlant;
-use pocketmine\block\Flower;
-use pocketmine\block\FlowerPot;
-use pocketmine\block\Hopper;
-use pocketmine\block\TallGrass;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -128,22 +120,14 @@ final class ItemInteractListener implements Listener
         $player = $event->getPlayer();
         $item = $event->getItem();
         $block = $event->getBlock();
-
-        switch (true) {
-            case $block instanceof TallGrass:
-            case $block instanceof Flower:
-            case $block instanceof FlowerPot:
-            case $block instanceof DoublePlant:
-            case $block instanceof Anvil:
-            case $block instanceof Chest:
-            case $block instanceof CraftingTable:
-            case $block instanceof Hopper:
-                $event->cancel();
-                break;
-        }
+        $event->cancel();
 
         if (!$player instanceof GhostlyPlayer) {
             return;
+        }
+
+        if ($player->isOp()) {
+            $event->uncancel();
         }
 
         if (!$player->canInteractItem()) {

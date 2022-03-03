@@ -33,13 +33,13 @@ use zomarrd\ghostly\commands\language\LangCommand;
 use zomarrd\ghostly\commands\mute\GlobalMuteCommand;
 use zomarrd\ghostly\commands\server\ServerCommand;
 use zomarrd\ghostly\config\ConfigManager;
+use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\entity\Entity;
 use zomarrd\ghostly\events\HumanListener;
 use zomarrd\ghostly\events\ItemInteractListener;
 use zomarrd\ghostly\events\PlayerListener;
 use zomarrd\ghostly\exception\ExtensionMissing;
 use zomarrd\ghostly\menu\Menu;
-use zomarrd\ghostly\mysql\MySQL;
 use zomarrd\ghostly\network\login\LoginPacketHandler;
 use zomarrd\ghostly\network\skin\MojangAdapter;
 use zomarrd\ghostly\player\language\LangHandler;
@@ -128,7 +128,7 @@ final class Ghostly extends PluginBase
 
         $this->registerEvents([new PlayerListener(), new ItemInteractListener(), new HumanListener()]);
 
-        $this->registerCommands("bukkit", [new ServerCommand($this), new LangCommand($this, "lang"), new GlobalMuteCommand($this, 'globalmute'), new EntityCommand($this, 'entity')]);
+        $this->registerCommands("bukkit", [new ServerCommand($this), new LangCommand($this, "lang"), new GlobalMuteCommand($this, 'globalmute'), new EntityCommand($this, 'entity'),]);
 
         $this->getServer()->getPluginManager()->registerEvent(QueryRegenerateEvent::class, function (QueryRegenerateEvent $event): void {
             $info = $event->getQueryInfo();
@@ -190,6 +190,7 @@ final class Ghostly extends PluginBase
          $prefix §fCreated by zOmArRD :)                                                                     
 INFO
         );
+
     }
 
     /**

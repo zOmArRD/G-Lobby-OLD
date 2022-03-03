@@ -12,11 +12,9 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\events;
 
 use pocketmine\block\BlockLegacyIds;
-use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockBurnEvent;
 use pocketmine\event\block\BlockFormEvent;
 use pocketmine\event\block\BlockGrowEvent;
-use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\event\block\LeavesDecayEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -24,7 +22,6 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
-use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
@@ -35,13 +32,10 @@ use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
-use pocketmine\Server;
-use zomarrd\ghostly\config\ConfigManager;
+use zomarrd\ghostly\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\queries\InsertQuery;
+use zomarrd\ghostly\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\Ghostly;
-use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\queries\InsertQuery;
-use zomarrd\ghostly\mysql\queries\SelectQuery;
-use zomarrd\ghostly\network\proxy\AntiProxy;
 use zomarrd\ghostly\player\DeviceData;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangKey;
@@ -91,20 +85,6 @@ final class PlayerListener implements Listener
             $player->setLanguage($data->lang);
             $player->setScoreboard((bool)$data->scoreboard);
         });
-    }
-
-    public function PlayerJoinEvent(PlayerJoinEvent $event): void
-    {
-        $event->setJoinMessage("");
-        $player = $event->getPlayer();
-
-        if ($player instanceof GhostlyPlayer) {
-            $player->onJoin();
-
-            if (ConfigManager::getServerConfig()->get('proxy_detect')) {
-                Server::getInstance()->getAsyncPool()->submitTask(new AntiProxy($player->getName(), $player->getNetworkSession()->getIp()));
-            }
-        }
     }
 
     public function PlayerQuitEvent(PlayerQuitEvent $event): void
@@ -222,28 +202,6 @@ final class PlayerListener implements Listener
     public function EntityDamageEvent(EntityDamageEvent $event): void
     {
         $event->cancel();
-    }
-
-    public function BlockBreakEvent(BlockBreakEvent $event): void
-    {
-        if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
-            return;
-        }
-        $event->cancel();
-    }
-
-    public function BlockPlaceEvent(BlockPlaceEvent $event): void
-    {
-        $item = $event->getItem();
-        $event->cancel();
-
-        if ($event->getPlayer()->hasPermission(PermissionKey::GHOSTLY_BUILD)) {
-            $event->uncancel();
-        }
-
-        if ($item->getNamedTag()->getString("itemId", "") !== "") {
-            $event->cancel();
-        }
     }
 
     public function BlockBurnEvent(BlockBurnEvent $event): void

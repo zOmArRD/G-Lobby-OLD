@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\commands\mute;
 
 use CortexPE\Commando\args\BooleanArgument;
-use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
@@ -54,7 +53,5 @@ final class GlobalMuteCommand extends BaseCommand
     protected function prepare(): void
     {
         $this->registerArgument(0, new BooleanArgument('value'));
-        $this->registerArgument(1, new RawStringArgument('type'));
-
     }
 }

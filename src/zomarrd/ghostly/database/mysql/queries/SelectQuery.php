@@ -9,10 +9,10 @@
  */
 declare(strict_types=1);
 
-namespace zomarrd\ghostly\mysql\queries;
+namespace zomarrd\ghostly\database\mysql\queries;
 
 use mysqli;
-use zomarrd\ghostly\mysql\Query;
+use zomarrd\ghostly\database\mysql\Query;
 
 class SelectQuery extends Query
 {

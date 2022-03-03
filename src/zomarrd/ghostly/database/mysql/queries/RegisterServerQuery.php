@@ -9,12 +9,12 @@
  */
 declare(strict_types=1);
 
-namespace zomarrd\ghostly\mysql\queries;
+namespace zomarrd\ghostly\database\mysql\queries;
 
 use mysqli;
+use zomarrd\ghostly\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\Query;
 use zomarrd\ghostly\Ghostly;
-use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\Query;
 
 final class RegisterServerQuery extends Query
 {
@@ -33,7 +33,7 @@ final class RegisterServerQuery extends Query
                 $mysqli->query("INSERT INTO ghostly_servers(server_name, players, max_players, online, whitelist, category) VALUES ('$this->serverName', 0, 0, true, true, '$category');");
             }
         } else {
-            MySQL::runAsync(new RegisterServerQuery($this->serverName));
+            MySQL::runAsync(new self($this->serverName));
         }
     }
 }

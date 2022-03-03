@@ -13,18 +13,31 @@ namespace zomarrd\ghostly\player;
 
 use JetBrains\PhpStorm\Pure;
 use muqsit\invmenu\InvMenuHandler;
+use pocketmine\entity\animation\ArmSwingAnimation;
+use pocketmine\entity\Entity;
+use pocketmine\entity\object\ItemEntity;
+use pocketmine\entity\projectile\Arrow;
+use pocketmine\event\player\PlayerChatEvent;
+use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\item\Item;
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\network\mcpe\protocol\types\UIProfile;
+use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
+use pocketmine\Server as PMServer;
+use pocketmine\timings\Timings;
+use pocketmine\utils\TextFormat;
+use zomarrd\ghostly\config\ConfigManager;
 use zomarrd\ghostly\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\Ghostly;
+use zomarrd\ghostly\network\proxy\AntiProxy;
 use zomarrd\ghostly\player\item\ItemManager;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
@@ -289,5 +302,112 @@ class GhostlyPlayer extends Player
             $this->onGround = false;
             $this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
         }
+    }
+
+    public function attackEntity(Entity $entity): bool
+    {
+        if (!$entity->isAlive()) {
+            return false;
+        }
+
+        if ($entity instanceof ItemEntity || $entity instanceof Arrow) {
+            return false;
+        }
+
+        $this->broadcastAnimation(new ArmSwingAnimation($this), $this->getViewers());
+        return true;
+    }
+
+    public function getLeaveMessage(): string
+    {
+        return "";
+    }
+
+    private function recheckBroadcastPermissions(): void
+    {
+        foreach ([DefaultPermissionNames::BROADCAST_ADMIN => PMServer::BROADCAST_CHANNEL_ADMINISTRATIVE, DefaultPermissionNames::BROADCAST_USER => PMServer::BROADCAST_CHANNEL_USERS] as $permission => $channel) {
+            if ($this->hasPermission($permission)) {
+                $this->server->subscribeToBroadcastChannel($channel, $this);
+            } else {
+                $this->server->unsubscribeFromBroadcastChannel($channel, $this);
+            }
+        }
+    }
+
+    public function doFirstSpawn(): void
+    {
+        if ($this->spawned) {
+            return;
+        }
+
+        $this->spawned = true;
+        $this->recheckBroadcastPermissions();
+        $this->getPermissionRecalculationCallbacks()->add(function (array $changedPermissionsOldValues): void {
+            if (isset($changedPermissionsOldValues[PMServer::BROADCAST_CHANNEL_ADMINISTRATIVE]) || isset($changedPermissionsOldValues[PMServer::BROADCAST_CHANNEL_USERS])) {
+                $this->recheckBroadcastPermissions();
+            }
+        });
+
+        $this->onJoin();
+
+        if (ConfigManager::getServerConfig()->get('proxy_detect')) {
+            PMServer::getInstance()->getAsyncPool()->submitTask(new AntiProxy($this->getName(), $this->getNetworkSession()->getIp()));
+        }
+
+        $this->noDamageTicks = 60;
+        $this->spawnToAll();
+    }
+
+    public function chat(string $message): bool
+    {
+        $this->removeCurrentWindow();
+
+        $message = TextFormat::clean($message, false);
+        foreach (explode("\n", $message) as $messagePart) {
+            if (trim($messagePart) !== "" and strlen($messagePart) <= 255 && $this->messageCounter-- > 0) {
+                if (str_starts_with($messagePart, './')) {
+                    $messagePart = substr($messagePart, 1);
+                }
+
+                $ev = new PlayerCommandPreprocessEvent($this, $messagePart);
+                $ev->call();
+
+                if ($ev->isCancelled()) {
+                    break;
+                }
+
+                if (str_starts_with($ev->getMessage(), "/")) {
+                    Timings::$playerCommand->startTiming();
+                    $this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
+                    Timings::$playerCommand->stopTiming();
+                } else {
+                    $ev = new PlayerChatEvent($this, $ev->getMessage(), $this->server->getBroadcastChannelSubscribers(PMServer::BROADCAST_CHANNEL_USERS));
+                    $ev->call();
+                    /** TODO: Put the player's rank */
+                    if (!$ev->isCancelled()) {
+                        $this->server->broadcastMessage(TextFormat::WHITE . $this->getDisplayName() . "§r§7: {$ev->getMessage()}", $ev->getRecipients());
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public function breakBlock(Vector3 $pos): bool
+    {
+        if (!$this->isOp()) {
+            return false;
+        }
+        return parent::breakBlock($pos);
+    }
+
+    public function interactBlock(Vector3 $pos, int $face, Vector3 $clickOffset): bool
+    {
+        if (!$this->isOp()) {
+            return false;
+        }
+
+        return parent::interactBlock($pos, $face, $clickOffset);
     }
 }

@@ -9,7 +9,7 @@
  */
 declare(strict_types=1);
 
-namespace zomarrd\ghostly\mysql;
+namespace zomarrd\ghostly\database\mysql;
 
 use mysqli;
 use pocketmine\scheduler\AsyncTask;
