@@ -43,6 +43,7 @@ use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\player\language\Language;
 use zomarrd\ghostly\player\permission\PermissionKey;
+use zomarrd\ghostly\server\queue\Queue;
 use zomarrd\ghostly\server\Server;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\world\Lobby;
@@ -58,6 +59,27 @@ class GhostlyPlayer extends Player
     private Scoreboard $scoreboard_session;
     private ItemManager $itemManager;
     private bool $canInteractItem = true;
+    public ?Queue $queue = null;
+
+    public function getQueue(): ?Queue
+    {
+        return $this->queue;
+    }
+
+    public function setQueue(string|Server $server): void
+    {
+        $this->queue = new Queue($this, $server);
+    }
+
+    public function isQueue(): bool
+    {
+        return isset($this->queue);
+    }
+
+    public function quitQueue(): void
+    {
+        $this->queue = null;
+    }
 
     public function canInteractItem(): bool
     {
@@ -157,6 +179,12 @@ class GhostlyPlayer extends Player
         }
     }
 
+    public function getQueueItem(): void
+    {
+        $this->getInventory()?->clearAll();
+        $this->setItem(8, $this->getItemManager()->get('item-queue'));
+    }
+
     private function setItem(int $index, Item $item): void
     {
         $this->getInventory()?->setItem($index, $item);
@@ -200,6 +228,12 @@ class GhostlyPlayer extends Player
         }
     }
 
+    /**
+     * @param string|\zomarrd\ghostly\server\Server $server
+     *
+     * @return void
+     * @deprecated THIS SHIT
+     */
     public function server_transfer_task(string|Server $server): void
     {
         Ghostly::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($server): void {
@@ -215,6 +249,10 @@ class GhostlyPlayer extends Player
      */
     public function transferTo(string|Server $server): void
     {
+        if (!$this->isOnline()) {
+            return;
+        }
+
         if (is_string($server)) {
             $server = ServerManager::getInstance()->getServerByName($server);
         }
@@ -223,6 +261,7 @@ class GhostlyPlayer extends Player
             $this->sendSound(LevelSoundEvent::EXPLODE);
             $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
             $this->setCanInteractItem();
+            $this->getLobbyItems();
             return;
         }
 
@@ -230,6 +269,7 @@ class GhostlyPlayer extends Player
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
             $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
             $this->setCanInteractItem();
+            $this->getLobbyItems();
             return;
         }
 
@@ -237,6 +277,7 @@ class GhostlyPlayer extends Player
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
             $this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
             $this->setCanInteractItem();
+            $this->getLobbyItems();
             return;
         }
 
@@ -244,13 +285,15 @@ class GhostlyPlayer extends Player
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
             $this->sendTranslated(LangKey::SERVER_IS_WHITELISTED);
             $this->setCanInteractItem();
+            $this->getLobbyItems();
             return;
         }
 
         if (!$this->hasPermission(PermissionKey::GHOSTLY_SERVER_JOIN_BYPASS) && $server->getPlayers() >= $server->getMaxPlayers()) {
-            $this->sendSound(LevelEvent::SOUND_IGNITE, 'level-event');
+            $this->sendSound(LevelEvent::SOUND_SHOOT, 'level-event');
             $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_4);
             $this->setCanInteractItem();
+            $this->getLobbyItems();
             return;
         }
 

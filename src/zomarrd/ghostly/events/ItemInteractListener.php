@@ -23,8 +23,10 @@ use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use zomarrd\ghostly\entity\events\HumanInteractEvent;
 use zomarrd\ghostly\entity\type\HumanType;
+use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\menu\Menu;
 use zomarrd\ghostly\player\GhostlyPlayer;
+use zomarrd\ghostly\player\language\LangKey;
 
 final class ItemInteractListener implements Listener
 {
@@ -97,6 +99,11 @@ final class ItemInteractListener implements Listener
 
                 $player->sendSound(LevelSoundEvent::DROP_SLOT);
                 break;
+            case "item-queue":
+                Ghostly::getQueueManager()->remove($player);
+                $player->getLobbyItems();
+                $player->sendTranslated(LangKey::QUEUE_PLAYER_LEFT);
+                break;
         }
     }
 
@@ -128,14 +135,6 @@ final class ItemInteractListener implements Listener
 
         if ($player->isOp()) {
             $event->uncancel();
-        }
-
-        if (!$player->canInteractItem()) {
-            return;
-        }
-
-        if (!$player->isOp()) {
-            $event->cancel();
         }
 
         if ($player->hasCooldown(2)) {

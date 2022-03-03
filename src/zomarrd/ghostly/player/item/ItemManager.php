@@ -33,6 +33,7 @@ final class ItemManager extends IPlayer
             'item-lobby' => VanillaItems::NETHER_STAR()->setNamedTag((new CompoundTag())->setString("itemId", "item-lobby"))->setCustomName($this->getPlayer()->getLang()->getItemNames('item-lobby')),
             'item-cosmetics' => ItemFactory::getInstance()->get(ItemIds::ENDER_CHEST)->setNamedTag((new CompoundTag())->setString("itemId", "item-cosmetics"))->setCustomName($this->getPlayer()->getLang()->getItemNames('item-cosmetics')),
             'item-config' => VanillaItems::SKELETON_SKULL()->setNamedTag((new CompoundTag())->setString("itemId", "item-config"))->setCustomName($this->getPlayer()->getLang()->getItemNames('item-config')),
+            'item-queue' => VanillaItems::REDSTONE_DUST()->setNamedTag((new CompoundTag())->setString("itemId", "item-queue"))->setCustomName($this->getPlayer()->getLang()->getItemNames('item-queue')),
             default => ItemFactory::air()
         };
     }

@@ -44,6 +44,7 @@ use zomarrd\ghostly\network\login\LoginPacketHandler;
 use zomarrd\ghostly\network\skin\MojangAdapter;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\security\ChatHandler;
+use zomarrd\ghostly\server\queue\QueueManager;
 use zomarrd\ghostly\server\ServerManager;
 use zomarrd\ghostly\task\GlobalTask;
 
@@ -58,6 +59,7 @@ final class Ghostly extends PluginBase
     public static bool $is_proxy_server = true;
     public static Config $server_items;
     private static bool $globalMute = false;
+    public static QueueManager $queueManager;
 
     public static function getInstance(): Ghostly
     {
@@ -95,6 +97,7 @@ final class Ghostly extends PluginBase
             throw new ExtensionMissing("mysqli");
         }
 
+        self::$queueManager = new QueueManager();
         new ConfigManager();
         MySQL::createTables();
     }
@@ -139,6 +142,8 @@ final class Ghostly extends PluginBase
         }, EventPriority::LOWEST, $this);
 
         Entity::ENTITY()->register();
+
+        self::getQueueManager()->enable($this);
 
         foreach ($this->getServer()->getNetwork()->getInterfaces() as $interface) {
             if (!$interface instanceof RakLibInterface) {
@@ -214,5 +219,10 @@ INFO
     protected function onDisable(): void
     {
         ServerManager::getInstance()->getCurrentServer()?->setOnline(false);
+    }
+
+    public static function getQueueManager(): QueueManager
+    {
+        return self::$queueManager;
     }
 }

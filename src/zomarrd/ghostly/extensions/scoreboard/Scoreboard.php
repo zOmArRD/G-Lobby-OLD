@@ -46,14 +46,21 @@ class Scoreboard extends ScoreAPI
 
     private function updateScoreboard(): void
     {
-        foreach ($this->getConfig()['lines'] as $line => $string) {
-            $msg = $this->replaceData($line, (string)$string);
-            $this->setLine($line, $msg);
+        if (!$this->getPlayer()->isQueue()) {
+            foreach ($this->getConfig()['lines-normal'] as $line => $string) {
+                $msg = $this->replaceData($line, (string)$string);
+                $this->setLine($line, $msg);
+            }
+        } else {
+            foreach ($this->getConfig()['lines-queue'] as $line => $string) {
+                $msg = $this->replaceData($line, (string)$string);
+                $this->setLine($line, $msg);
+            }
         }
     }
 
     public function replaceData(int $line, string $string): string
     {
-        return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : Utils::checkStrings($string);
+        return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : Utils::checkStrings($string, $this->getPlayer());
     }
 }

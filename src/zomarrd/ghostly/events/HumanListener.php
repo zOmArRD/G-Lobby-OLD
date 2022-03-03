@@ -15,6 +15,7 @@ use pocketmine\event\Listener;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use zomarrd\ghostly\entity\Entity;
 use zomarrd\ghostly\entity\events\HumanInteractEvent;
+use zomarrd\ghostly\Ghostly;
 use zomarrd\ghostly\player\language\LangKey;
 use zomarrd\ghostly\server\ServerManager;
 
@@ -52,7 +53,7 @@ final class HumanListener implements Listener
                 return;
             }
 
-            $player->transferTo($server);
+            Ghostly::getQueueManager()->add($player, $server);
         }
     }
 }

@@ -96,9 +96,8 @@ final class ServerSelector
     Server|string $server): void
     {
         $player->sendTranslated(LangKey::SERVER_SEARCHING);
-        $player->setCanInteractItem(false);
+        Ghostly::getQueueManager()->add($player, $server);
         $player->closeInventory();
-        $player->server_transfer_task($server);
     }
 
     public function sendType(GhostlyPlayer $player, string $type = Menu::GUI_TYPE): void
@@ -112,7 +111,8 @@ final class ServerSelector
                         return;
                     }
 
-                    $player->transferTo($data);
+                    $player->sendTranslated(LangKey::SERVER_SEARCHING);
+                    Ghostly::getQueueManager()->add($player, $data);
                 }
             });
 

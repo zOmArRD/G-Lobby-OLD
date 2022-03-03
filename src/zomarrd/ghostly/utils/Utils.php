@@ -12,16 +12,39 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\utils;
 
 use pocketmine\utils\TextFormat;
+use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\server\ServerManager;
 
 class Utils
 {
     public const ONLY_PLAYER = PREFIX . "§cThis command must be executed by a player!";
 
-    public static function checkStrings(string $string): string
+    public static function checkStrings(string $string, ?GhostlyPlayer $player = null): string
     {
         $msg = $string;
-        $toReplace = ["{BLUE}" => TextFormat::BLUE, "{GREEN}" => TextFormat::GREEN, "{RED}" => TextFormat::RED, "{DARK_RED}" => TextFormat::DARK_RED, "{PREFIX}" => PREFIX, "{DARK_BLUE}" => TextFormat::DARK_BLUE, "{DARK_AQUA}" => TextFormat::DARK_AQUA, "{DARK_GREEN}" => TextFormat::DARK_GREEN, "{GOLD}" => TextFormat::GOLD, "{GRAY}" => TextFormat::GRAY, "{DARK_GRAY}" => TextFormat::DARK_GRAY, "{DARK_PURPLE}" => TextFormat::DARK_PURPLE, "{LIGHT_PURPLE}" => TextFormat::LIGHT_PURPLE, "{RESET}" => TextFormat::RESET, "{YELLOW}" => TextFormat::YELLOW, "{AQUA}" => TextFormat::AQUA, "{BOLD}" => TextFormat::BOLD, "{WHITE}" => TextFormat::WHITE, "{date}" => date('d/m/y'), "{NETWORK.GET-PLAYERS}" => ServerManager::getInstance()->getNetworkPlayers(), "{NETWORK.GET-MAX_PLAYERS}" => ServerManager::getInstance()->getNetworkMaxPlayers()];
+        $toReplace = ["{BLUE}" => TextFormat::BLUE,
+            "{GREEN}" => TextFormat::GREEN,
+            "{RED}" => TextFormat::RED,
+            "{DARK_RED}" => TextFormat::DARK_RED,
+            "{PREFIX}" => PREFIX,
+            "{DARK_BLUE}" => TextFormat::DARK_BLUE,
+            "{DARK_AQUA}" => TextFormat::DARK_AQUA,
+            "{DARK_GREEN}" => TextFormat::DARK_GREEN,
+            "{GOLD}" => TextFormat::GOLD,
+            "{GRAY}" => TextFormat::GRAY,
+            "{DARK_GRAY}" => TextFormat::DARK_GRAY,
+            "{DARK_PURPLE}" => TextFormat::DARK_PURPLE,
+            "{LIGHT_PURPLE}" => TextFormat::LIGHT_PURPLE,
+            "{RESET}" => TextFormat::RESET,
+            "{YELLOW}" => TextFormat::YELLOW,
+            "{AQUA}" => TextFormat::AQUA,
+            "{BOLD}" => TextFormat::BOLD,
+            "{WHITE}" => TextFormat::WHITE,
+            "{date}" => date('d/m/y'),
+            "{NETWORK.GET-PLAYERS}" => ServerManager::getInstance()->getNetworkPlayers(),
+            "{NETWORK.GET-MAX_PLAYERS}" => ServerManager::getInstance()->getNetworkMaxPlayers(),
+            "{POSITION}" => $player?->getQueue()?->getPositionFormatted(),
+            "{SERVER-QUEUED}" => $player?->getQueue()?->getServer()];
         $keys = array_keys($toReplace);
         $values = array_values($toReplace);
 

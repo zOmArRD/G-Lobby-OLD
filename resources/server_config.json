@@ -1,5 +1,5 @@
 {
-	"version": 4.0,
+	"version": 4.1,
 	"prefix": "§l§cGhostly §f» §r",
 	"proxy_detect": false,
 	"is_proxy_server": false,
@@ -27,7 +27,7 @@
 			"§l§cGhostly §fNetwo§cr§fk",
 			"§l§cGhostly §fNetwor§ck"
 		],
-		"lines": [
+		"lines-normal": [
 			"\uE001",
 			" §7{date}",
 			"",
@@ -35,6 +35,22 @@
 			" §f {NETWORK.GET-PLAYERS}§c/§f{NETWORK.GET-MAX_PLAYERS}",
 			"",
 			" §cRank: §7Default",
+			"",
+			" §7GhostlyMC.live",
+			"§c\uE001"
+		],
+		"lines-queue": [
+			"\uE001",
+			" §7{date}",
+			"",
+			" §cNetwork:",
+			" §f {NETWORK.GET-PLAYERS}§c/§f{NETWORK.GET-MAX_PLAYERS}",
+			"",
+			" §cRank: §7Default",
+			"",
+			" §cQueue:",
+			" §7 Server:§f {SERVER-QUEUED}",
+			" §7 Position:§f {POSITION}",
 			"",
 			" §7GhostlyMC.live",
 			"§c\uE001"

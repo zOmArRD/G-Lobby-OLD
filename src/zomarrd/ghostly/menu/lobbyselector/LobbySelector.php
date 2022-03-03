@@ -112,9 +112,8 @@ final class LobbySelector
     public function callable(GhostlyPlayer $player, Server|string $server): void
     {
         $player->sendTranslated(LangKey::SERVER_SEARCHING);
-        $player->setCanInteractItem(false);
+        $player->transferTo($server);
         $player->closeInventory();
-        $player->server_transfer_task($server);
     }
 
     public function sendType(GhostlyPlayer $player, string $type = Menu::GUI_TYPE): void
