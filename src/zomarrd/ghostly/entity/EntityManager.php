@@ -702,4 +702,9 @@ final class EntityManager
             $entity->setNameTag($text);
         }
     }
+
+    public function serverExist($server): bool
+    {
+        return $server instanceof Server;
+    }
 }
