@@ -50,8 +50,5 @@ final class GlobalMuteCommand extends BaseCommand
     /**
      * @throws ArgumentOrderException
      */
-    protected function prepare(): void
-    {
-        $this->registerArgument(0, new BooleanArgument('value'));
-    }
+    protected function prepare(): void { $this->registerArgument(0, new BooleanArgument('value')); }
 }

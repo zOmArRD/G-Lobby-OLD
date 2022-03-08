@@ -66,9 +66,9 @@ class GhostlyPlayer extends Player
         return $this->queue;
     }
 
-    public function setQueue(string|Server $server): void
+    public function setQueue(string|Server $server): Queue
     {
-        $this->queue = new Queue($this, $server);
+        return $this->queue = new Queue($this, $server);
     }
 
     public function isQueue(): bool

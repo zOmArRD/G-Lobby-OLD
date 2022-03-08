@@ -53,7 +53,7 @@ final class HumanListener implements Listener
                 return;
             }
 
-            Ghostly::getQueueManager()->add($player, $server);
+            Ghostly::getQueueManager()->add($player, $entity->getServerName());
         }
     }
 }

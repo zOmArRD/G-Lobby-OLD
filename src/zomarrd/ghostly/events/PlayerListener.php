@@ -70,6 +70,7 @@ final class PlayerListener implements Listener
     public function PlayerLoginEvent(PlayerLoginEvent $event): void
     {
         $player = $event->getPlayer();
+
         if (!$player instanceof GhostlyPlayer) {
             return;
         }
@@ -81,6 +82,7 @@ final class PlayerListener implements Listener
                 $player->transfer("ghostlymc.live");
                 return;
             }
+
             $data = $result[0];
             $player->setLanguage($data->lang);
             $player->setScoreboard((bool)$data->scoreboard);
@@ -91,7 +93,9 @@ final class PlayerListener implements Listener
     {
         $event->setQuitMessage("");
         $player = $event->getPlayer();
+
         if ($player instanceof GhostlyPlayer) {
+            $player->quitQueue();
             $player->teleport_to_lobby();
         }
     }

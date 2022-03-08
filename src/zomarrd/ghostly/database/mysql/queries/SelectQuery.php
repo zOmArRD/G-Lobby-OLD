@@ -25,20 +25,24 @@ class SelectQuery extends Query
         $result = $mysqli->query($this->query);
         $rows = [];
 
-        if ($result !== false) {
-            while ($row = $result->fetch_assoc()) {
-                $rows[] = $row;
-            }
-
-            $this->rows = serialize($rows);
+        if ($result === false) {
+            return;
         }
+
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+
+        $this->rows = serialize($rows);
     }
 
     public function onCompletion(): void
     {
-        if ($this->rows !== null) {
-            $this->rows = unserialize($this->rows, array([]));
-            parent::onCompletion();
+        if ($this->rows === null) {
+            return;
         }
+
+        $this->rows = unserialize($this->rows, array([]));
+        parent::onCompletion();
     }
 }

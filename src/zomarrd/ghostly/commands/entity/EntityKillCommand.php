@@ -15,7 +15,7 @@ use CortexPE\Commando\args\BooleanArgument;
 use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\BaseSubCommand;
-use Exception;
+use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use zomarrd\ghostly\entity\Entity;
 
@@ -39,14 +39,11 @@ final class EntityKillCommand extends BaseSubCommand
     }
 
     /**
-     * This is where all the arguments, permissions, sub-commands, etc. would be registered
+     * @throws ArgumentOrderException
      */
     protected function prepare(): void
     {
-        try {
-            $this->registerArgument(0, new BooleanArgument("isAll", true));
-            $this->registerArgument(0, new RawStringArgument("EntityId", true));
-        } catch (Exception) {
-        }
+        $this->registerArgument(0, new BooleanArgument("isAll", true));
+        $this->registerArgument(0, new RawStringArgument("EntityId", true));
     }
 }

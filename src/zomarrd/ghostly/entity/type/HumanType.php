@@ -156,11 +156,13 @@ final class HumanType extends Human
         $this->xpManager = new ExperienceManager($this);
 
         $this->inventory = new PlayerInventory($this);
+
         $syncHeldItem = function (): void {
             foreach ($this->getViewers() as $viewer) {
                 $viewer->getNetworkSession()->onMobMainHandItemChange($this);
             }
         };
+
         $this->inventory->getListeners()->add(new CallbackInventoryListener(function (Inventory $inventory, int $slot) use ($syncHeldItem): void {
             if ($slot === $this->inventory->getHeldItemIndex()) {
                 $syncHeldItem();
@@ -170,6 +172,7 @@ final class HumanType extends Human
                 $syncHeldItem();
             }
         }));
+
         $this->offHandInventory = new PlayerOffHandInventory($this);
         $this->enderInventory = new PlayerEnderInventory($this);
         $this->initHumanData($nbt);
@@ -196,6 +199,7 @@ final class HumanType extends Human
         }
 
         $offHand = $nbt->getCompoundTag("OffHandItem");
+
         if ($offHand !== null) {
             $this->offHandInventory->setItem(0, Item::nbtDeserialize($offHand));
         }
@@ -227,7 +231,6 @@ final class HumanType extends Human
         $this->hungerManager->setFoodTickTimer($nbt->getInt("foodTickTimer", $this->hungerManager->getFoodTickTimer()));
 
         $this->xpManager->setXpAndProgressNoEvent($nbt->getInt("XpLevel", 0), $nbt->getFloat("XpP", 0.0));
-
         $this->xpManager->setLifetimeTotalXp($nbt->getInt("XpTotal", 0));
 
         if (($xpSeedTag = $nbt->getTag("XpSeed")) instanceof IntTag) {

@@ -38,7 +38,6 @@ final class LangCommand extends BaseCommand
     protected function prepare(): void
     {
         $this->registerSubCommand(new LangListCommand('list', "List of available languages"));
-
         $this->registerSubCommand(new LangSetCommand('set', "Set your language, or someone else's"));
     }
 }

@@ -30,7 +30,10 @@ final class ServerCommand extends BaseCommand
     {
         if ($sender instanceof GhostlyPlayer) {
             Menu::SERVER_MANAGER_FORM()->build($sender);
+            return;
         }
+
+        $this->sendUsage();
     }
 
     protected function prepare(): void

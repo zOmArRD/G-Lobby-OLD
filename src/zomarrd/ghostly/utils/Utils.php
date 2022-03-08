@@ -19,6 +19,12 @@ class Utils
 {
     public const ONLY_PLAYER = PREFIX . "§cThis command must be executed by a player!";
 
+    /**
+     * @param string             $string
+     * @param GhostlyPlayer|null $player
+     *
+     * @return string The formatted text, replaces custom variables with their respective values.
+     */
     public static function checkStrings(string $string, ?GhostlyPlayer $player = null): string
     {
         $msg = $string;
@@ -55,28 +61,6 @@ class Utils
         return $msg;
     }
 
-    public static function str_indexOf(string $needle, string $haystack, int $len = 0): int
-    {
-
-        $result = -1;
-
-        $indexes = self::str_indexes($needle, $haystack);
-
-        $length = count($indexes);
-
-        if ($length > 0) {
-
-            --$length;
-
-            $indexOfArr = ($len > $length or max($len, 0));
-
-            $result = $indexes[$indexOfArr];
-
-        }
-
-        return $result;
-    }
-
     /**
      * @param string $needle
      * @param string $haystack
@@ -106,26 +90,6 @@ class Utils
         return $result;
     }
 
-    public static function str_contains_vals(string $haystack, string...$needles): bool
-    {
-        $result = true;
-        $size = count($needles);
-
-        if ($size > 0) {
-            foreach ($needles as $needle) {
-                if (!self::str_contains($needle, $haystack)) {
-                    $result = false;
-                    break;
-                }
-            }
-        } else {
-            $result = false;
-        }
-
-
-        return $result;
-    }
-
     public static function str_contains(string $needle, string $haystack, bool $use_mb = false): bool
     {
         $result = false;
@@ -140,32 +104,6 @@ class Utils
         return $result;
     }
 
-    public static function arr_indexOf($needle, array $haystack, bool $strict = false): bool|int|string
-    {
-        $index = array_search($needle, $haystack, $strict);
-
-        if (is_bool($index) && $index === false) {
-            $index = -1;
-        }
-
-        return $index;
-    }
-
-    public static function arr_contains_keys(array $haystack, ...$needles): bool
-    {
-        $result = true;
-
-        foreach ($needles as $key) {
-            if (!isset($haystack[$key])) {
-                $result = false;
-                break;
-            }
-        }
-
-        return $result;
-    }
-
-
     public static function array_replace_values(array $array, string $replaceable, string $newText): array
     {
         $new = [];
@@ -179,24 +117,9 @@ class Utils
         return $new;
     }
 
-
     public static function arr_contains_value($needle, array $haystack, bool $strict = true): bool
     {
         return in_array($needle, $haystack, $strict);
-    }
-
-    public static function equals_string(string $input, string...$tests): bool
-    {
-        $result = false;
-
-        foreach ($tests as $test) {
-            if ($test === $input) {
-                $result = true;
-                break;
-            }
-        }
-
-        return $result;
     }
 
     public static function str_replace(string $haystack, array $values): string
@@ -210,96 +133,6 @@ class Utils
             if (self::str_contains($value, $haystack)) {
                 $result = str_replace($value, $replaced, $result);
             }
-        }
-
-        return $result;
-    }
-
-    public static function sort_array(array $arr): array
-    {
-        if (count($arr) === 1) {
-            return $arr;
-        }
-
-        $middle = (int)(count($arr) / 2);
-        $left = array_slice($arr, 0, $middle, true);
-        $right = array_slice($arr, $middle, null, true);
-        $left = self::sort_array($left);
-        $right = self::sort_array($right);
-
-        return self::merge($left, $right);
-    }
-
-    private static function merge(array $arr1, array $arr2): array
-    {
-        $result = [];
-
-        while (count($arr1) > 0 and count($arr2) > 0) {
-            $leftKey = array_keys($arr1)[0];
-            $rightKey = array_keys($arr2)[0];
-            $leftVal = $arr1[$leftKey];
-            $rightVal = $arr2[$rightKey];
-            if ($leftVal > $rightVal) {
-                $result[$rightKey] = $rightVal;
-                $arr2 = array_slice($arr2, 1, null, true);
-            } else {
-                $result[$leftKey] = $leftVal;
-                $arr1 = array_slice($arr1, 1, null, true);
-            }
-        }
-
-        while (count($arr1) > 0) {
-            $leftKey = array_keys($arr1)[0];
-            $leftVal = $arr1[$leftKey];
-            $result[$leftKey] = $leftVal;
-            $arr1 = array_slice($arr1, 1, null, true);
-        }
-
-        while (count($arr2) > 0) {
-            $rightKey = array_keys($arr2)[0];
-            $rightVal = $arr2[$rightKey];
-            $result[$rightKey] = $rightVal;
-            $arr2 = array_slice($arr2, 1, null, true);
-        }
-
-        return $result;
-    }
-
-    public static function canParse($s, bool $isInteger): bool
-    {
-        if (is_string($s)) {
-
-            $abc = 'ABCDEFGHIJKLMNOPQRZTUVWXYZ';
-            $invalid = $abc . strtoupper($abc) . "!@#$%^&*()_+={}[]|:;\"',<>?/";
-
-            if ($isInteger === true) {
-                $invalid .= '.';
-            }
-
-            $strArr = str_split($invalid);
-            $canParse = self::str_contains_from_arr($s, $strArr);
-
-        } else {
-            $canParse = ($isInteger === true) ? is_int($s) : is_float($s);
-        }
-
-        return $canParse;
-    }
-
-    public static function str_contains_from_arr(string $haystack, array $needles): bool
-    {
-        $result = true;
-        $size = count($needles);
-
-        if ($size > 0) {
-            foreach ($needles as $needle) {
-                if (!self::str_contains($needle, $haystack)) {
-                    $result = false;
-                    break;
-                }
-            }
-        } else {
-            $result = false;
         }
 
         return $result;

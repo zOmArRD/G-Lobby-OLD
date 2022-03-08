@@ -16,8 +16,8 @@ use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
-use zomarrd\ghostly\mysql\MySQL;
-use zomarrd\ghostly\mysql\queries\UpdateRowQuery;
+use zomarrd\ghostly\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\player\GhostlyPlayer;
 use zomarrd\ghostly\player\language\LangHandler;
 use zomarrd\ghostly\player\language\LangKey;
@@ -63,6 +63,7 @@ final class LangSetCommand extends BaseSubCommand
             if ($sender instanceof GhostlyPlayer) {
                 $sender->sendTranslated(LangKey::NOT_PERMISSION);
             }
+
             return;
         }
 
@@ -72,6 +73,7 @@ final class LangSetCommand extends BaseSubCommand
             } else {
                 $sender->sendMessage(PREFIX . "Player $target is not connected.");
             }
+
             return;
         }
 
@@ -82,6 +84,7 @@ final class LangSetCommand extends BaseSubCommand
                 } else {
                     $sender->sendMessage(PREFIX . 'Use </lang list> to see the list of available languages');
                 }
+
                 return;
             }
 

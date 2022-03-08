@@ -153,6 +153,9 @@ final class Ghostly extends PluginBase
             $interface->setPacketLimit(PHP_INT_MAX);
         }
 
+        /**
+         * If the server is proxy, it will establish a custom login method.
+         */
         if (self::$is_proxy_server) {
             $this->getServer()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, function (DataPacketReceiveEvent $event): void {
                 $packet = $event->getPacket();
