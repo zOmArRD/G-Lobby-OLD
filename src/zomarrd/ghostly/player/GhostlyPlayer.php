@@ -54,12 +54,12 @@ use zomarrd\ghostly\world\Lobby;
 class GhostlyPlayer extends Player
 {
     public int|float $cooldown = 0;
+    public ?Queue $queue = null;
     private string $currentLang = Language::ENGLISH_US;
     private bool $loaded = false, $scoreboard = true;
     private Scoreboard $scoreboard_session;
     private ItemManager $itemManager;
     private bool $canInteractItem = true;
-    public ?Queue $queue = null;
 
     public function getQueue(): ?Queue
     {
@@ -160,25 +160,6 @@ class GhostlyPlayer extends Player
         $this->currentLang = $lang;
     }
 
-    public function onJoin(): void
-    {
-        $this->getLobbyItems();
-        $this->setGamemode(GameMode::SURVIVAL());
-        $this->setHealth(20);
-        $this->getHungerManager()->setFood(20);
-        $this->setAllowFlight(true);
-        $this->setMovementSpeed($this->getMovementSpeed() * 1.2);
-        $this->teleport_to_lobby();
-    }
-
-    public function getLobbyItems(): void
-    {
-        $this->getInventory()?->clearAll();
-        foreach (['item-servers' => 0, 'item-cosmetics' => 4, 'item-lobby' => 7, 'item-config' => 8] as $item => $index) {
-            $this->setItem($index, $this->getItemManager()->get($item));
-        }
-    }
-
     public function getQueueItem(): void
     {
         $this->getInventory()?->clearAll();
@@ -193,20 +174,6 @@ class GhostlyPlayer extends Player
     public function getItemManager(): ItemManager
     {
         return $this->itemManager;
-    }
-
-    public function teleport_to_lobby(): void
-    {
-        $lobby = Lobby::getInstance();
-
-        if ($lobby !== null) {
-            $this->teleport($lobby->getSpawnPosition(), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
-        }
-    }
-
-    public function isOp(): bool
-    {
-        return Ghostly::getInstance()->getServer()->isOp($this->getName());
     }
 
     public function closeInventory(): void
@@ -310,6 +277,14 @@ class GhostlyPlayer extends Player
         $this->canInteractItem = $canInteractItem;
     }
 
+    public function getLobbyItems(): void
+    {
+        $this->getInventory()?->clearAll();
+        foreach (['item-servers' => 0, 'item-cosmetics' => 4, 'item-lobby' => 7, 'item-config' => 8] as $item => $index) {
+            $this->setItem($index, $this->getItemManager()->get($item));
+        }
+    }
+
     public function hasCooldown(float|int $time): bool
     {
         return time() - $this->cooldown < $time;
@@ -318,27 +293,6 @@ class GhostlyPlayer extends Player
     public function setCooldown(): void
     {
         $this->cooldown = time();
-    }
-
-    protected function internalSetGameMode(GameMode $gameMode): void
-    {
-        $this->gamemode = $gameMode;
-
-        $this->allowFlight = true;
-        $this->hungerManager->setEnabled(false);
-
-        if (!$this->isSpectator()) {
-            if ($this->isSurvival()) {
-                $this->setFlying(false);
-            }
-            $this->setSilent(false);
-            $this->checkGroundState(0, 0, 0, 0, 0, 0);
-        } else {
-            $this->setFlying(true);
-            $this->setSilent();
-            $this->onGround = false;
-            $this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
-        }
     }
 
     public function attackEntity(Entity $entity): bool
@@ -358,17 +312,6 @@ class GhostlyPlayer extends Player
     public function getLeaveMessage(): string
     {
         return "";
-    }
-
-    private function recheckBroadcastPermissions(): void
-    {
-        foreach ([DefaultPermissionNames::BROADCAST_ADMIN => PMServer::BROADCAST_CHANNEL_ADMINISTRATIVE, DefaultPermissionNames::BROADCAST_USER => PMServer::BROADCAST_CHANNEL_USERS] as $permission => $channel) {
-            if ($this->hasPermission($permission)) {
-                $this->server->subscribeToBroadcastChannel($channel, $this);
-            } else {
-                $this->server->unsubscribeFromBroadcastChannel($channel, $this);
-            }
-        }
     }
 
     public function doFirstSpawn(): void
@@ -394,6 +337,37 @@ class GhostlyPlayer extends Player
 
         $this->noDamageTicks = 60;
         $this->spawnToAll();
+    }
+
+    private function recheckBroadcastPermissions(): void
+    {
+        foreach ([DefaultPermissionNames::BROADCAST_ADMIN => PMServer::BROADCAST_CHANNEL_ADMINISTRATIVE, DefaultPermissionNames::BROADCAST_USER => PMServer::BROADCAST_CHANNEL_USERS] as $permission => $channel) {
+            if ($this->hasPermission($permission)) {
+                $this->server->subscribeToBroadcastChannel($channel, $this);
+            } else {
+                $this->server->unsubscribeFromBroadcastChannel($channel, $this);
+            }
+        }
+    }
+
+    public function onJoin(): void
+    {
+        $this->getLobbyItems();
+        $this->setGamemode(GameMode::SURVIVAL());
+        $this->setHealth(20);
+        $this->getHungerManager()->setFood(20);
+        $this->setAllowFlight(true);
+        $this->setMovementSpeed($this->getMovementSpeed() * 1.2);
+        $this->teleport_to_lobby();
+    }
+
+    public function teleport_to_lobby(): void
+    {
+        $lobby = Lobby::getInstance();
+
+        if ($lobby !== null) {
+            $this->teleport($lobby->getSpawnPosition(), $lobby->getSpawnYaw(), $lobby->getSpawnPitch());
+        }
     }
 
     public function chat(string $message): bool
@@ -440,6 +414,11 @@ class GhostlyPlayer extends Player
         return parent::breakBlock($pos);
     }
 
+    public function isOp(): bool
+    {
+        return Ghostly::getInstance()->getServer()->isOp($this->getName());
+    }
+
     public function interactBlock(Vector3 $pos, int $face, Vector3 $clickOffset): bool
     {
         if (!$this->isOp()) {
@@ -447,5 +426,26 @@ class GhostlyPlayer extends Player
         }
 
         return parent::interactBlock($pos, $face, $clickOffset);
+    }
+
+    protected function internalSetGameMode(GameMode $gameMode): void
+    {
+        $this->gamemode = $gameMode;
+
+        $this->allowFlight = true;
+        $this->hungerManager->setEnabled(false);
+
+        if (!$this->isSpectator()) {
+            if ($this->isSurvival()) {
+                $this->setFlying(false);
+            }
+            $this->setSilent(false);
+            $this->checkGroundState(0, 0, 0, 0, 0, 0);
+        } else {
+            $this->setFlying(true);
+            $this->setSilent();
+            $this->onGround = false;
+            $this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
+        }
     }
 }

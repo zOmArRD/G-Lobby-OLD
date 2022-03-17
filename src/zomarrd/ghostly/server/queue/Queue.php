@@ -19,7 +19,7 @@ class Queue
     public int $position = 0;
     public string $positionFormatted = "";
 
-    public function __construct(private GhostlyPlayer $player, private string|Server $server) { }
+    public function __construct(private GhostlyPlayer $player, private string|Server $server) {}
 
     public function getPlayer(): GhostlyPlayer
     {
@@ -34,23 +34,23 @@ class Queue
         return $this->server;
     }
 
-    public function setPosition(int $position): void
-    {
-        $this->position = $position;
-    }
-
     public function getPosition(): int
     {
         return $this->position;
     }
 
-    public function setPositionFormatted(string $positionFormatted): void
+    public function setPosition(int $position): void
     {
-        $this->positionFormatted = $positionFormatted;
+        $this->position = $position;
     }
 
     public function getPositionFormatted(): string
     {
         return $this->positionFormatted;
+    }
+
+    public function setPositionFormatted(string $positionFormatted): void
+    {
+        $this->positionFormatted = $positionFormatted;
     }
 }

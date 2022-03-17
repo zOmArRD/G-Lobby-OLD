@@ -28,29 +28,7 @@ class Utils
     public static function checkStrings(string $string, ?GhostlyPlayer $player = null): string
     {
         $msg = $string;
-        $toReplace = ["{BLUE}" => TextFormat::BLUE,
-            "{GREEN}" => TextFormat::GREEN,
-            "{RED}" => TextFormat::RED,
-            "{DARK_RED}" => TextFormat::DARK_RED,
-            "{PREFIX}" => PREFIX,
-            "{DARK_BLUE}" => TextFormat::DARK_BLUE,
-            "{DARK_AQUA}" => TextFormat::DARK_AQUA,
-            "{DARK_GREEN}" => TextFormat::DARK_GREEN,
-            "{GOLD}" => TextFormat::GOLD,
-            "{GRAY}" => TextFormat::GRAY,
-            "{DARK_GRAY}" => TextFormat::DARK_GRAY,
-            "{DARK_PURPLE}" => TextFormat::DARK_PURPLE,
-            "{LIGHT_PURPLE}" => TextFormat::LIGHT_PURPLE,
-            "{RESET}" => TextFormat::RESET,
-            "{YELLOW}" => TextFormat::YELLOW,
-            "{AQUA}" => TextFormat::AQUA,
-            "{BOLD}" => TextFormat::BOLD,
-            "{WHITE}" => TextFormat::WHITE,
-            "{date}" => date('d/m/y'),
-            "{NETWORK.GET-PLAYERS}" => ServerManager::getInstance()->getNetworkPlayers(),
-            "{NETWORK.GET-MAX_PLAYERS}" => ServerManager::getInstance()->getNetworkMaxPlayers(),
-            "{POSITION}" => $player?->getQueue()?->getPositionFormatted(),
-            "{SERVER-QUEUED}" => $player?->getQueue()?->getServer()];
+        $toReplace = ["{BLUE}" => TextFormat::BLUE, "{GREEN}" => TextFormat::GREEN, "{RED}" => TextFormat::RED, "{DARK_RED}" => TextFormat::DARK_RED, "{PREFIX}" => PREFIX, "{DARK_BLUE}" => TextFormat::DARK_BLUE, "{DARK_AQUA}" => TextFormat::DARK_AQUA, "{DARK_GREEN}" => TextFormat::DARK_GREEN, "{GOLD}" => TextFormat::GOLD, "{GRAY}" => TextFormat::GRAY, "{DARK_GRAY}" => TextFormat::DARK_GRAY, "{DARK_PURPLE}" => TextFormat::DARK_PURPLE, "{LIGHT_PURPLE}" => TextFormat::LIGHT_PURPLE, "{RESET}" => TextFormat::RESET, "{YELLOW}" => TextFormat::YELLOW, "{AQUA}" => TextFormat::AQUA, "{BOLD}" => TextFormat::BOLD, "{WHITE}" => TextFormat::WHITE, "{date}" => date('d/m/y'), "{NETWORK.GET-PLAYERS}" => ServerManager::getInstance()->getNetworkPlayers(), "{NETWORK.GET-MAX_PLAYERS}" => ServerManager::getInstance()->getNetworkMaxPlayers(), "{POSITION}" => $player?->getQueue()?->getPositionFormatted(), "{SERVER-QUEUED}" => $player?->getQueue()?->getServer()];
         $keys = array_keys($toReplace);
         $values = array_values($toReplace);
 
@@ -90,20 +68,6 @@ class Utils
         return $result;
     }
 
-    public static function str_contains(string $needle, string $haystack, bool $use_mb = false): bool
-    {
-        $result = false;
-        $type = ($use_mb === true) ? mb_strpos($haystack, $needle) : strpos($haystack, $needle);
-
-        if (is_bool($type)) {
-            $result = $type;
-        } else if (is_int($type)) {
-            $result = $type > -1;
-        }
-
-        return $result;
-    }
-
     public static function array_replace_values(array $array, string $replaceable, string $newText): array
     {
         $new = [];
@@ -133,6 +97,20 @@ class Utils
             if (self::str_contains($value, $haystack)) {
                 $result = str_replace($value, $replaced, $result);
             }
+        }
+
+        return $result;
+    }
+
+    public static function str_contains(string $needle, string $haystack, bool $use_mb = false): bool
+    {
+        $result = false;
+        $type = ($use_mb === true) ? mb_strpos($haystack, $needle) : strpos($haystack, $needle);
+
+        if (is_bool($type)) {
+            $result = $type;
+        } elseif (is_int($type)) {
+            $result = $type > -1;
         }
 
         return $result;

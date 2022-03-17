@@ -23,5 +23,5 @@ final class ServerReloadCommand extends BaseSubCommand
         $sender->sendMessage(PREFIX . "Servers have been reloaded from the database!");
     }
 
-    protected function prepare(): void { }
+    protected function prepare(): void {}
 }

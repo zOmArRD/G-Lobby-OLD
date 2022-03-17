@@ -18,7 +18,7 @@ class SelectQuery extends Query
 {
     public mixed $rows;
 
-    public function __construct(private string $query) { }
+    public function __construct(private string $query) {}
 
     public function query(mysqli $mysqli): void
     {
@@ -42,7 +42,7 @@ class SelectQuery extends Query
             return;
         }
 
-        $this->rows = unserialize($this->rows, array([]));
+        $this->rows = unserialize($this->rows, [[]]);
         parent::onCompletion();
     }
 }

@@ -33,12 +33,12 @@ class QueueManager
 
         $ghostly->getScheduler()->scheduleRepeatingTask(new ClosureTask(function () {
 
-                $this->updateQueue(Server::HCF);
-                $this->updateQueue(Server::COMBO);
-                $this->updateQueue(Server::PRACTICE);
-                $this->updateQueue(Server::KITMAP);
-                $this->updateQueue(Server::UHC);
-                $this->updateQueue(Server::UHC_RUN);
+            $this->updateQueue(Server::HCF);
+            $this->updateQueue(Server::COMBO);
+            $this->updateQueue(Server::PRACTICE);
+            $this->updateQueue(Server::KITMAP);
+            $this->updateQueue(Server::UHC);
+            $this->updateQueue(Server::UHC_RUN);
 
         }), 60);
     }
@@ -69,7 +69,7 @@ class QueueManager
     /**
      * @param GhostlyPlayer $player Player {@link GhostlyPlayer}.
      * @param string|Server $server Server {@link Server}.
-     * Add the player to the Queue.
+     *                              Add the player to the Queue.
      */
     public function add(GhostlyPlayer $player, string|Server $server): void
     {
@@ -113,7 +113,7 @@ class QueueManager
      */
     public function remove(GhostlyPlayer $player, string $server): void
     {
-        if (!$this->exist($player)){
+        if (!$this->exist($player)) {
             return;
         }
 

@@ -37,7 +37,7 @@ final class GlobalMuteCommand extends BaseCommand
                 $sender->sendMessage(PREFIX . "§cYou cannot activate the global mute, apparently it is already activated!");
                 return;
             }
-        } else if (Ghostly::isGlobalMute()) {
+        } elseif (Ghostly::isGlobalMute()) {
             $sender->sendMessage("§aYou have deactivated the global mute");
         } else {
             $sender->sendMessage("§cYou cannot deactivate the global mute, apparently it is already deactivated!");
@@ -50,5 +50,8 @@ final class GlobalMuteCommand extends BaseCommand
     /**
      * @throws ArgumentOrderException
      */
-    protected function prepare(): void { $this->registerArgument(0, new BooleanArgument('value')); }
+    protected function prepare(): void
+    {
+        $this->registerArgument(0, new BooleanArgument('value'));
+    }
 }

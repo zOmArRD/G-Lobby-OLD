@@ -17,9 +17,15 @@ use zomarrd\ghostly\database\mysql\Query;
 final class InsertQuery extends Query
 {
 
-    public function __construct(private string $query) { }
+    public function __construct(private string $query) {}
 
-    public function query(mysqli $mysqli): void { $mysqli->query($this->getQuery()); }
+    public function query(mysqli $mysqli): void
+    {
+        $mysqli->query($this->getQuery());
+    }
 
-    public function getQuery(): string { return $this->query; }
+    public function getQuery(): string
+    {
+        return $this->query;
+    }
 }

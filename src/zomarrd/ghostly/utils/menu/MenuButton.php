@@ -17,7 +17,7 @@ use zomarrd\ghostly\player\GhostlyPlayer;
 
 class MenuButton
 {
-    public function __construct(private Item $item, private ?Closure $closure = null) { }
+    public function __construct(private Item $item, private ?Closure $closure = null) {}
 
     public function getItem(): Item
     {

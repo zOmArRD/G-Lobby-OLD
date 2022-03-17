@@ -29,7 +29,7 @@ class Language
      * @param array<string> $item_names
      * @param string        $authors
      */
-    public function __construct(private string $locale, private array $names, private array $messages, private array $item_names, private string $authors) { }
+    public function __construct(private string $locale, private array $names, private array $messages, private array $item_names, private string $authors) {}
 
     public static function openLangForm(GhostlyPlayer $player): LangForm
     {

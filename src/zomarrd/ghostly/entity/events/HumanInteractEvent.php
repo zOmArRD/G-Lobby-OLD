@@ -21,7 +21,7 @@ class HumanInteractEvent extends Event implements Cancellable
 {
     use CancellableTrait;
 
-    public function __construct(private HumanType $entity, private GhostlyPlayer $player) { }
+    public function __construct(private HumanType $entity, private GhostlyPlayer $player) {}
 
     public function getEntity(): HumanType
     {

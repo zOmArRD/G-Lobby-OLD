@@ -27,7 +27,7 @@ final class Server
     public const HCF = "HCF";
     public const KITMAP = "KITMAP";
 
-    public function __construct(private string $server_name, private int $players, private int $max_players, private bool $online, private bool $whitelist, private null|string $category) { }
+    public function __construct(private string $server_name, private int $players, private int $max_players, private bool $online, private bool $whitelist, private null|string $category) {}
 
     /**
      * @return string PLAYERS | WHITELISTED | OFFLINE

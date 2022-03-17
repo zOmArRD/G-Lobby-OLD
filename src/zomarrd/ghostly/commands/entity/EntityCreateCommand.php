@@ -72,5 +72,8 @@ final class EntityCreateCommand extends BaseSubCommand
     /**
      * @throws ArgumentOrderException
      */
-    protected function prepare(): void { $this->registerArgument(0, new RawStringArgument("type")); }
+    protected function prepare(): void
+    {
+        $this->registerArgument(0, new RawStringArgument("type"));
+    }
 }

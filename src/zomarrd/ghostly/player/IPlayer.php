@@ -15,7 +15,7 @@ use JetBrains\PhpStorm\Pure;
 
 abstract class IPlayer
 {
-    public function __construct(private GhostlyPlayer $player) { }
+    public function __construct(private GhostlyPlayer $player) {}
 
     #[Pure] public function getPlayerName(): string
     {

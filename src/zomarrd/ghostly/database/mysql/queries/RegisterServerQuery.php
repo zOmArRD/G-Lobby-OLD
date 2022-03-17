@@ -18,7 +18,7 @@ use zomarrd\ghostly\Ghostly;
 
 final class RegisterServerQuery extends Query
 {
-    public function __construct(private string $serverName) { }
+    public function __construct(private string $serverName) {}
 
     public function query(mysqli $mysqli): void
     {

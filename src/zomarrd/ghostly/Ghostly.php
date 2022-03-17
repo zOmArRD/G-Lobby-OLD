@@ -58,8 +58,8 @@ final class Ghostly extends PluginBase
     public static array $colors;
     public static bool $is_proxy_server = true;
     public static Config $server_items;
-    private static bool $globalMute = false;
     public static QueueManager $queueManager;
+    private static bool $globalMute = false;
 
     public static function getInstance(): Ghostly
     {
@@ -217,13 +217,13 @@ INFO
         $this->getServer()->getCommandMap()->registerAll($fallbackPrefix, $commands);
     }
 
-    protected function onDisable(): void
-    {
-        ServerManager::getInstance()->getCurrentServer()?->setOnline(false);
-    }
-
     public static function getQueueManager(): QueueManager
     {
         return self::$queueManager;
+    }
+
+    protected function onDisable(): void
+    {
+        ServerManager::getInstance()->getCurrentServer()?->setOnline(false);
     }
 }

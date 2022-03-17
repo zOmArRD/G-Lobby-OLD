@@ -24,7 +24,7 @@ use zomarrd\ghostly\player\permission\PermissionKey;
 final class AntiProxy extends AsyncTask
 {
 
-    public function __construct(private string $player, private string $ip) { }
+    public function __construct(private string $player, private string $ip) {}
 
     public function onRun(): void
     {

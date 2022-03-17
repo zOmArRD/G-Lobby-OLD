@@ -38,5 +38,5 @@ final class LangListCommand extends BaseSubCommand
         $sender->sendMessage($line . $line);
     }
 
-    protected function prepare(): void { }
+    protected function prepare(): void {}
 }

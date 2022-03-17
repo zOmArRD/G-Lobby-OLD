@@ -16,12 +16,12 @@ use zomarrd\ghostly\database\mysql\Query;
 
 class UpdateRowQuery extends Query
 {
-    public function __construct(private string $updates, private string $conditionKey, private string $conditionValue, private string $table) { }
+    public function __construct(private string $updates, private string $conditionKey, private string $conditionValue, private string $table) {}
 
     public function query(mysqli $mysqli): void
     {
         $updates = [];
-        foreach (unserialize($this->updates, array([])) as $key => $value) {
+        foreach (unserialize($this->updates, [[]]) as $key => $value) {
             $updates[] = "$key='$value'";
         }
 
