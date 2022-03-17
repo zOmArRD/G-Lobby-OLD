@@ -126,11 +126,6 @@ final class EntityManager
         }
     }
 
-    public function create(GhostlyPlayer $player, CompoundTag $tag): HumanType
-    {
-        return new HumanType($player->getLocation(), $player->getSkin(), $tag);
-    }
-
     public function floating_text(string $text, string $id, Location $location, bool $spawnToAll = true, GhostlyPlayer $player = null): void
     {
         $nbt = new CompoundTag();
@@ -242,21 +237,6 @@ final class EntityManager
 
         $this->floating_text("§l§cCombo", Entity::COMBO, new Location($x, $y + 2.10, $z, $eLocation->getWorld(), 0.0, 0.0));
         $this->floating_text("§eClick to join Combo.", Entity::COMBO . Entity::EXTRA, new Location($x, $y + 1.50, $z, $eLocation->getWorld(), 0.0, 0.0));
-    }
-
-    public function setEntityItems(Item $handItem, HumanType $entity): void
-    {
-        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
-        $chest_plate = VanillaItems::DIAMOND_CHESTPLATE()->addEnchantment($enchant);
-        $leggings = VanillaItems::DIAMOND_LEGGINGS()->addEnchantment($enchant);
-        $boots = VanillaItems::DIAMOND_BOOTS()->addEnchantment($enchant);
-
-        $armor = $entity->getArmorInventory();
-        $armor->setChestplate($chest_plate);
-        $armor->setLeggings($leggings);
-        $armor->setBoots($boots);
-
-        $entity->getInventory()->addItem($handItem);
     }
 
     public function npc_practice(GhostlyPlayer $player): void
