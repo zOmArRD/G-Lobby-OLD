@@ -23,7 +23,10 @@ class QueueManager
 {
     use SingletonTrait;
 
-    private array $queueList = [];
+    private array $queue = [];
+
+    /** @var array<Queue> */
+    private array $practice, $combo = [], $hcf = [], $kitmap = [], $uhc = [], $uhcrun = [];
 
     public function enable(Ghostly $ghostly): void
     {
@@ -32,16 +35,19 @@ class QueueManager
         }), 60);
     }
 
+    /**
+     * It is responsible for updating the Queue's
+     */
     public function updateQueue(): void
     {
         /**
          * @var int   $key
          * @var Queue $queue
          */
-        foreach ($this->queueList as $key => $queue) {
+        foreach ($this->queue as $key => $queue) {
             if ($queue->getPlayer()->isOnline()) {
                 $queue->setPosition($key + 1);
-                $queue->setPositionFormatted("§f" . $queue->getPosition(). "§7/§f" . count($this->queueList));
+                $queue->setPositionFormatted("§f" . $queue->getPosition() . "§7/§f" . count($this->queue));
                 $queue->getPlayer()->sendTranslated(LangKey::QUEUE_PLAYER_NOTICE, ["{POSITION-QUEUE}" => $queue->getPositionFormatted()]);
             }
 
@@ -54,6 +60,11 @@ class QueueManager
         }
     }
 
+    /**
+     * @param GhostlyPlayer $player Player {@link GhostlyPlayer}.
+     * @param string|Server $server Server {@link Server}.
+     * Add the player to the Queue.
+     */
     public function add(GhostlyPlayer $player, string|Server $server): void
     {
         if ($player->hasPermission(PermissionKey::GHOSTLY_SERVER_JOIN_BYPASS)) {
@@ -62,27 +73,94 @@ class QueueManager
         }
 
         if ($this->exist($player)) {
-            $player->sendTranslated(LangKey::QUEUE_PLAYER_EXIST, ["{SERVER-NAME}" => $server]);
+            $player->sendTranslated(LangKey::QUEUE_PLAYER_EXIST, ["{SERVER-NAME}" => $player->getQueue()?->getServer()]);
             return;
         }
 
         $queue = $player->setQueue($server);
-        $this->queueList[] = $queue;
+        $this->queue[] = $queue;
 
         $player->getQueueItem();
 
-        $position = array_search($player->getQueue(), $this->queueList, true);
+        $position = array_search($player->getQueue(), $this->queue, true);
 
         $queue->setPosition((int)$position + 1);
-        $queue->setPositionFormatted("§f" . $queue->getPosition(). "§7/§f" . count($this->queueList));
+        $queue->setPositionFormatted("§f" . $queue->getPosition() . "§7/§f" . count($this->queue));
 
         $player->sendTranslated(LangKey::QUEUE_PLAYER_ADDED, ["{SERVER-NAME}" => $server, "{POSITION-QUEUE}" => $queue->getPositionFormatted()]);
     }
 
-    public function exist(GhostlyPlayer $player): bool
+    /**
+     * Check if the player is already in a Queue.
+     *
+     * @param GhostlyPlayer $player
+     * @param string        $server
+     *
+     * @return bool is in Queue.
+     */
+    public function exist(GhostlyPlayer $player, string $server): bool
     {
-        foreach ($this->queueList as $value) {
-            if ($value->getPlayer() !== $player) {
+        switch ($server) {
+            case Server::PRACTICE:
+                foreach ($this->practice as $queue) {
+                    if ($queue->getPlayer() !== $player) {
+                        continue;
+                    }
+
+                    return true;
+                }
+                break;
+            case Server::COMBO:
+                foreach ($this->combo as $queue) {
+                    if ($queue->getPlayer() !== $player) {
+                        continue;
+                    }
+
+                    return true;
+                }
+                break;
+            case Server::UHC:
+                foreach ($this->uhc as $queue) {
+                    if ($queue->getPlayer() !== $player) {
+                        continue;
+                    }
+
+                    return true;
+                }
+                break;
+            case Server::UHC_RUN:
+                foreach ($this->uhcrun as $queue) {
+                    if ($queue->getPlayer() !== $player) {
+                        continue;
+                    }
+
+                    return true;
+                }
+                break;
+            case Server::HCF:
+                foreach ($this->hcf as $queue) {
+                    if ($queue->getPlayer() !== $player) {
+                        continue;
+                    }
+
+                    return true;
+                }
+                break;
+            case Server::KITMAP:
+                foreach ($this->kitmap as $queue) {
+                    if ($queue->getPlayer() !== $player) {
+                        continue;
+                    }
+
+                    return true;
+                }
+                break;
+            default:
+                return false;
+        }
+
+        foreach ($this->queue[$server] as $queue) {
+            if ($queue->getPlayer() !== $player) {
                 continue;
             }
 
@@ -92,12 +170,15 @@ class QueueManager
         return false;
     }
 
+    /**
+     *  Remove player from Queue.
+     */
     public function remove(GhostlyPlayer $player): void
     {
-        foreach ($this->queueList as $key => $value) {
+        foreach ($this->queue as $key => $value) {
             if ($value->getPlayer() === $player) {
-                unset($this->queueList[$key]);
-                $this->queueList = array_values($this->queueList);
+                unset($this->queue[$key]);
+                $this->queue = array_values($this->queue);
                 $player->quitQueue();
             }
         }
