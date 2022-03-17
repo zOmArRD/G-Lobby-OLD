@@ -10,6 +10,8 @@ class SimpleForm extends Form
 {
 	public const IMAGE_TYPE_PATH = 0, IMAGE_TYPE_URL = 1, IMAGE_TYPE_NULL = -1;
 	private string $content = "";
+
+    /** @var array<string, int> */
 	private array $labelMap = [];
 
 	public function __construct(?callable $callable)

@@ -133,7 +133,7 @@ class GhostlyPlayer extends Player
             $this->setLoaded();
         }
 
-        if ($currentTick % 10 === 0) {
+        if ($currentTick % 5 === 0) {
             $this->getScoreboardSession()->setScoreboard();
         }
 
@@ -241,12 +241,6 @@ class GhostlyPlayer extends Player
         }), 25);
     }
 
-    /**
-     * @param string|Server $server
-     *
-     * @return void
-     * @todo Add Queue System for this shit omg!
-     */
     public function transferTo(string|Server $server): void
     {
         if (!$this->isOnline()) {
@@ -391,6 +385,7 @@ class GhostlyPlayer extends Player
             }
         });
 
+        $this->setMovementSpeed($this->getMovementSpeed() * 1.4);
         $this->onJoin();
 
         if (ConfigManager::getServerConfig()->get('proxy_detect')) {

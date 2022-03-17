@@ -17,6 +17,7 @@ use pocketmine\entity\Location;
 use pocketmine\entity\Skin;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\VanillaEnchantments;
+use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Server;
@@ -43,16 +44,34 @@ final class EntityManager
         }, ["FloatingTextType"]);
     }
 
+    public function create(GhostlyPlayer $player, CompoundTag $tag): HumanType
+    {
+        return new HumanType($player->getLocation(), $player->getSkin(), $tag);
+    }
+
+    public function setEntityItems(Item $handItem, HumanType $entity): void
+    {
+        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
+        $chest_plate = VanillaItems::DIAMOND_CHESTPLATE()->addEnchantment($enchant);
+        $leggings = VanillaItems::DIAMOND_LEGGINGS()->addEnchantment($enchant);
+        $boots = VanillaItems::DIAMOND_BOOTS()->addEnchantment($enchant);
+
+        $armor = $entity->getArmorInventory();
+        $armor->setChestplate($chest_plate);
+        $armor->setLeggings($leggings);
+        $armor->setBoots($boots);
+
+        $entity->getInventory()->addItem($handItem);
+    }
+
     public function entity_discord(GhostlyPlayer $player): void
     {
-        $nbt = new CompoundTag();
-        $nbt->setString("npcId", Entity::DISCORD);
-
-        $location = $player->getLocation();
+        $tag = new CompoundTag();
+        $tag->setString("npcId", Entity::DISCORD);
 
         $this->remove_entity(Entity::DISCORD);
+        $entity = $this->create($player, $tag);
 
-        $entity = new HumanType($location, $player->getSkin(), $nbt);
         $entity->setNpcId(Entity::DISCORD);
         $entity->setNameTag("§r§eClick to join our Discord server!");
         $entity->spawnToAll();
@@ -132,11 +151,9 @@ final class EntityManager
         $nbt = new CompoundTag();
         $nbt->setString("npcId", Entity::STORE);
 
-        $location = $player->getLocation();
-
         $this->remove_entity(Entity::STORE);
 
-        $entity = new HumanType($location, $player->getSkin(), $nbt);
+        $entity = $this->create($player, $nbt);
         $entity->setNameTag("§r§eClick to view store!");
         $entity->spawnToAll();
 
@@ -209,19 +226,7 @@ final class EntityManager
         $entity = new HumanType($location, $player->getSkin(), $nbt);
         $entity->setNameTag("§7Players: §f??§7/§f??");
 
-        $enchant = new EnchantmentInstance(VanillaEnchantments::PROTECTION(), 1);
-
-        $item = VanillaItems::ENDER_PEARL();
-        $chest_plate = VanillaItems::DIAMOND_CHESTPLATE()->addEnchantment($enchant);
-        $leggings = VanillaItems::DIAMOND_LEGGINGS()->addEnchantment($enchant);
-        $boots = VanillaItems::DIAMOND_BOOTS()->addEnchantment($enchant);
-
-        $armor = $entity->getArmorInventory();
-        $armor->setChestplate($chest_plate);
-        $armor->setLeggings($leggings);
-        $armor->setBoots($boots);
-
-        $entity->getInventory()->addItem($item);
+        $this->setEntityItems(VanillaItems::ENDER_PEARL(), $entity);
         $entity->spawnToAll();
 
         $eLocation = $entity->getLocation();

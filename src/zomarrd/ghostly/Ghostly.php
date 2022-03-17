@@ -77,9 +77,7 @@ final class Ghostly extends PluginBase
     }
 
     /**
-     * It returns the plugin directory, not plugin_data
-     *
-     * @return string
+     * @return string the plugin directory, not plugin_data
      */
     #[Pure] public function getResourcesFolder(): string
     {

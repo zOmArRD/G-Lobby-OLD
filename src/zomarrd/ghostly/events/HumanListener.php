@@ -25,35 +25,30 @@ final class HumanListener implements Listener
     {
         $player = $event->getPlayer();
         $entity = $event->getEntity();
-
         $i = $entity->getNpcId();
 
-        if ($i === Entity::OMAR) {
-            $player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
-            return;
-        }
+        switch ($i) {
+            case Entity::OMAR:
+                $player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
+                break;
+            case Entity::STORE:
+                $player->sendTranslated(LangKey::STORE_LINK_MESSAGE);
+                break;
+            case Entity::DISCORD:
+                $player->sendTranslated(LangKey::DISCORD_INVITATION_MESSAGE);
+                break;
+            default:
+                $server = ServerManager::getInstance()->getServerByName($entity->getServerName());
 
-        if ($i === Entity::DISCORD) {
-            $player->sendTranslated(LangKey::DISCORD_INVITATION_MESSAGE);
-            return;
-        }
+                if (is_null($server)) {
+                    $player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x)), ($player->getLocation()->z - ($entity->getLocation()->z)), (20 / 0xa));
+                    $player->sendSound(LevelSoundEvent::EXPLODE);
+                    $player->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
+                    return;
+                }
 
-        if ($i === Entity::STORE) {
-            $player->sendTranslated(LangKey::STORE_LINK_MESSAGE);
-            return;
-        }
-
-        if ($i === Entity::COMBO || $i === Entity::PRACTICE || $i === Entity::UHC || $i === Entity::UHC_RUN || $i === Entity::KITMAP || $i === Entity::HCF) {
-            $server = ServerManager::getInstance()->getServerByName($entity->getServerName());
-
-            if (is_null($server)) {
-                $player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x)), ($player->getLocation()->z - ($entity->getLocation()->z)), (20 / 0xa));
-                $player->sendSound(LevelSoundEvent::EXPLODE);
-                $player->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
-                return;
-            }
-
-            Ghostly::getQueueManager()->add($player, $entity->getServerName());
+                Ghostly::getQueueManager()->add($player, $entity->getServerName());
+                break;
         }
     }
 }

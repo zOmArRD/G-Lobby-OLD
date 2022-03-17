@@ -29,6 +29,7 @@ final class FloatingTextType extends Entity
     protected $gravity = 0.0;
     protected $immobile = true;
     protected $scale = 0.001;
+    protected $drag = 0.0;
     protected string $textId;
 
 
@@ -88,7 +89,7 @@ final class FloatingTextType extends Entity
         $this->fireTicks = $nbt->getShort("Fire", 0);
         $this->onGround = $nbt->getByte("OnGround", 0) !== 0;
         $this->fallDistance = $nbt->getFloat("FallDistance", 0.0);
-        $this->textId = $nbt->getString("TextId");
+        $this->textId = $nbt->getString("TextId", "");
         if (($customNameTag = $nbt->getTag("CustomName")) instanceof StringTag) {
             $this->setNameTag($customNameTag->getValue());
             if (($customNameVisibleTag = $nbt->getTag("CustomNameVisible")) instanceof StringTag) {

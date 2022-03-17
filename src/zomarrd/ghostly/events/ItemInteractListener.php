@@ -100,7 +100,7 @@ final class ItemInteractListener implements Listener
                 $player->sendSound(LevelSoundEvent::DROP_SLOT);
                 break;
             case "item-queue":
-                Ghostly::getQueueManager()->remove($player);
+                Ghostly::getQueueManager()->remove($player, $player->getQueue()?->getServer());
                 $player->getLobbyItems();
                 $player->sendTranslated(LangKey::QUEUE_PLAYER_LEFT);
                 break;

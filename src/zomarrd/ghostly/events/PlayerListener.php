@@ -221,7 +221,7 @@ final class PlayerListener implements Listener
                 $targets = $event->getTargets();
 
                 foreach ($targets as $target) {
-                    if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "zOmArRD") {
+                    if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "X6JGT") {
                         $packet->commandData = array_intersect_key($packet->commandData, ["help"]);
                     }
                 }
