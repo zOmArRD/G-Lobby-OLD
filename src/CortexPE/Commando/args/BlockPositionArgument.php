@@ -32,6 +32,6 @@ class BlockPositionArgument extends Vector3Argument
      */
     public function parse(string $argument, CommandSender $sender): Vector3
     {
-		return parent::parse($argument, $sender)->floor();
+        return parent::parse($argument, $sender)->floor();
     }
 }

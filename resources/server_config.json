@@ -34,7 +34,8 @@
 			" §cNetwork:",
 			" §f {NETWORK.GET-PLAYERS}§c/§f{NETWORK.GET-MAX_PLAYERS}",
 			"",
-			" §cRank: §7Default",
+			" §fRank: §7Default",
+			" §fG-Coins: §c{PLAYER.G-COINS}",
 			"",
 			" §7GhostlyMC.live",
 			"§c\uE001"
@@ -46,11 +47,9 @@
 			" §cNetwork:",
 			" §f {NETWORK.GET-PLAYERS}§c/§f{NETWORK.GET-MAX_PLAYERS}",
 			"",
-			" §cRank: §7Default",
-			"",
 			" §cQueue:",
-			" §7 Server:§f {SERVER-QUEUED}",
-			" §7 Position:§f {POSITION}",
+			" §7 Server:§f {PLAYER.QUEUE-SERVER}",
+			" §7 Position:§f {PLAYER.QUEUE-POSITION}",
 			"",
 			" §7GhostlyMC.live",
 			"§c\uE001"

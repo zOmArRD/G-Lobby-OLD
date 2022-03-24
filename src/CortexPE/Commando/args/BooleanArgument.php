@@ -8,10 +8,7 @@ use pocketmine\command\CommandSender;
 
 class BooleanArgument extends StringEnumArgument
 {
-    protected const VALUES = [
-        'true' => true,
-        'false' => false,
-    ];
+    protected const VALUES = ['true' => true, 'false' => false,];
 
     /**
      * @return string

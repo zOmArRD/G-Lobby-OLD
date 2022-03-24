@@ -11,5 +11,5 @@ use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 interface InvMenuGraphicNetworkTranslator
 {
 
-	public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet): void;
+    public function translate(PlayerSession $session, InvMenuInfo $current, ContainerOpenPacket $packet): void;
 }

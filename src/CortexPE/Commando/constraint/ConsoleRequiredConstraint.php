@@ -7,7 +7,8 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class ConsoleRequiredConstraint extends BaseConstraint {
+class ConsoleRequiredConstraint extends BaseConstraint
+{
 
     /**
      * @param CommandSender $sender
@@ -16,7 +17,8 @@ class ConsoleRequiredConstraint extends BaseConstraint {
      *
      * @return bool
      */
-    public function test(CommandSender $sender, string $aliasUsed, array $args): bool {
+    public function test(CommandSender $sender, string $aliasUsed, array $args): bool
+    {
         return $this->isVisibleTo($sender);
     }
 
@@ -25,9 +27,10 @@ class ConsoleRequiredConstraint extends BaseConstraint {
      *
      * @return bool
      */
-    public function isVisibleTo(CommandSender $sender): bool {
-		return !($sender instanceof Player);
-	}
+    public function isVisibleTo(CommandSender $sender): bool
+    {
+        return !($sender instanceof Player);
+    }
 
     /**
      * @param CommandSender $sender
@@ -36,7 +39,8 @@ class ConsoleRequiredConstraint extends BaseConstraint {
      *
      * @return void
      */
-    public function onFailure(CommandSender $sender, string $aliasUsed, array $args): void {
+    public function onFailure(CommandSender $sender, string $aliasUsed, array $args): void
+    {
         $sender->sendMessage(TextFormat::RED . 'This command must be executed from a server console.'); // f*ck off grammar police
     }
 }

@@ -24,6 +24,16 @@ class InGameRequiredConstraint extends BaseConstraint
 
     /**
      * @param CommandSender $sender
+     *
+     * @return bool
+     */
+    public function isVisibleTo(CommandSender $sender): bool
+    {
+        return $sender instanceof Player;
+    }
+
+    /**
+     * @param CommandSender $sender
      * @param string        $aliasUsed
      * @param array         $args
      *
@@ -32,15 +42,5 @@ class InGameRequiredConstraint extends BaseConstraint
     public function onFailure(CommandSender $sender, string $aliasUsed, array $args): void
     {
         $sender->sendMessage(TextFormat::RED . 'This command must be executed in-game.'); // f*ck off grammar police
-    }
-
-    /**
-     * @param CommandSender $sender
-     *
-     * @return bool
-     */
-    public function isVisibleTo(CommandSender $sender): bool
-    {
-        return $sender instanceof Player;
     }
 }

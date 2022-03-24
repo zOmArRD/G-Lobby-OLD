@@ -9,16 +9,16 @@ use LogicException;
 trait FixedInvMenuTypeBuilderTrait
 {
 
-	private ?int $size = null;
+    private ?int $size = null;
 
-	protected function getSize(): int
-	{
-		return $this->size ?? throw new LogicException("No size was provided");
-	}
+    protected function getSize(): int
+    {
+        return $this->size ?? throw new LogicException("No size was provided");
+    }
 
-	public function setSize(int $size): self
-	{
-		$this->size = $size;
-		return $this;
-	}
+    public function setSize(int $size): self
+    {
+        $this->size = $size;
+        return $this;
+    }
 }

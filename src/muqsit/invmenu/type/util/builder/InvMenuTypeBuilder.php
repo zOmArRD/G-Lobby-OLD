@@ -9,5 +9,5 @@ use muqsit\invmenu\type\InvMenuType;
 interface InvMenuTypeBuilder
 {
 
-	public function build(): InvMenuType;
+    public function build(): InvMenuType;
 }

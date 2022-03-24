@@ -61,12 +61,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     public const ERR_NO_ARGUMENTS = 0x04;
 
     /** @var string[] */
-    protected array $errorMessages = [
-        self::ERR_INVALID_ARG_VALUE => PREFIX . TextFormat::RED . "Invalid value '{value}' for argument #{position}",
-        self::ERR_TOO_MANY_ARGUMENTS => PREFIX . TextFormat::RED . 'You have entered too many arguments for this command.',
-        self::ERR_INSUFFICIENT_ARGUMENTS => PREFIX . TextFormat::RED . 'The command you have entered needs more arguments, please try again!',
-        self::ERR_NO_ARGUMENTS => PREFIX . TextFormat::RED . 'You must not enter any arguments for this command!',
-    ];
+    protected array $errorMessages = [self::ERR_INVALID_ARG_VALUE => PREFIX . TextFormat::RED . "Invalid value '{value}' for argument #{position}", self::ERR_TOO_MANY_ARGUMENTS => PREFIX . TextFormat::RED . 'You have entered too many arguments for this command.', self::ERR_INSUFFICIENT_ARGUMENTS => PREFIX . TextFormat::RED . 'The command you have entered needs more arguments, please try again!', self::ERR_NO_ARGUMENTS => PREFIX . TextFormat::RED . 'You must not enter any arguments for this command!',];
 
     /** @var CommandSender */
     protected CommandSender $currentSender;
@@ -80,12 +75,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     /** @var Plugin */
     private Plugin $plugin;
 
-    public function __construct(
-        Plugin $plugin,
-        string $name,
-        string $description = '',
-        array  $aliases = []
-    )
+    public function __construct(Plugin $plugin, string $name, string $description = '', array $aliases = [])
     {
         $this->plugin = $plugin;
         parent::__construct($name, $description, null, $aliases);
@@ -116,7 +106,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
      * @return void
      */
     final public function execute(CommandSender $sender, string $commandLabel, array $args): void
-	{
+    {
         $this->currentSender = $sender;
         if (!$this->testPermission($sender)) {
             return;
@@ -177,21 +167,6 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     }
 
     /**
-     * @param CommandSender                   $sender
-     * @param string                          $aliasUsed
-     * @param array|array<string,mixed|array> $args
-     */
-    abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
-
-    /**
-     * @return void
-     */
-    protected function sendUsage(): void
-    {
-        $this->currentSender->sendMessage(PREFIX . 'Correct use: ' . $this->getUsage());
-    }
-
-    /**
      * @param int   $errorCode
      * @param array $args
      *
@@ -207,19 +182,19 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     }
 
     /**
-     * @param int    $errorCode
-     * @param string $format
-     *
-     * @return void
-     * @throws InvalidErrorCode
+     * @return BaseConstraint[]
      */
-    public function setErrorFormat(int $errorCode, string $format): void
+    public function getConstraints(): array
     {
-        if (!isset($this->errorMessages[$errorCode])) {
-            throw new InvalidErrorCode('Invalid error code 0x' . dechex($errorCode));
-        }
-        $this->errorMessages[$errorCode] = $format;
+        return $this->constraints;
     }
+
+    /**
+     * @param CommandSender                   $sender
+     * @param string                          $aliasUsed
+     * @param array|array<string,mixed|array> $args
+     */
+    abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
 
     /**
      * @param array $errorFormats
@@ -232,6 +207,21 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
         foreach ($errorFormats as $errorCode => $format) {
             $this->setErrorFormat($errorCode, $format);
         }
+    }
+
+    /**
+     * @param int    $errorCode
+     * @param string $format
+     *
+     * @return void
+     * @throws InvalidErrorCode
+     */
+    public function setErrorFormat(int $errorCode, string $format): void
+    {
+        if (!isset($this->errorMessages[$errorCode])) {
+            throw new InvalidErrorCode('Invalid error code 0x' . dechex($errorCode));
+        }
+        $this->errorMessages[$errorCode] = $format;
     }
 
     /**
@@ -273,18 +263,18 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     }
 
     /**
-     * @return BaseConstraint[]
-     */
-    public function getConstraints(): array
-    {
-        return $this->constraints;
-    }
-
-    /**
      * @return string
      */
     public function getUsageMessage(): string
     {
         return $this->getUsage();
+    }
+
+    /**
+     * @return void
+     */
+    protected function sendUsage(): void
+    {
+        $this->currentSender->sendMessage(PREFIX . 'Correct use: ' . $this->getUsage());
     }
 }

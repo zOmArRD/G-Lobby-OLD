@@ -26,11 +26,6 @@ trait ArgumentableTrait
     private array $requiredArgumentCount = [];
 
     /**
-     * This is where all the arguments, permissions, sub-commands, etc would be registered
-     */
-    abstract protected function prepare(): void;
-
-    /**
      * @param int          $position
      * @param BaseArgument $argument
      *
@@ -66,17 +61,11 @@ trait ArgumentableTrait
      */
     public function parseArguments(array $rawArgs, CommandSender $sender): array
     {
-        $return = [
-            'arguments' => [],
-            'errors' => []
-        ];
+        $return = ['arguments' => [], 'errors' => []];
         // try parsing arguments
         $required = count($this->requiredArgumentCount);
         if (!$this->hasArguments() && count($rawArgs) > 0) { // doesnt take args but sender gives args anyways
-            $return['errors'][] = [
-                'code' => BaseCommand::ERR_NO_ARGUMENTS,
-                'data' => []
-            ];
+            $return['errors'][] = ['code' => BaseCommand::ERR_NO_ARGUMENTS, 'data' => []];
         }
         $offset = 0;
         if (count($rawArgs) > 0) {
@@ -118,32 +107,28 @@ trait ArgumentableTrait
                     }
                 }
                 if (!$parsed && !($optional && empty($arg))) { // we tried every other possible argument type, none was satisfied
-                    $return['errors'][] = [
-                        'code' => BaseCommand::ERR_INVALID_ARG_VALUE,
-                        'data' => [
-                            'value' => $rawArgs[$offset] ?? '',
-                            'position' => $pos + 1
-                        ]
-                    ];
+                    $return['errors'][] = ['code' => BaseCommand::ERR_INVALID_ARG_VALUE, 'data' => ['value' => $rawArgs[$offset] ?? '', 'position' => $pos + 1]];
 
                     return $return; // let's break it here.
                 }
             }
         }
         if ($offset < count($rawArgs)) { // this means that the arguments our user sent is more than the needed amount
-            $return['errors'][] = [
-                'code' => BaseCommand::ERR_TOO_MANY_ARGUMENTS,
-                'data' => []
-            ];
+            $return['errors'][] = ['code' => BaseCommand::ERR_TOO_MANY_ARGUMENTS, 'data' => []];
         }
         if ($required > 0) {// We still have more unfilled required arguments
-            $return['errors'][] = [
-                'code' => BaseCommand::ERR_INSUFFICIENT_ARGUMENTS,
-                'data' => []
-            ];
+            $return['errors'][] = ['code' => BaseCommand::ERR_INSUFFICIENT_ARGUMENTS, 'data' => []];
         }
 
         return $return;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasArguments(): bool
+    {
+        return !empty($this->argumentList);
     }
 
     /**
@@ -177,14 +162,6 @@ trait ArgumentableTrait
     /**
      * @return bool
      */
-    public function hasArguments(): bool
-    {
-        return !empty($this->argumentList);
-    }
-
-    /**
-     * @return bool
-     */
     public function hasRequiredArguments(): bool
     {
         foreach ($this->argumentList as $arguments) {
@@ -205,4 +182,9 @@ trait ArgumentableTrait
     {
         return $this->argumentList;
     }
+
+    /**
+     * This is where all the arguments, permissions, sub-commands, etc would be registered
+     */
+    abstract protected function prepare(): void;
 }

@@ -7,16 +7,16 @@ namespace muqsit\invmenu\type\util\builder;
 trait AnimationDurationInvMenuTypeBuilderTrait
 {
 
-	private int $animation_duration = 0;
+    private int $animation_duration = 0;
 
-	protected function getAnimationDuration(): int
-	{
-		return $this->animation_duration;
-	}
+    protected function getAnimationDuration(): int
+    {
+        return $this->animation_duration;
+    }
 
-	public function setAnimationDuration(int $animation_duration): self
-	{
-		$this->animation_duration = $animation_duration;
-		return $this;
-	}
+    public function setAnimationDuration(int $animation_duration): self
+    {
+        $this->animation_duration = $animation_duration;
+        return $this;
+    }
 }

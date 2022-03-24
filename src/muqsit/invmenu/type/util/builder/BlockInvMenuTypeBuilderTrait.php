@@ -10,16 +10,16 @@ use pocketmine\block\Block;
 trait BlockInvMenuTypeBuilderTrait
 {
 
-	private ?Block $block = null;
+    private ?Block $block = null;
 
-	protected function getBlock(): Block
-	{
-		return $this->block ?? throw new LogicException("No block was provided");
-	}
+    protected function getBlock(): Block
+    {
+        return $this->block ?? throw new LogicException("No block was provided");
+    }
 
-	public function setBlock(Block $block): self
-	{
-		$this->block = $block;
-		return $this;
-	}
+    public function setBlock(Block $block): self
+    {
+        $this->block = $block;
+        return $this;
+    }
 }
