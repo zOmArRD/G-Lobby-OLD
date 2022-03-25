@@ -26,6 +26,7 @@ use zomarrd\ghostly\lobby\entity\type\HumanType;
 use zomarrd\ghostly\lobby\Ghostly;
 use zomarrd\ghostly\lobby\menu\Menu;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
+use zomarrd\ghostly\lobby\player\item\ItemManager;
 use zomarrd\ghostly\lobby\player\language\LangKey;
 
 final class ItemInteractListener implements Listener
@@ -79,9 +80,9 @@ final class ItemInteractListener implements Listener
 
     public function handleInteract(GhostlyPlayer $player, Item $item): void
     {
-        $itemId = $item->getNamedTag()->getString("itemId", "");
+        $itemId = $item->getNamedTag()->getString("ItemID", "");
         switch ($itemId) {
-            case "lobby-selector":
+            case ItemManager::LOBBY_SELECTOR:
                 if ($player->hasClassicProfile()) {
                     Menu::LOBBY_SELECTOR()->sendType($player);
                 } else {
@@ -90,7 +91,7 @@ final class ItemInteractListener implements Listener
 
                 $player->sendSound(LevelSoundEvent::DROP_SLOT);
                 break;
-            case "server-selector":
+            case ItemManager::SERVER_SELECTOR:
                 if ($player->hasClassicProfile()) {
                     Menu::SERVER_SELECTOR()->sendType($player);
                 } else {
@@ -99,7 +100,7 @@ final class ItemInteractListener implements Listener
 
                 $player->sendSound(LevelSoundEvent::DROP_SLOT);
                 break;
-            case "queue-exit":
+            case ItemManager::QUEUE_EXIT:
                 Ghostly::getQueueManager()->remove($player, $player->getQueue()?->getServer());
                 $player->getLobbyItems();
                 $player->sendTranslated(LangKey::QUEUE_PLAYER_LEFT);

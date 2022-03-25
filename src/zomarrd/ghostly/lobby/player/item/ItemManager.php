@@ -20,14 +20,14 @@ use zomarrd\ghostly\lobby\player\IPlayer;
 
 final class ItemManager extends IPlayer
 {
-    public const SERVER_SELECTOR = 'server-selector';
-    public const COSMETICS_SELECTOR = 'cosmetics-selector';
-    public const LOBBY_SELECTOR = 'lobby-selector';
-    public const VISIBILITY_ALL = 'visibility-all';
-    public const VISIBILITY_STAFF = 'visibility-staff';
-    public const VISIBILITY_NOBODY = 'visibility-nobody';
-    public const PERSONAL_SETTINGS = 'personal-settings';
-    public const QUEUE_EXIT = 'queue-exit';
+    public const SERVER_SELECTOR = "server-selector";
+    public const COSMETICS_SELECTOR = "cosmetics-selector";
+    public const LOBBY_SELECTOR = "lobby-selector";
+    public const VISIBILITY_ALL = "visibility-all";
+    public const VISIBILITY_STAFF = "visibility-staff";
+    public const VISIBILITY_NOBODY = "visibility-nobody";
+    public const PERSONAL_SETTINGS = "personal-settings";
+    public const QUEUE_EXIT = "queue-exit";
 
     public function get(string $name): Item
     {
@@ -35,6 +35,8 @@ final class ItemManager extends IPlayer
             self::SERVER_SELECTOR => $this->getFormatted($name, VanillaItems::COMPASS()),
             self::COSMETICS_SELECTOR => $this->getFormatted($name, ItemFactory::getInstance()->get(ItemIds::ENDER_CHEST)),
             self::VISIBILITY_ALL => $this->getFormatted($name, VanillaItems::LIME_DYE()),
+            self::VISIBILITY_STAFF => $this->getFormatted($name, VanillaItems::PINK_DYE()),
+            self::VISIBILITY_NOBODY => $this->getFormatted($name, VanillaItems::GRAY_DYE()),
             self::LOBBY_SELECTOR => $this->getFormatted($name, VanillaItems::NETHER_STAR()),
             self::PERSONAL_SETTINGS => $this->getFormatted($name, ItemFactory::getInstance()->get(ItemIds::COMPARATOR)),
             self::QUEUE_EXIT => $this->getFormatted($name, VanillaItems::REDSTONE_DUST()),
@@ -44,6 +46,6 @@ final class ItemManager extends IPlayer
 
     public function getFormatted(string $id, Item $item): Item
     {
-        return $item->setCustomName($this->getPlayer()->getLang()->getItemNames($id))->setNamedTag((new CompoundTag())->setString('ItemID', $id));
+        return $item->setNamedTag((new CompoundTag())->setString('ItemID', $id))->setCustomName($this->getPlayer()->getLang()->getItemNames($id));
     }
 }

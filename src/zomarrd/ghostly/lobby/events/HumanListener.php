@@ -12,7 +12,10 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\events;
 
 use pocketmine\event\Listener;
+use pocketmine\network\mcpe\protocol\SetActorLinkPacket;
+use pocketmine\network\mcpe\protocol\types\entity\EntityLink;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
+use pocketmine\Server;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\entity\events\HumanInteractEvent;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -30,6 +33,9 @@ final class HumanListener implements Listener
         switch ($i) {
             case Entity::OMAR:
                 $player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
+                $packet = new SetActorLinkPacket();
+                $packet->link = new EntityLink($entity->getId(), $player->getId(), EntityLink::TYPE_RIDER, true, true);
+                Server::getInstance()->broadcastPackets(Server::getInstance()->getOnlinePlayers(), [$packet]);
                 break;
             case Entity::STORE:
                 $player->sendTranslated(LangKey::STORE_LINK_MESSAGE);

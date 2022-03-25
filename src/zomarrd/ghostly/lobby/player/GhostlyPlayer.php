@@ -161,7 +161,7 @@ class GhostlyPlayer extends Player
     public function getQueueItem(): void
     {
         $this->getInventory()?->clearAll();
-        $this->setItem(8, $this->getItemManager()->get('item-queue'));
+        $this->setItem(8, $this->getItemManager()->get(ItemManager::QUEUE_EXIT));
     }
 
     private function setItem(int $index, Item $item): void
@@ -266,10 +266,11 @@ class GhostlyPlayer extends Player
     {
         $this->getInventory()?->clearAll();
         foreach ([
-            'item-servers' => 0,
-            'item-cosmetics' => 4,
-            'item-lobby' => 7,
-            'item-config' => 8
+            ItemManager::SERVER_SELECTOR => 0,
+            ItemManager::COSMETICS_SELECTOR => 4,
+            ItemManager::VISIBILITY_ALL => 6,
+            ItemManager::PERSONAL_SETTINGS => 7,
+            ItemManager::LOBBY_SELECTOR => 8
         ] as $item => $index) {
             $this->setItem($index, $this->getItemManager()->get($item));
         }
