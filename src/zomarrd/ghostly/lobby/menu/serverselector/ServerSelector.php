@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\menu\serverselector;
 
-use JetBrains\PhpStorm\ExpectedValues;
 use jojoe77777\FormAPI\SimpleForm;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
@@ -36,7 +35,7 @@ final class ServerSelector
 
     public function register(): void
     {
-        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName("§l§cGhostly §f» §r§6Server Selector")->setListener(function (InvMenuTransaction $transaction): InvMenuTransactionResult {
+        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName("§l§cGhostly §f» §r§6Server Selector")->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
             $player = $transaction->getPlayer();
             $button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 
@@ -52,7 +51,7 @@ final class ServerSelector
         });
 
         $close = VanillaItems::RED_BED()->setCustomName("§r§cClose");
-        $this->addButton(new MenuButton($close, function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton($close, function(GhostlyPlayer $player): void {
             $player->closeInventory();
         }), 0);
     }
@@ -67,40 +66,32 @@ final class ServerSelector
 
     public function prepare(): void
     {
-        $this->addButton(new MenuButton(ServerItems::get(Server::PRACTICE, VanillaItems::DIAMOND_SWORD()), function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton(ServerItems::get(Server::PRACTICE, VanillaItems::DIAMOND_SWORD()), function(GhostlyPlayer $player): void {
             $this->callable($player, Server::PRACTICE);
         }), 12);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::COMBO, VanillaItems::ENDER_PEARL()), function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton(ServerItems::get(Server::COMBO, VanillaItems::ENDER_PEARL()), function(GhostlyPlayer $player): void {
             $this->callable($player, Server::COMBO);
         }), 14);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::HCF, VanillaItems::DIAMOND_PICKAXE()), function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton(ServerItems::get(Server::HCF, VanillaItems::DIAMOND_PICKAXE()), function(GhostlyPlayer $player): void {
             $this->callable($player, Server::HCF);
         }), 38);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::KITMAP, VanillaItems::GOLDEN_PICKAXE()), function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton(ServerItems::get(Server::KITMAP, VanillaItems::GOLDEN_PICKAXE()), function(GhostlyPlayer $player): void {
             $this->callable($player, Server::KITMAP);
         }), 39);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::UHC, VanillaItems::GOLDEN_APPLE()), function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton(ServerItems::get(Server::UHC, VanillaItems::GOLDEN_APPLE()), function(GhostlyPlayer $player): void {
             $this->callable($player, Server::UHC);
         }), 41);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::UHC_RUN, VanillaItems::APPLE()), function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton(ServerItems::get(Server::UHC_RUN, VanillaItems::APPLE()), function(GhostlyPlayer $player): void {
             $this->callable($player, Server::UHC_RUN);
         }), 42);
     }
 
-    public function callable(GhostlyPlayer $player, #[ExpectedValues([
-        Server::HCF,
-        Server::PRACTICE,
-        Server::COMBO,
-        Server::KITMAP,
-        Server::UHC,
-        Server::UHC_RUN
-    ])]
-    Server|string $server): void
+    public function callable(GhostlyPlayer $player, Server|string $server): void
     {
         $player->sendTranslated(LangKey::SERVER_SEARCHING);
         Ghostly::getQueueManager()->add($player, $server);
@@ -112,7 +103,7 @@ final class ServerSelector
         if ($type === Menu::GUI_TYPE) {
             $this->menu->send($player);
         } else {
-            $form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
+            $form = new SimpleForm(function(GhostlyPlayer $player, $data): void {
                 if (isset($data)) {
                     if ($data === "close") {
                         return;
@@ -144,17 +135,13 @@ final class ServerSelector
         $text = "§r";
 
         if ($server->getName() === Ghostly::SERVER) {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}§7]\n§cYou are already connected here!";
+            $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
         }
 
-        if ($server->isOnline()) {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§eClick to transfer!";
-        } else {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cOFFLINE";
-        }
+        $text = $server->isOnline() ? ($text . sprintf("§a%s §7[§f%s§f/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers())) : ($text . sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getPlayers(), $server->getMaxPlayers()));
 
         if ($server->isWhitelist()) {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cWHITELISTED";
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
         }
 
         $form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());

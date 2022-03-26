@@ -36,7 +36,7 @@ final class GlobalMuteCommand extends BaseCommand
                 $sender->sendMessage(PREFIX . "§cYou cannot activate the global mute, apparently it is already activated!");
                 return;
             }
-        } elseif (Ghostly::isGlobalMute()) {
+        } else if (Ghostly::isGlobalMute()) {
             $sender->sendMessage("§aYou have deactivated the global mute");
         } else {
             $sender->sendMessage("§cYou cannot deactivate the global mute, apparently it is already deactivated!");

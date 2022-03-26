@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\entity\type;
 
-use JetBrains\PhpStorm\Pure;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityFactory;
 use pocketmine\entity\EntitySizeInfo;
@@ -90,7 +89,7 @@ final class FloatingTextType extends Entity
         return $nbt;
     }
 
-    #[Pure] protected function getInitialSizeInfo(): EntitySizeInfo
+    protected function getInitialSizeInfo(): EntitySizeInfo
     {
         return new EntitySizeInfo(0.001, 0.001, 0.001);
     }

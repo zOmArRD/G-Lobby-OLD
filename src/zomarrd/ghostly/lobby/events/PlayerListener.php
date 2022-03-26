@@ -60,7 +60,7 @@ final class PlayerListener implements Listener
 
         DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()["UIProfile"]);
 
-        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function ($result) use ($name, $locale): void {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function($result) use ($name, $locale): void {
             if (count($result) === 0) {
                 MySQL::runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
             }
@@ -77,7 +77,7 @@ final class PlayerListener implements Listener
 
         $player_name = $player->getName();
 
-        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function ($result) use ($player): void {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function($result) use ($player): void {
             if (count($result) === 0) {
                 $player->transfer("ghostlymc.live");
                 return;

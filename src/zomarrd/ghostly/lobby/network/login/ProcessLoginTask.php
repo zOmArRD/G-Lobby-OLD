@@ -31,9 +31,9 @@ class ProcessLoginTask extends AsyncTask
     private const CLOCK_DRIFT_MAX = 60;
 
     /** @var string */
-    private $chain;
+    private string $chain;
     /** @var string */
-    private $clientDataJwt;
+    private string $clientDataJwt;
 
     /**
      * @var string|null
@@ -57,7 +57,7 @@ class ProcessLoginTask extends AsyncTask
     /**
      * @param string[] $chainJwts
      *
-     * @phpstan-param \Closure(bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPublicKey) :
+     * @phpstan-param Closure(bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPublicKey) :
      *                void $onCompletion
      */
     public function __construct(array $chainJwts, string $clientDataJwt, bool $authRequired, Closure $onCompletion)
@@ -68,7 +68,7 @@ class ProcessLoginTask extends AsyncTask
         $this->authRequired = $authRequired;
     }
 
-    public function onRun(): void
+    final public function onRun(): void
     {
         try {
             $this->clientPublicKey = $this->validateChain();
@@ -133,7 +133,7 @@ class ProcessLoginTask extends AsyncTask
             if (!$first) {
                 throw new VerifyLoginException(KnownTranslationKeys::POCKETMINE_DISCONNECT_INVALIDSESSION_MISSINGKEY);
             }
-        } elseif ($headerDerKey !== $currentPublicKey) {
+        } else if ($headerDerKey !== $currentPublicKey) {
             //Fast path: if the header key doesn't match what we expected, the signature isn't going to validate anyway
             throw new VerifyLoginException(KnownTranslationKeys::POCKETMINE_DISCONNECT_INVALIDSESSION_BADSIGNATURE);
         }
@@ -187,12 +187,8 @@ class ProcessLoginTask extends AsyncTask
         }
     }
 
-    public function onCompletion(): void
+    final public function onCompletion(): void
     {
-        /**
-         * @var \Closure $callback
-         * @phpstan-var \Closure(bool, bool, ?string, ?string) : void $callback
-         */
         $callback = $this->fetchLocal(self::TLS_KEY_ON_COMPLETION);
         $callback($this->authenticated, $this->authRequired, $this->error, $this->clientPublicKey);
     }

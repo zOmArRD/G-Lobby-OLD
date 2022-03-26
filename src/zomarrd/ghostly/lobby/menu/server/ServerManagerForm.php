@@ -22,7 +22,7 @@ final class ServerManagerForm
 {
     public function build(GhostlyPlayer $player): void
     {
-        $form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
+        $form = new SimpleForm(function(GhostlyPlayer $player, $data): void {
             if (!isset($data)) {
                 return;
             }
@@ -33,7 +33,7 @@ final class ServerManagerForm
                     $player->sendMessage(PREFIX . "Servers have been reloaded from the database!");
                     break;
                 case "proxy_detect":
-                    $form = new CustomForm(function (GhostlyPlayer $player, $data): void {
+                    $form = new CustomForm(function(GhostlyPlayer $player, $data): void {
                         $value = $data[0];
                         $default_value = ConfigManager::getServerConfig()->get('proxy_detect');
                         if ($default_value === $value) {

@@ -15,12 +15,12 @@ abstract class IPlayer
 {
     public function __construct(private GhostlyPlayer $player) {}
 
-    public function getPlayerName(): string
+    final public function getPlayerName(): string
     {
         return $this->getPlayer()->getName();
     }
 
-    public function getPlayer(): GhostlyPlayer
+    final public function getPlayer(): GhostlyPlayer
     {
         return $this->player;
     }

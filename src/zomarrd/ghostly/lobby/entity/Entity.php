@@ -31,6 +31,7 @@ final class Entity
 
     use EnumTrait;
 
+    /** @noinspection MethodCanBePrivateInspection */
     protected static function setup(): void
     {
         self::_registryRegister("entity", new EntityManager());

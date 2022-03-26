@@ -1,4 +1,5 @@
 <?php
+/** @noinspection MethodVisibilityInspection */
 /*
  * Created by PhpStorm.
  *
@@ -14,10 +15,8 @@ namespace zomarrd\ghostly\lobby;
 use AttachableLogger;
 use CortexPE\Commando\exception\HookAlreadyRegistered;
 use CortexPE\Commando\PacketHooker;
-use JetBrains\PhpStorm\Pure;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\event\EventPriority;
-use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\QueryRegenerateEvent;
 use pocketmine\network\mcpe\convert\SkinAdapterSingleton;
@@ -79,7 +78,7 @@ final class Ghostly extends PluginBase
     /**
      * @return string the plugin directory, not plugin_data
      */
-    #[Pure] public function getResourcesFolder(): string
+    public function getResourcesFolder(): string
     {
         return $this->getFile() . 'resources/';
     }
@@ -136,7 +135,7 @@ final class Ghostly extends PluginBase
             new EntityCommand($this, 'entity'),
         ]);
 
-        $this->getServer()->getPluginManager()->registerEvent(QueryRegenerateEvent::class, function (QueryRegenerateEvent $event): void {
+        $this->getServer()->getPluginManager()->registerEvent(QueryRegenerateEvent::class, function(QueryRegenerateEvent $event): void {
             $info = $event->getQueryInfo();
             $server_manager = ServerManager::getInstance();
             $info->setPlugins([$this]);
@@ -160,20 +159,20 @@ final class Ghostly extends PluginBase
          * If the server is proxy, it will establish a custom login method.
          */
         if (self::$is_proxy_server) {
-            $this->getServer()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, function (DataPacketReceiveEvent $event): void {
+            $this->getServer()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, function(DataPacketReceiveEvent $event): void {
                 $packet = $event->getPacket();
                 if (!$packet instanceof LoginPacket) {
                     return;
                 }
 
-                $event->getOrigin()->setHandler(new LoginPacketHandler($this->getServer(), $event->getOrigin(), function (PlayerInfo $info) use ($event): void {
-                    (function () use ($info): void {
+                $event->getOrigin()->setHandler(new LoginPacketHandler($this->getServer(), $event->getOrigin(), function(PlayerInfo $info) use ($event): void {
+                    (function() use ($info): void {
                         $this->info = $info;
                         $this->getLogger()->info("Player: " . TextFormat::RED . $info->getUsername() . TextFormat::RESET);
                         $this->getLogger()->setPrefix($this->getLogPrefix());
                     })->call($event->getOrigin());
-                }, function (bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
-                    (function () use ($authRequired, $error, $clientPubKey): void {
+                }, function(bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
+                    (function() use ($authRequired, $error, $clientPubKey): void {
                         $this->setAuthenticationStatus(true, $authRequired, $error, $clientPubKey);
                     })->call($event->getOrigin());
                 }));
@@ -204,11 +203,6 @@ INFO
 
     }
 
-    /**
-     * @param Listener[] $listeners
-     *
-     * @return void
-     */
     public function registerEvents(array $listeners): void
     {
         $manager = $this->getServer()->getPluginManager();

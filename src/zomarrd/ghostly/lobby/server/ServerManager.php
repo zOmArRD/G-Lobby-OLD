@@ -42,7 +42,7 @@ final class ServerManager
         sleep(1); //WHY YES ?
         $this->reloadServers();
 
-        Ghostly::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
+        Ghostly::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
             $this->getCurrentServer()?->sync_local();
             foreach ($this->getServers() as $server) {
                 $server->sync_remote();
@@ -60,7 +60,7 @@ final class ServerManager
         $this->servers = [];
         $cServerName = $this->getCurrentServerName();
 
-        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers"), function ($rows) use ($cServerName, $player) {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers"), function($rows) use ($cServerName, $player) {
             foreach ($rows as $row) {
                 $server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist'], $row["category"]);
 
@@ -70,8 +70,8 @@ final class ServerManager
                     $this->servers[] = $server;
                 }
 
-                Ghostly::$logger->info(PREFIX . "The server (" . $server->getName() . ") has been registered in the database!");
-                $player?->sendMessage(PREFIX . "The server (" . $server->getName() . ") has been registered in the database!");
+                Ghostly::$logger->info(sprintf("%sThe server (%s) has been registered in the database!", PREFIX, $server->getName()));
+                $player?->sendMessage(sprintf("%sThe server (%s) has been registered in the database!", PREFIX, $server->getName()));
             }
         });
     }
@@ -96,7 +96,7 @@ final class ServerManager
      *
      * @param string $name
      *
-     * @return Server|null the object {@link \zomarrd\ghostly\lobby\server\Server}.
+     * @return Server|null the object {@link Server}.
      */
     public function getServerByName(string $name): ?Server
     {
@@ -116,9 +116,7 @@ final class ServerManager
     }
 
     /**
-     * Function dedicated to the Scoreboard :)
-     *
-     * @return int
+     * @return int The total players of the Network.
      */
     public function getNetworkPlayers(): int
     {

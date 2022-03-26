@@ -31,7 +31,7 @@ abstract class Chest implements Listener
 
     public function __construct(private string $chestName, private string $identifier = InvMenuTypeIds::TYPE_CHEST)
     {
-        $this->menu = InvMenu::create($this->identifier)->setName($this->chestName)->setInventoryCloseListener(function (GhostlyPlayer $player): void {
+        $this->menu = InvMenu::create($this->identifier)->setName($this->chestName)->setInventoryCloseListener(function(GhostlyPlayer $player): void {
             $closure = $this->inventoryClose[$player->getUniqueId()->toString()] ?? null;
 
             if ($closure !== null) {
@@ -39,7 +39,7 @@ abstract class Chest implements Listener
                 unset($this->inventoryClose[$player->getUniqueId()->toString()]);
             }
 
-        })->setListener(function (InvMenuTransaction $transaction): InvMenuTransactionResult {
+        })->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
             $player = $transaction->getPlayer();
             $button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 
@@ -55,14 +55,14 @@ abstract class Chest implements Listener
         });
     }
 
-    public function build(GhostlyPlayer $player): void
+    final public function build(GhostlyPlayer $player): void
     {
         if ($player->isOnline()) {
             $this->menu->send($player);
         }
     }
 
-    public function addButton(MenuButton $button, int $slot): void
+    final public function addButton(MenuButton $button, int $slot): void
     {
         if ($slot < $this->menu->getInventory()->getSize()) {
             $this->menu->getInventory()->setItem($slot, $button->getItem());
@@ -70,12 +70,12 @@ abstract class Chest implements Listener
         }
     }
 
-    public function getMenu(): InvMenu
+    final public function getMenu(): InvMenu
     {
         return $this->menu;
     }
 
-    public function getServerManager(): ServerManager
+    final public function getServerManager(): ServerManager
     {
         return ServerManager::getInstance();
     }

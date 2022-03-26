@@ -13,7 +13,10 @@ final class PlayerSession
 
     private ?InvMenuInfo $current = null;
 
-    public function __construct(private Player $player, private PlayerNetwork $network) {}
+    public function __construct(
+        private Player        $player,
+        private PlayerNetwork $network
+    ) {}
 
     /**
      * @internal
@@ -44,7 +47,7 @@ final class PlayerSession
         $this->current = $current;
 
         if ($this->current !== null) {
-            $this->network->waitUntil($this->current->graphic->getAnimationDuration(), function (bool $success) use ($callback): bool {
+            $this->network->waitUntil($this->current->graphic->getAnimationDuration(), function(bool $success) use ($callback): bool {
                 if ($this->current !== null) {
                     if ($success && $this->current->graphic->sendInventory($this->player, $this->current->menu->getInventory())) {
                         if ($callback !== null) {

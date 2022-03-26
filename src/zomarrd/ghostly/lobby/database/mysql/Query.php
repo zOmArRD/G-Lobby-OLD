@@ -18,7 +18,7 @@ abstract class Query extends AsyncTask
 {
     public string $host, $user, $password, $database;
 
-    public function onRun(): void
+    final public function onRun(): void
     {
         $this->query($mysqli = new mysqli($this->host, $this->user, $this->password, $this->database));
 
@@ -36,25 +36,25 @@ abstract class Query extends AsyncTask
         MySQL::submitAsync($this);
     }
 
-    public function setHost(string $host): Query
+    final public function setHost(string $host): Query
     {
         $this->host = $host;
         return $this;
     }
 
-    public function setUser(string $user): Query
+    final public function setUser(string $user): Query
     {
         $this->user = $user;
         return $this;
     }
 
-    public function setPassword(string $password): Query
+    final public function setPassword(string $password): Query
     {
         $this->password = $password;
         return $this;
     }
 
-    public function setDatabase(string $database): Query
+    final public function setDatabase(string $database): Query
     {
         $this->database = $database;
         return $this;

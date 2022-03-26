@@ -33,7 +33,7 @@ final class LobbySelector
 
     public function register(): void
     {
-        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST)->setName("§l§cGhostly §f» §r§6Lobby Selector")->setListener(function (InvMenuTransaction $transaction): InvMenuTransactionResult {
+        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST)->setName("§l§cGhostly §f» §r§6Lobby Selector")->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
             $player = $transaction->getPlayer();
             $button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 
@@ -49,7 +49,7 @@ final class LobbySelector
         });
 
         $close = VanillaItems::RED_BED()->setCustomName("§r§cClose");
-        $this->addButton(new MenuButton($close, function (GhostlyPlayer $player): void {
+        $this->addButton(new MenuButton($close, function(GhostlyPlayer $player): void {
             $player->closeInventory();
         }), 0);
     }
@@ -92,7 +92,7 @@ final class LobbySelector
 
         if ($server->isOnline()) {
             $arrayOriginal = Ghostly::$server_items->get('Lobby')['online'];
-            $arrayOriginal[0] = "§r§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}\n";
+            $arrayOriginal[0] = sprintf("§r§7Players: §f%s§7/§f%s\n", $server->getPlayers(), $server->getMaxPlayers());
             $item->setLore($arrayOriginal);
         } else {
             $item->setLore(Ghostly::$server_items->get('Lobby')['offline']);
@@ -100,11 +100,11 @@ final class LobbySelector
 
         if ($server->getName() === Ghostly::SERVER) {
             $arrayOriginal = Ghostly::$server_items->get('Lobby')['already-connected'];
-            $arrayOriginal[0] = "§r§7Players: §f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}\n";
+            $arrayOriginal[0] = sprintf("§r§7Players: §f%s§7/§f%s\n", $server->getPlayers(), $server->getMaxPlayers());
             $item->setLore($arrayOriginal);
         }
 
-        $this->addButton(new MenuButton($item, function (GhostlyPlayer $player) use ($server): void {
+        $this->addButton(new MenuButton($item, function(GhostlyPlayer $player) use ($server): void {
             $this->callable($player, $server);
         }), $slot);
     }
@@ -121,7 +121,7 @@ final class LobbySelector
         if ($type === Menu::GUI_TYPE) {
             $this->menu->send($player);
         } else {
-            $form = new SimpleForm(function (GhostlyPlayer $player, $data): void {
+            $form = new SimpleForm(function(GhostlyPlayer $player, $data): void {
                 if (isset($data)) {
                     if ($data === "close") {
                         return;
@@ -153,17 +153,17 @@ final class LobbySelector
         $text = "§r";
 
         if ($server->getName() === Ghostly::SERVER) {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§7/§f{$server->getMaxPlayers()}§7]\n§cYou are already connected here!";
+            $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
         }
 
         if ($server->isOnline()) {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§eClick to transfer!";
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
         } else {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cOFFLINE";
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
         }
 
         if ($server->isWhitelist()) {
-            $text .= "§a{$server->getName()} §7[§f{$server->getPlayers()}§f/§7{$server->getMaxPlayers()}§7]\n§cWHITELISTED";
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
         }
 
         $form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());

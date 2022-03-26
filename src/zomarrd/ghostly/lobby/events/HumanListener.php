@@ -30,8 +30,6 @@ final class HumanListener implements Listener
         switch ($i) {
             case Entity::OMAR:
                 $player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
-
-				# This is to mount on an entity lol?
                 /*$packet = new SetActorLinkPacket();
                 $packet->link = new EntityLink($entity->getId(), $player->getId(), EntityLink::TYPE_RIDER, true, true);
                 Server::getInstance()->broadcastPackets(Server::getInstance()->getOnlinePlayers(), [$packet]);*/

@@ -20,7 +20,7 @@ class SelectQuery extends Query
 
     public function __construct(private string $query) {}
 
-    public function query(mysqli $mysqli): void
+    final public function query(mysqli $mysqli): void
     {
         $result = $mysqli->query($this->query);
         $rows = [];
@@ -36,7 +36,7 @@ class SelectQuery extends Query
         $this->rows = serialize($rows);
     }
 
-    public function onCompletion(): void
+    final public function onCompletion(): void
     {
         if ($this->rows === null) {
             return;

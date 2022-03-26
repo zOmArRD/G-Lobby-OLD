@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\server;
 
-use JetBrains\PhpStorm\Pure;
 use zomarrd\ghostly\lobby\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
@@ -32,7 +31,7 @@ final class Server
     /**
      * @return string PLAYERS | WHITELISTED | OFFLINE
      */
-    #[Pure] public function getStatus(): string
+    public function getStatus(): string
     {
         if (!$this->isOnline()) {
             return '§r§c' . 'OFFLINE';
@@ -96,7 +95,7 @@ final class Server
 
     public function sync_remote(): void
     {
-        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers WHERE server_name='$this->server_name';"), function ($rows) {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers WHERE server_name='$this->server_name';"), function($rows) {
             $row = $rows[0];
             if ($row !== null) {
                 $this->setOnline((bool)$row['online']);

@@ -156,17 +156,17 @@ final class HumanType extends Human
 
         $this->inventory = new PlayerInventory($this);
 
-        $syncHeldItem = function (): void {
+        $syncHeldItem = function(): void {
             foreach ($this->getViewers() as $viewer) {
                 $viewer->getNetworkSession()->onMobMainHandItemChange($this);
             }
         };
 
-        $this->inventory->getListeners()->add(new CallbackInventoryListener(function (Inventory $inventory, int $slot) use ($syncHeldItem): void {
+        $this->inventory->getListeners()->add(new CallbackInventoryListener(function(Inventory $inventory, int $slot) use ($syncHeldItem): void {
             if ($slot === $this->inventory->getHeldItemIndex()) {
                 $syncHeldItem();
             }
-        }, function (Inventory $inventory, array $oldItems) use ($syncHeldItem): void {
+        }, function(Inventory $inventory, array $oldItems) use ($syncHeldItem): void {
             if (array_key_exists($this->inventory->getHeldItemIndex(), $oldItems)) {
                 $syncHeldItem();
             }
@@ -182,12 +182,12 @@ final class HumanType extends Human
             $inventoryListeners = $this->inventory->getListeners()->toArray();
             $this->inventory->getListeners()->clear();
 
-            /** @var CompoundTag $item */
             foreach ($inventoryTag as $i => $item) {
+                assert($item instanceof CompoundTag);
                 $slot = $item->getByte("Slot");
                 if ($slot >= 100 && $slot < 104) { //Armor
                     $this->armorInventory->setItem($slot - 100, Item::nbtDeserialize($item));
-                } elseif ($slot >= 9 && $slot < $this->inventory->getSize() + 9) {
+                } else if ($slot >= 9 && $slot < $this->inventory->getSize() + 9) {
                     $this->inventory->setItem($slot - 9, Item::nbtDeserialize($item));
                 }
             }
@@ -202,14 +202,14 @@ final class HumanType extends Human
             $this->offHandInventory->setItem(0, Item::nbtDeserialize($offHand));
         }
 
-        $this->offHandInventory->getListeners()->add(CallbackInventoryListener::onAnyChange(function (): void {
+        $this->offHandInventory->getListeners()->add(CallbackInventoryListener::onAnyChange(function(): void {
             foreach ($this->getViewers() as $viewer) {
                 $viewer->getNetworkSession()->onMobOffHandItemChange($this);
             }
         }));
 
         $this->inventory->setHeldItemIndex($nbt->getInt("SelectedInventorySlot", 0));
-        $this->inventory->getHeldItemIndexChangeListeners()->add(function (): void {
+        $this->inventory->getHeldItemIndexChangeListeners()->add(function(): void {
             foreach ($this->getViewers() as $viewer) {
                 $viewer->getNetworkSession()->onMobMainHandItemChange($this);
             }

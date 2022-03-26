@@ -14,7 +14,7 @@ namespace zomarrd\ghostly\lobby\server\queue;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\server\Server;
 
-class Queue
+final class Queue
 {
     public int $position = 0;
     public string $positionFormatted = "";

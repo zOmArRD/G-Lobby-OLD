@@ -20,15 +20,15 @@ use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\item\Item;
 use pocketmine\player\Player;
 
-class InvMenu implements InvMenuTypeIds
+final class InvMenu implements InvMenuTypeIds
 {
 
-    protected InvMenuType $type;
-    protected ?string $name = null;
-    protected ?Closure $listener = null;
-    protected ?Closure $inventory_close_listener = null;
-    protected Inventory $inventory;
-    protected ?SharedInvMenuSynchronizer $synchronizer = null;
+    private InvMenuType $type;
+    private ?string $name = null;
+    private ?Closure $listener = null;
+    private ?Closure $inventory_close_listener = null;
+    private Inventory $inventory;
+    private ?SharedInvMenuSynchronizer $synchronizer = null;
 
     public function __construct(InvMenuType $type, ?Inventory $custom_inventory = null)
     {
@@ -58,7 +58,7 @@ class InvMenu implements InvMenuTypeIds
      */
     public static function readonly(?Closure $listener = null): Closure
     {
-        return static function (InvMenuTransaction $transaction) use ($listener): InvMenuTransactionResult {
+        return static function(InvMenuTransaction $transaction) use ($listener): InvMenuTransactionResult {
             $result = $transaction->discard();
             if ($listener !== null) {
                 $listener(new DeterministicInvMenuTransaction($transaction, $result));
@@ -123,7 +123,7 @@ class InvMenu implements InvMenuTypeIds
             // however I suppose it is more convenient if done within InvMenu...
             $network->dropPending();
         }
-        $network->waitUntil(0, function (bool $success) use ($player, $session, $name, $callback): bool {
+        $network->waitUntil(0, function(bool $success) use ($player, $session, $name, $callback): bool {
             if (!$success) {
                 if ($callback !== null) {
                     $callback(false);
@@ -134,7 +134,7 @@ class InvMenu implements InvMenuTypeIds
             $graphic = $this->type->createGraphic($this, $player);
             if ($graphic !== null) {
                 $graphic->send($player, $name);
-                $session->setCurrentMenu(new InvMenuInfo($this, $graphic), static function (bool $success) use ($callback): bool {
+                $session->setCurrentMenu(new InvMenuInfo($this, $graphic), static function(bool $success) use ($callback): bool {
                     if ($callback !== null) {
                         $callback($success);
                     }

@@ -26,7 +26,7 @@ final class LangForm
     public function showForm(): void
     {
         $player = $this->getPlayer();
-        $form = new SimpleForm(static function (Ghostlyplayer $player, $data) {
+        $form = new SimpleForm(static function(Ghostlyplayer $player, $data) {
             if (isset($data)) {
                 if ($data === 'close') {
                     return;

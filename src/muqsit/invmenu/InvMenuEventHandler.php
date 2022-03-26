@@ -17,7 +17,9 @@ use pocketmine\network\mcpe\protocol\NetworkStackLatencyPacket;
 final class InvMenuEventHandler implements Listener
 {
 
-    public function __construct(private PlayerManager $player_manager) {}
+    public function __construct(
+        private PlayerManager $player_manager
+    ) {}
 
     /**
      * @param DataPacketReceiveEvent $event
@@ -121,7 +123,7 @@ final class InvMenuEventHandler implements Listener
         }
 
         if (count($network_stack_callbacks) > 0) {
-            $player_instance->getNetwork()->wait(static function (bool $success) use ($player, $network_stack_callbacks): bool {
+            $player_instance->getNetwork()->wait(static function(bool $success) use ($player, $network_stack_callbacks): bool {
                 if ($success) {
                     foreach ($network_stack_callbacks as $callback) {
                         $callback($player);

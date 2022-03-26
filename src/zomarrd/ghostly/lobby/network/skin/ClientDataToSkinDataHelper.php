@@ -35,9 +35,9 @@ class ClientDataToSkinDataHelper
             $animations[] = new SkinAnimation(new SkinImage($animation->ImageHeight, $animation->ImageWidth, self::safeB64Decode($animation->Image, "AnimatedImageData.$k.Image")), $animation->Type, $animation->Frames, $animation->AnimationExpression);
         }
         return new SkinData($clientData->SkinId, $clientData->PlayFabId, self::safeB64Decode($clientData->SkinResourcePatch, "SkinResourcePatch"), new SkinImage($clientData->SkinImageHeight, $clientData->SkinImageWidth, self::safeB64Decode($clientData->SkinData, "SkinData")), $animations, new SkinImage($clientData->CapeImageHeight, $clientData->CapeImageWidth, self::safeB64Decode($clientData->CapeData, "CapeData")), self::safeB64Decode($clientData->SkinGeometryData, "SkinGeometryData"), self::safeB64Decode($clientData->SkinGeometryDataEngineVersion, "SkinGeometryDataEngineVersion"), //yes, they actually base64'd the version!
-            self::safeB64Decode($clientData->SkinAnimationData, "SkinAnimationData"), $clientData->CapeId, null, $clientData->ArmSize, $clientData->SkinColor, array_map(static function (ClientDataPersonaSkinPiece $piece): PersonaSkinPiece {
+            self::safeB64Decode($clientData->SkinAnimationData, "SkinAnimationData"), $clientData->CapeId, null, $clientData->ArmSize, $clientData->SkinColor, array_map(static function(ClientDataPersonaSkinPiece $piece): PersonaSkinPiece {
                 return new PersonaSkinPiece($piece->PieceId, $piece->PieceType, $piece->PackId, $piece->IsDefault, $piece->ProductId);
-            }, $clientData->PersonaPieces), array_map(static function (ClientDataPersonaPieceTintColor $tint): PersonaPieceTintColor {
+            }, $clientData->PersonaPieces), array_map(static function(ClientDataPersonaPieceTintColor $tint): PersonaPieceTintColor {
                 return new PersonaPieceTintColor($tint->PieceType, $tint->Colors);
             }, $clientData->PieceTintColors), true, $clientData->PremiumSkin, $clientData->PersonaSkin, $clientData->CapeOnClassicSkin, true, //assume this is true? there's no field for it ...
         );

@@ -21,7 +21,7 @@ use zomarrd\ghostly\lobby\player\permission\PermissionKey;
 use zomarrd\ghostly\lobby\server\Server;
 use zomarrd\ghostly\lobby\server\ServerManager;
 
-class QueueManager
+final class QueueManager
 {
     use SingletonTrait;
 
@@ -40,7 +40,7 @@ class QueueManager
             $this->queue[$server] = [];
         }
 
-        $ghostly->getScheduler()->scheduleRepeatingTask(new ClosureTask(function () {
+        $ghostly->getScheduler()->scheduleRepeatingTask(new ClosureTask(function() {
 
             $this->updateQueue(Server::HCF);
             $this->updateQueue(Server::COMBO);
@@ -57,8 +57,8 @@ class QueueManager
      */
     public function updateQueue(string $serverName): void
     {
-        /** @var Queue $queue */
         foreach ($this->queue[$serverName] as $key => $queue) {
+            assert($queue instanceof Queue);
             if ($queue->getPlayer()->isOnline()) {
                 $queue->setPosition($key + 1);
                 $queue->setPositionFormatted(sprintf("§f%s§7/§f%s", $queue->getPosition(), count($this->queue[$serverName])));
@@ -92,8 +92,8 @@ class QueueManager
             return;
         }
 
-        /** @var Queue $queue */
         foreach ($this->queue[$server] as $key => $queue) {
+            assert($queue instanceof Queue);
             if ($queue->getPlayer() === $player) {
                 unset($this->queue[$server][$key]);
                 $this->queue[$server] = array_values($this->queue[$server]);
@@ -104,10 +104,6 @@ class QueueManager
 
     /**
      * Check if the player is already in a Queue.
-     *
-     * @param GhostlyPlayer $player
-     *
-     * @return bool is in Queue.
      */
     public function exist(GhostlyPlayer $player): bool
     {
@@ -115,9 +111,7 @@ class QueueManager
     }
 
     /**
-     * @param GhostlyPlayer $player Player {@link GhostlyPlayer}.
-     * @param string|Server $server Server {@link Server}.
-     *                              Add the player to the Queue.
+     * Add the {@link GhostlyPlayer} to the Queue.
      */
     public function add(GhostlyPlayer $player, string|Server $server): void
     {

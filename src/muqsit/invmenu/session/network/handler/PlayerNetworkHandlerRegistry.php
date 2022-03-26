@@ -18,10 +18,10 @@ final class PlayerNetworkHandlerRegistry
 
     public function __construct()
     {
-        $this->registerDefault(new ClosurePlayerNetworkHandler(static function (Closure $then): NetworkStackLatencyEntry {
+        $this->registerDefault(new ClosurePlayerNetworkHandler(static function(Closure $then): NetworkStackLatencyEntry {
             return new NetworkStackLatencyEntry(mt_rand() * 1000 /* TODO: remove this hack */, $then);
         }));
-        $this->register(DeviceOS::PLAYSTATION, new ClosurePlayerNetworkHandler(static function (Closure $then): NetworkStackLatencyEntry {
+        $this->register(DeviceOS::PLAYSTATION, new ClosurePlayerNetworkHandler(static function(Closure $then): NetworkStackLatencyEntry {
             $timestamp = mt_rand();
             return new NetworkStackLatencyEntry($timestamp, $then, $timestamp * 1000);
         }));

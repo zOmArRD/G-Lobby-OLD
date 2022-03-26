@@ -18,7 +18,11 @@ use pocketmine\world\World;
 final class BlockFixedInvMenuType implements FixedInvMenuType
 {
 
-    public function __construct(private Block $block, private int $size, private ?InvMenuGraphicNetworkTranslator $network_translator = null) {}
+    public function __construct(
+        private Block                            $block,
+        private int                              $size,
+        private ?InvMenuGraphicNetworkTranslator $network_translator = null
+    ) {}
 
     public function getSize(): int
     {

@@ -27,10 +27,10 @@ final class PlayerManager
         $this->network_handler_registry = new PlayerNetworkHandlerRegistry();
 
         $plugin_manager = Server::getInstance()->getPluginManager();
-        $plugin_manager->registerEvent(PlayerLoginEvent::class, function (PlayerLoginEvent $event): void {
+        $plugin_manager->registerEvent(PlayerLoginEvent::class, function(PlayerLoginEvent $event): void {
             $this->create($event->getPlayer());
         }, EventPriority::MONITOR, $registrant);
-        $plugin_manager->registerEvent(PlayerQuitEvent::class, function (PlayerQuitEvent $event): void {
+        $plugin_manager->registerEvent(PlayerQuitEvent::class, function(PlayerQuitEvent $event): void {
             $this->destroy($event->getPlayer());
         }, EventPriority::MONITOR, $registrant);
     }
@@ -43,7 +43,10 @@ final class PlayerManager
             $_playerInfo->setAccessible(true);
         }
 
-        $this->sessions[$player->getId()] = new PlayerSession($player, new PlayerNetwork($player->getNetworkSession(), $this->network_handler_registry->get($_playerInfo->getValue($player)->getExtraData()["DeviceOS"] ?? -1)));
+        $this->sessions[$player->getId()] = new PlayerSession($player, new PlayerNetwork(
+            $player->getNetworkSession(),
+            $this->network_handler_registry->get($_playerInfo->getValue($player)->getExtraData()["DeviceOS"] ?? -1)
+        ));
     }
 
     private function destroy(Player $player): void

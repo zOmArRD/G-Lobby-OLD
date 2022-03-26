@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\config;
 
-use JetBrains\PhpStorm\Pure;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\world\World;
@@ -89,7 +88,7 @@ final class ConfigManager
         return new Config($this->getDataFolder() . $file);
     }
 
-    #[Pure] public function getDataFolder(): string
+    public function getDataFolder(): string
     {
         return Ghostly::getInstance()->getDataFolder();
     }

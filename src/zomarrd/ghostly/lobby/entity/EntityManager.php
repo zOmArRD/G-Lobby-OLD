@@ -34,11 +34,11 @@ final class EntityManager
 
     public function register(): void
     {
-        EntityFactory::getInstance()->register(HumanType::class, function (World $world, CompoundTag $tag): HumanType {
+        EntityFactory::getInstance()->register(HumanType::class, function(World $world, CompoundTag $tag): HumanType {
             return new HumanType(EntityDataHelper::parseLocation($tag, $world), HumanType::parseSkinNBT($tag), $tag);
         }, ["HumanType"]);
 
-        EntityFactory::getInstance()->register(FloatingTextType::class, function (World $world, CompoundTag $tag): FloatingTextType {
+        EntityFactory::getInstance()->register(FloatingTextType::class, function(World $world, CompoundTag $tag): FloatingTextType {
             return new FloatingTextType(EntityDataHelper::parseLocation($tag, $world), $tag);
         }, ["FloatingTextType"]);
     }

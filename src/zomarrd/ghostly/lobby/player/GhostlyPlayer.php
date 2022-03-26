@@ -14,12 +14,15 @@ namespace zomarrd\ghostly\lobby\player;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\entity\animation\ArmSwingAnimation;
 use pocketmine\entity\Entity;
+use pocketmine\entity\Location;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
@@ -29,6 +32,7 @@ use pocketmine\network\mcpe\protocol\types\UIProfile;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\player\PlayerInfo;
 use pocketmine\Server as PMServer;
 use pocketmine\timings\Timings;
 use pocketmine\utils\TextFormat;
@@ -49,15 +53,29 @@ use zomarrd\ghostly\lobby\world\Lobby;
 /**
  * @todo check<PARTICLE_EYE_DESPAWN>
  */
-class GhostlyPlayer extends Player
+final class GhostlyPlayer extends Player
 {
-    public int|float $cooldown = 0, $messageReceivedDelay = 0;
+    public int|float $messageReceivedDelay = 0;
     public ?Queue $queue = null;
     private string $currentLang = Language::ENGLISH_US;
     private bool $loaded = false, $scoreboard = true;
     private Scoreboard $scoreboard_session;
     private ItemManager $itemManager;
     private bool $canInteractItem = true;
+    private Cooldown $cooldown;
+
+    public function __construct
+    (
+        PMServer       $server,
+        NetworkSession $session,
+        PlayerInfo     $playerInfo,
+        bool           $authenticated,
+        Location       $spawnLocation,
+        ?CompoundTag   $namedtag)
+    {
+        parent::__construct($server, $session, $playerInfo, $authenticated, $spawnLocation, $namedtag);
+        $this->cooldown = new Cooldown();
+    }
 
     public function getQueue(): ?Queue
     {
@@ -278,12 +296,12 @@ class GhostlyPlayer extends Player
 
     public function hasCooldown(float|int $time): bool
     {
-        return time() - $this->cooldown < $time;
+        return $this->cooldown->hasCooldown($time);
     }
 
     public function setCooldown(): void
     {
-        $this->cooldown = time();
+        $this->cooldown->setCooldown();
     }
 
     public function getMessageReceivedDelay(float|int $time): bool
@@ -323,7 +341,7 @@ class GhostlyPlayer extends Player
 
         $this->spawned = true;
         $this->recheckBroadcastPermissions();
-        $this->getPermissionRecalculationCallbacks()->add(function (array $changedPermissionsOldValues): void {
+        $this->getPermissionRecalculationCallbacks()->add(function(array $changedPermissionsOldValues): void {
             if (isset($changedPermissionsOldValues[PMServer::BROADCAST_CHANNEL_ADMINISTRATIVE]) || isset($changedPermissionsOldValues[PMServer::BROADCAST_CHANNEL_USERS])) {
                 $this->recheckBroadcastPermissions();
             }

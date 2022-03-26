@@ -10,5 +10,8 @@ use muqsit\invmenu\type\graphic\InvMenuGraphic;
 final class InvMenuInfo
 {
 
-    public function __construct(public InvMenu $menu, public InvMenuGraphic $graphic) {}
+    public function __construct(
+        public InvMenu        $menu,
+        public InvMenuGraphic $graphic
+    ) {}
 }

@@ -14,7 +14,10 @@ use pocketmine\player\Player;
 final class DeterministicInvMenuTransaction implements InvMenuTransaction
 {
 
-    public function __construct(private InvMenuTransaction $inner, private InvMenuTransactionResult $result) {}
+    public function __construct(
+        private InvMenuTransaction       $inner,
+        private InvMenuTransactionResult $result
+    ) {}
 
     public function continue(): InvMenuTransactionResult
     {

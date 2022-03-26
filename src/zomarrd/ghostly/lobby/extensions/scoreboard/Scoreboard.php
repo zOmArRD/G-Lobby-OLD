@@ -16,7 +16,7 @@ use zomarrd\ghostly\lobby\utils\Utils;
 
 class Scoreboard extends ScoreAPI
 {
-    /** @var string[] This is to replace blanks */
+    /** This is to replace blanks */
     private const EMPTY_CACHE = [
         "§0\e",
         "§1\e",
@@ -37,7 +37,7 @@ class Scoreboard extends ScoreAPI
 
     private int $count = 0;
 
-    public function setScoreboard(): void
+    final public function setScoreboard(): void
     {
         if (!$this->getPlayer()->isScoreboard()) {
             if ($this->isObjectiveName()) {
@@ -55,7 +55,7 @@ class Scoreboard extends ScoreAPI
         $this->count++;
     }
 
-    private function getConfig()
+    private function getConfig(): array
     {
         return ConfigManager::getServerConfig()?->get('scoreboard');
     }
@@ -75,7 +75,7 @@ class Scoreboard extends ScoreAPI
         }
     }
 
-    public function replaceData(int $line, string $string): string
+    final public function replaceData(int $line, string $string): string
     {
         return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : Utils::checkStrings($string, $this->getPlayer());
     }

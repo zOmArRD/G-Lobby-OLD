@@ -21,7 +21,7 @@ final class LangHandler
 {
     private static LangHandler $instance;
 
-    /** @var array<Language> */
+    /** @var array<Language>|null */
     private array $languages;
 
     private Language $defaultLanguage;

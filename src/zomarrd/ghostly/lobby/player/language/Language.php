@@ -11,14 +11,13 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\player\language;
 
-use JetBrains\PhpStorm\Pure;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\utils\Utils;
 
 /**
  * @copyright GitHub Open Source lmao
  */
-class Language
+final class Language
 {
     public const ENGLISH_US = "en_US";
 
@@ -68,7 +67,7 @@ class Language
         return $resultingName === $name;
     }
 
-    #[Pure] public function equals(Language $lang): bool
+    public function equals(Language $lang): bool
     {
         return $this->locale === $lang->getLocale();
     }
@@ -103,7 +102,7 @@ class Language
         return isset($this->item_names[$type]) ? Utils::checkStrings($this->item_names[$type]) : null;
     }
 
-    #[Pure] public function hasAuthors(): bool
+    public function hasAuthors(): bool
     {
         return $this->getAuthors() !== "";
     }

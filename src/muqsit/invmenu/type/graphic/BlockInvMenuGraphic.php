@@ -18,7 +18,12 @@ use pocketmine\player\Player;
 final class BlockInvMenuGraphic implements PositionedInvMenuGraphic
 {
 
-    public function __construct(private Block $block, private Vector3 $position, private ?InvMenuGraphicNetworkTranslator $network_translator = null, private int $animation_duration = 0) {}
+    public function __construct(
+        private Block                            $block,
+        private Vector3                          $position,
+        private ?InvMenuGraphicNetworkTranslator $network_translator = null,
+        private int                              $animation_duration = 0
+    ) {}
 
     public function getPosition(): Vector3
     {

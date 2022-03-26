@@ -23,12 +23,12 @@ class HumanInteractEvent extends Event implements Cancellable
 
     public function __construct(private HumanType $entity, private GhostlyPlayer $player) {}
 
-    public function getEntity(): HumanType
+    final public function getEntity(): HumanType
     {
         return $this->entity;
     }
 
-    public function getPlayer(): GhostlyPlayer
+    final public function getPlayer(): GhostlyPlayer
     {
         return $this->player;
     }

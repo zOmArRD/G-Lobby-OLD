@@ -76,7 +76,7 @@ final class AntiProxy extends AsyncTask
         $ip = $result->ip;
 
         // Make a ban system that detects alts (ip with the same accounts, etc.)
-        MySQL::runAsync(new SelectQuery("SELECT * FROM player_location WHERE xuid = '$xuid';"), static function ($result) use ($playerName, $xuid, $ip, $location): void {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM player_location WHERE xuid = '$xuid';"), static function($result) use ($playerName, $xuid, $ip, $location): void {
             if (count($result) === 0) {
                 MySQL::runAsync(new InsertQuery(sprintf("INSERT INTO player_location(player, xuid, ip, city, region, country, continent) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');", $playerName, $xuid, $ip, $location->city, $location->region, $location->country, $location->continent)));
             } else {

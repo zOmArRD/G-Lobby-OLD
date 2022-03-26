@@ -64,12 +64,6 @@ class Utils
         return $msg;
     }
 
-    /**
-     * @param string $needle
-     * @param string $haystack
-     *
-     * @return array
-     */
     public static function str_indexes(string $needle, string $haystack): array
     {
 
@@ -106,7 +100,7 @@ class Utils
         return $new;
     }
 
-    public static function arr_contains_value($needle, array $haystack, bool $strict = true): bool
+    public static function arr_contains_value(mixed $needle, array $haystack, bool $strict = true): bool
     {
         return in_array($needle, $haystack, $strict);
     }
@@ -134,7 +128,7 @@ class Utils
 
         if (is_bool($type)) {
             $result = $type;
-        } elseif (is_int($type)) {
+        } else if (is_int($type)) {
             $result = $type > -1;
         }
 

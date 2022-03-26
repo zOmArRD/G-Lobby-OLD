@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\extensions\scoreboard;
 
-use JetBrains\PhpStorm\Pure;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
@@ -26,18 +25,18 @@ abstract class ScoreAPI extends IPlayer
 
     private SetDisplayObjectivePacket $displayPacket;
 
-    #[Pure] public function __construct(GhostlyPlayer $player)
+    public function __construct(GhostlyPlayer $player)
     {
         $this->displayPacket = new SetDisplayObjectivePacket();
         parent::__construct($player);
     }
 
-    public function removeObjectiveName(): void
+    final public function removeObjectiveName(): void
     {
         unset($this->objectiveName[$this->getPlayerName()]);
     }
 
-    public function new(string $objectiveName, string $displayName): void
+    final public function new(string $objectiveName, string $displayName): void
     {
         if ($this->isObjectiveName()) {
             $this->remove();
@@ -52,34 +51,34 @@ abstract class ScoreAPI extends IPlayer
         $this->getPlayer()->getNetworkSession()->sendDataPacket($this->getDisplayPacket());
     }
 
-    #[Pure] public function isObjectiveName(): bool
+    final public function isObjectiveName(): bool
     {
         return isset($this->objectiveName[$this->getPlayer()->getName()]);
     }
 
-    public function remove(): void
+    final public function remove(): void
     {
         $packet = new RemoveObjectivePacket();
         $packet->objectiveName = $this->getObjectiveName();
         $this->getPlayer()->getNetworkSession()->sendDataPacket($packet);
     }
 
-    #[Pure] public function getObjectiveName(): string
+    final public function getObjectiveName(): string
     {
         return $this->objectiveName[$this->getPlayerName()];
     }
 
-    public function getDisplayPacket(): SetDisplayObjectivePacket
+    final public function getDisplayPacket(): SetDisplayObjectivePacket
     {
         return $this->displayPacket;
     }
 
-    public function setObjectiveName(string $objectiveName): void
+    final public function setObjectiveName(string $objectiveName): void
     {
         $this->objectiveName[$this->getPlayerName()] = $objectiveName;
     }
 
-    public function setLine(int $score, string $message): void
+    final public function setLine(int $score, string $message): void
     {
         if ($this->isObjectiveName()) {
             if ($score > 15 || $score < 0) {

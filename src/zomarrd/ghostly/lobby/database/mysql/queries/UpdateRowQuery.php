@@ -18,7 +18,7 @@ class UpdateRowQuery extends Query
 {
     public function __construct(private string $updates, private string $conditionKey, private string $conditionValue, private string $table) {}
 
-    public function query(mysqli $mysqli): void
+    final public function query(mysqli $mysqli): void
     {
         $updates = [];
         foreach (unserialize($this->updates, [[]]) as $key => $value) {

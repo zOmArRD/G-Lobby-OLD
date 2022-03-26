@@ -22,7 +22,10 @@ final class PlayerNetwork
     /** @var SplQueue<NetworkStackLatencyEntry> */
     private SplQueue $queue;
 
-    public function __construct(private NetworkSession $session, private PlayerNetworkHandler $handler)
+    public function __construct(
+        private NetworkSession       $session,
+        private PlayerNetworkHandler $handler
+    )
     {
         $this->queue = new SplQueue();
     }
@@ -88,7 +91,7 @@ final class PlayerNetwork
             $this->current = null;
             if ($repeat && $success) {
                 $this->setCurrent($current);
-            } elseif (!$this->queue->isEmpty()) {
+            } else if (!$this->queue->isEmpty()) {
                 $this->setCurrent($this->queue->dequeue());
             }
         }
@@ -108,7 +111,7 @@ final class PlayerNetwork
         }
 
         $elapsed_ms = 0.0;
-        $this->wait(function (bool $success) use ($wait_ms, $then, &$elapsed_ms): bool {
+        $this->wait(function(bool $success) use ($wait_ms, $then, &$elapsed_ms): bool {
             if ($this->current === null) {
                 $then(false);
                 return false;
@@ -147,7 +150,12 @@ final class PlayerNetwork
     public function translateContainerOpen(PlayerSession $session, ContainerOpenPacket $packet): bool
     {
         $inventory = $this->session->getInvManager()?->getWindow($packet->windowId);
-        if ($inventory !== null && ($current = $session->getCurrent()) !== null && $current->menu->getInventory() === $inventory && ($translation = $current->graphic->getNetworkTranslator()) !== null) {
+        if (
+            $inventory !== null &&
+            ($current = $session->getCurrent()) !== null &&
+            $current->menu->getInventory() === $inventory &&
+            ($translation = $current->graphic->getNetworkTranslator()) !== null
+        ) {
             $translation->translate($session, $current, $packet);
             return true;
         }
