@@ -41,25 +41,19 @@ class ProcessLoginTask extends AsyncTask
      * keychain is invalid for whatever reason (bad signature, not in nbf-exp window, etc). If this is non-null, the
      * keychain might have been tampered with. The player will always be disconnected if this is non-null.
      */
-    private $error = "Unknown";
+    private ?string $error = "Unknown";
     /**
      * @var bool
      * Whether the player is logged into Xbox Live. This is true if any link in the keychain is signed with the Mojang
      * root public key.
      */
-    private $authenticated = false;
+    private bool $authenticated = false;
     /** @var bool */
-    private $authRequired;
+    private bool $authRequired;
 
     /** @var string|null */
-    private $clientPublicKey = null;
+    private ?string $clientPublicKey = null;
 
-    /**
-     * @param string[] $chainJwts
-     *
-     * @phpstan-param Closure(bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPublicKey) :
-     *                void $onCompletion
-     */
     public function __construct(array $chainJwts, string $clientDataJwt, bool $authRequired, Closure $onCompletion)
     {
         $this->storeLocal(self::TLS_KEY_ON_COMPLETION, $onCompletion);
