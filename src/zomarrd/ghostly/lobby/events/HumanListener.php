@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\events;
 
 use pocketmine\event\Listener;
-use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\entity\events\HumanInteractEvent;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -28,7 +27,7 @@ final class HumanListener implements Listener
         $i = $entity->getNpcId();
 
         switch ($i) {
-            case Entity::OMAR:
+            case "X6JGT":
                 $player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
                 /*$packet = new SetActorLinkPacket();
                 $packet->link = new EntityLink($entity->getId(), $player->getId(), EntityLink::TYPE_RIDER, true, true);
@@ -44,9 +43,9 @@ final class HumanListener implements Listener
                 $server = ServerManager::getInstance()->getServerByName($entity->getServerName());
 
                 if (is_null($server)) {
-                    $player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x)), ($player->getLocation()->z - ($entity->getLocation()->z)), (20 / 0xa));
+                    /*$player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x)), ($player->getLocation()->z - ($entity->getLocation()->z)), (20 / 0xa));
                     $player->sendSound(LevelSoundEvent::EXPLODE);
-                    $player->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
+                    $player->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);*/
                     return;
                 }
 

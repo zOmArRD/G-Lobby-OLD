@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\commands\entity;
 
 use CortexPE\Commando\args\RawStringArgument;
+use CortexPE\Commando\args\TextArgument;
 use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
-use zomarrd\ghostly\lobby\server\Server;
 use zomarrd\ghostly\lobby\utils\Utils;
 
 final class EntityCreateCommand extends BaseSubCommand
@@ -33,21 +33,24 @@ final class EntityCreateCommand extends BaseSubCommand
         $type = $args["type"];
 
         switch ($type) {
-            case "discord":
+            case $sender->getName():
+                if (isset($args['format'])) {
+                    $explode = explode(":", $args['format']);
+                    Entity::ENTITY()->spawnHuman($sender, $type, $explode);
+                }
+                break;
+            case Entity::DISCORD:
                 Entity::ENTITY()->entity_discord($sender);
                 break;
-            case "store":
+            case Entity::STORE:
                 Entity::ENTITY()->entity_store($sender);
                 break;
-            case "zomarrd":
-                Entity::ENTITY()->spawn_zOmArRD($sender);
-                break;
-            case Server::COMBO:
-            case Server::PRACTICE:
-            case Server::UHC:
-            case Server::UHC_RUN:
-            case Server::HCF:
-            case Server::KITMAP:
+            case Entity::COMBO:
+            case Entity::PRACTICE:
+            case Entity::UHC:
+            case Entity::UHC_RUN:
+            case Entity::HCF:
+            case Entity::KITMAP:
                 Entity::ENTITY()->createEntityServer($sender, $type);
                 break;
             default:
@@ -55,7 +58,7 @@ final class EntityCreateCommand extends BaseSubCommand
                 return;
         }
 
-        $sender->sendMessage(PREFIX . "The entity {$args["type"]} has been spawned!");
+        $sender->sendMessage(sprintf("%s§aThe entity %s has been spawned!", PREFIX, $args["type"]));
     }
 
     /**
@@ -63,6 +66,7 @@ final class EntityCreateCommand extends BaseSubCommand
      */
     protected function prepare(): void
     {
-        $this->registerArgument(0, new RawStringArgument("type"));
+        $this->registerArgument(0, new RawStringArgument('type'));
+        $this->registerArgument(1, new TextArgument('format', true));
     }
 }

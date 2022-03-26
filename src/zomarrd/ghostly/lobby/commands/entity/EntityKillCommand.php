@@ -30,12 +30,29 @@ final class EntityKillCommand extends BaseSubCommand
 
         if (isset($args["isAll"]) && $args["isAll"] === true) {
             Entity::ENTITY()->purge_all();
-            $sender->sendMessage(PREFIX . 'you have purged all entities!');
+            $sender->sendMessage(PREFIX . '§aYou have purged all entities!');
             return;
         }
 
-        Entity::ENTITY()->remove_entity($args["EntityId"]);
-        $sender->sendMessage(PREFIX . "you have purged the entity {$args["EntityId"]}!");
+        $type = $args["EntityId"];
+
+        switch ($type) {
+            case Entity::COMBO:
+            case Entity::PRACTICE:
+            case Entity::UHC:
+            case Entity::UHC_RUN:
+            case Entity::HCF:
+            case Entity::KITMAP:
+            case Entity::DISCORD:
+            case Entity::STORE:
+                Entity::ENTITY()->remove_entity($type);
+                $sender->sendMessage(sprintf("%s§aYou have purged the entity %s!", PREFIX, $type));
+                return;
+            default:
+                Entity::ENTITY()->remove_entity($type);
+                $sender->sendMessage(PREFIX . "§cWe will try to delete this entity!");
+                break;
+        }
     }
 
     /**
