@@ -6,7 +6,9 @@ namespace muqsit\simplepackethandler\utils;
 
 use Closure;
 use InvalidArgumentException;
+use pocketmine\event\Event;
 use pocketmine\event\HandlerListManager;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionNamedType;
 
@@ -19,6 +21,7 @@ final class Utils
      * @param string   $return_type
      *
      * @return string[]
+     * @throws ReflectionException
      */
     public static function parseClosureSignature(Closure $closure, array $params, string $return_type): array
     {
@@ -58,9 +61,10 @@ final class Utils
      *
      * @return bool
      *
-     * @phpstan-template TEvent of \pocketmine\event\Event
+     * @phpstan-template TEvent of {@link Event}
      * @phpstan-param class-string<TEvent>   $event
      * @phpstan-param Closure(TEvent) : void $handler
+     * @throws ReflectionException
      */
     public static function unregisterEventByHandler(string $event, Closure $handler, int $priority): bool
     {

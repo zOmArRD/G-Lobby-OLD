@@ -2,6 +2,11 @@ allowedIps:
   - "play.ghostlymc.live"
   - "ghostlymc.live"
   - "store.ghostlymc.live"
+  - "www.ghostlymc.live"
+  - "play,ghostlymc,live"
+  - "ghostlymc,live"
+  - "store,ghostlymc,live"
+  - "www,ghostlymc,live"
 
 domains:
   - ".net"
@@ -120,7 +125,6 @@ domains:
   - " play,"
   - " .live"
   - " ,live"
-
   - ". net"
   - ". es"
   - ". com"

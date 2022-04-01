@@ -19,6 +19,9 @@ use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use zomarrd\ghostly\lobby\entity\Entity;
 
+/**
+ * Dedicated class to delete/remove custom entities.
+ */
 final class EntityKillCommand extends BaseSubCommand
 {
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void

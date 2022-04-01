@@ -20,6 +20,9 @@ use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\utils\Utils;
 
+/**
+ * Here we handle the creation of the entities on the server.
+ */
 final class EntityCreateCommand extends BaseSubCommand
 {
 

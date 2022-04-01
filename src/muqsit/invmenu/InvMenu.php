@@ -20,7 +20,7 @@ use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\item\Item;
 use pocketmine\player\Player;
 
-final class InvMenu implements InvMenuTypeIds
+class InvMenu implements InvMenuTypeIds
 {
 
     private InvMenuType $type;
@@ -52,7 +52,7 @@ final class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param (Closure(DeterministicInvMenuTransaction) : void)|null $listener
+     * @param Closure|null $listener
      *
      * @return Closure(InvMenuTransaction) : InvMenuTransactionResult
      */
@@ -84,7 +84,7 @@ final class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param (Closure(InvMenuTransaction) : InvMenuTransactionResult)|null $listener
+     * @param Closure|null $listener
      *
      * @return self
      */
@@ -95,10 +95,9 @@ final class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param (Closure(Player, Inventory) : void)|null $listener
-     *
+     * @param Closure|null $listener
      * @return self
-     */
+*/
     public function setInventoryCloseListener(?Closure $listener): self
     {
         $this->inventory_close_listener = $listener;
@@ -106,10 +105,10 @@ final class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param Player      $player
-     * @param string|null $name
-     * @param (Closure(bool) : void)|null $callback
-     */
+     * @param Player       $player
+     * @param string|null  $name
+     * @param Closure|null $callback
+*/
     final public function send(Player $player, ?string $name = null, ?Closure $callback = null): void
     {
         $player->removeCurrentWindow();

@@ -9,8 +9,10 @@ use pocketmine\form\FormValidationException;
 class CustomForm extends Form
 {
 
-    private $labelMap = [];
-    private $validationMethods = [];
+    /** @var array<int, string> */
+    private array $labelMap = [];
+
+    private array $validationMethods = [];
 
     /**
      * @param callable|null $callable

@@ -51,20 +51,18 @@ final class AntiProxy extends AsyncTask
     {
         $result = $this->getResult();
         $playerName = $this->player;
-        /**
-         * Add player can bypass
-         */
+
         if ($this->player === "") {
             return;
         }
 
-        if (!isset($result->security, $result->location)) {
+        if (!isset($result->{'security'}, $result->{'location'})) {
             $this->getPlayer()->disconnect(PREFIX . "Your login could not be confirmed, contact our support!");
             return;
         }
 
-        $security = $result->security;
-        $location = $result->location;
+        $security = $result->{'security'};
+        $location = $result->{'location'};
         $xuid = $this->getPlayer()->getXuid();
 
         if (!$this->getPlayer()->hasPermission(PermissionKey::GHOSTLY_PROXY_BYPASS)) {
@@ -73,19 +71,20 @@ final class AntiProxy extends AsyncTask
             }
         }
 
-        $ip = $result->ip;
+        $ip = $result->{'ip'};
 
         // Make a ban system that detects alts (ip with the same accounts, etc.)
         MySQL::runAsync(new SelectQuery("SELECT * FROM player_location WHERE xuid = '$xuid';"), static function($result) use ($playerName, $xuid, $ip, $location): void {
             if (count($result) === 0) {
-                MySQL::runAsync(new InsertQuery(sprintf("INSERT INTO player_location(player, xuid, ip, city, region, country, continent) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');", $playerName, $xuid, $ip, $location->city, $location->region, $location->country, $location->continent)));
+                MySQL::runAsync(new InsertQuery(sprintf("INSERT INTO player_location(player, xuid, ip, city, region, country, continent) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');", $playerName, $xuid, $ip, $location->{'city'}, $location->{'region'}, $location->{'country'}, $location->{'continent'})));
             } else {
+                /** Add a method to find alts */
                 MySQL::runAsync(new UpdateRowQuery(serialize([
                     "ip" => $ip,
-                    "city" => $location->city,
-                    "region" => $location->region,
-                    "country" => $location->country,
-                    "continent" => $location->continent
+                    "city" => $location->{'city'},
+                    "region" => $location->{'region'},
+                    "country" => $location->{'country'},
+                    "continent" => $location->{'continent'}
                 ]), "xuid", $xuid, "player_location"));
             }
         });
