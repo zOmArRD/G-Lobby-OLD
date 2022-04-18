@@ -1,13 +1,21 @@
 {
-	"version": 4.1,
+	"version": 4.5,
 	"prefix": "§l§cGhostly §f» §r",
 	"proxy_detect": false,
 	"is_proxy_server": false,
+	"server.info": {
+		"name": "Lobby-1",
+		"category": "Lobby",
+		"ip": "play.ghostlymc.live",
+		"port": 19132
+	},
 	"mysql.credentials": {
-		"user": "root",
-		"password": "omar",
 		"host": "localhost",
-		"database": "mc"
+		"port": 3306,
+		"user": "root",
+		"pass": "omar",
+		"db": "mc",
+		"prefix": "ghostly_"
 	},
 	"scoreboard": {
 		"display": [
