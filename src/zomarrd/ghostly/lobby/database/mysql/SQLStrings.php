@@ -15,16 +15,14 @@ final class SQLStrings
 {
 
     public const CREATE_TABLE_SERVERS = "CREATE TABLE IF NOT EXISTS `servers` (
-        id INT(11) NOT NULL AUTO_INCREMENT,
-        name VARCHAR(26) NOT NULL UNIQUE,
-        ip VARCHAR(50) NOT NULL,
-        port INT(5) NOT NULL UNIQUE,
-        online BOOLEAN DEFAULT FALSE,
-        maxplayers INT DEFAULT 0,
-        onlineplayers INT DEFAULT 0,
-        whitelisted BOOLEAN DEFAULT FALSE,
-        category VARCHAR(26) NOT NULL,
-        PRIMARY KEY (id)
+        name VARCHAR(26) UNIQUE,
+        ip VARCHAR(50),
+        port INT(5) UNIQUE,
+        online BOOLEAN,
+        maxplayers INT,
+        onlineplayers INT,
+        whitelisted BOOLEAN,
+        category VARCHAR(30)
     )";
 }
 

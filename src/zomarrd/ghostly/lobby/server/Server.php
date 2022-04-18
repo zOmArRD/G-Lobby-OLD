@@ -126,7 +126,7 @@ final class Server
         Database::getMysql()->runAsync(new UpdateRowQuery(serialize([
             'maxplayers' => $this->maxPlayers,
             'onlineplayers' => $this->onlinePlayers,
-            'whitelisted' => $this->isWhitelisted,
+            'whitelisted' => (int)$this->isWhitelisted,
         ]), 'name', $this->name, 'servers'));
     }
 

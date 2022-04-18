@@ -32,7 +32,7 @@ use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
-use zomarrd\ghostly\lobby\database\mysql\MySQL;
+use zomarrd\ghostly\lobby\database\Database;
 use zomarrd\ghostly\lobby\database\mysql\queries\InsertQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -60,9 +60,9 @@ final class PlayerListener implements Listener
 
         DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()["UIProfile"]);
 
-        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function($result) use ($name, $locale): void {
+        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function($result) use ($name, $locale): void {
             if (count($result) === 0) {
-                MySQL::runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
+                Database::getMysql()->runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
             }
         });
     }
@@ -77,7 +77,7 @@ final class PlayerListener implements Listener
 
         $player_name = $player->getName();
 
-        MySQL::runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function($result) use ($player): void {
+        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function($result) use ($player): void {
             if (count($result) === 0) {
                 $player->transfer("ghostlymc.live");
                 return;

@@ -229,7 +229,7 @@ final class GhostlyPlayer extends Player
             return;
         }
 
-        if ($server->getName() === Ghostly::SERVER) {
+        if ($server->getName() === Server['name']) {
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
             $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
             $this->setCanInteractItem();
@@ -245,7 +245,7 @@ final class GhostlyPlayer extends Player
             return;
         }
 
-        if ($server->isWhitelist() && !$this->hasPermission(PermissionKey::GHOSTLY_SERVER_CONNECT_WHITELISTED)) {
+        if ($server->isWhitelisted() && !$this->hasPermission(PermissionKey::GHOSTLY_SERVER_CONNECT_WHITELISTED)) {
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
             $this->sendTranslated(LangKey::SERVER_IS_WHITELISTED);
             $this->setCanInteractItem();
@@ -253,7 +253,7 @@ final class GhostlyPlayer extends Player
             return;
         }
 
-        if (!$this->hasPermission(PermissionKey::GHOSTLY_SERVER_JOIN_BYPASS) && $server->getPlayers() >= $server->getMaxPlayers()) {
+        if (!$this->hasPermission(PermissionKey::GHOSTLY_SERVER_JOIN_BYPASS) && $server->getOnlinePlayers() >= $server->getMaxPlayers()) {
             $this->sendSound(LevelEvent::SOUND_SHOOT, 'level-event');
             $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_4);
             $this->setCanInteractItem();

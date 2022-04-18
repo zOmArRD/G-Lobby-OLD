@@ -31,7 +31,7 @@ final class RegisterServerQuery
             if (is_array($assoc)) {
                 $mysqli->query("UPDATE servers SET online = 1 WHERE name = '$name';");
             } else {
-                $mysqli->query(sprintf("INSERT INTO servers(name, ip, port, category) VALUES('%s', '%s', %s, '%s');", Server['name'], Server['ip'], Server['port'], Server['category']));
+                $mysqli->query(sprintf("INSERT INTO servers (name, ip, port, online, maxplayers, onlineplayers, whitelisted, category) VALUES ('$name', '%s', %s, 1, %s, 0, 1, '%s');", Server['ip'], Server['port'], Ghostly::getInstance()->getServer()->getMaxPlayers(), Server['category']));
             }
         } else {
             $mysqli->close();

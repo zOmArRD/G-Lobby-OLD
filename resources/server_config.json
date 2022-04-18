@@ -1,5 +1,5 @@
 {
-	"version": 4.5,
+	"version": 4.6,
 	"prefix": "§l§cGhostly §f» §r",
 	"proxy_detect": false,
 	"is_proxy_server": false,
@@ -67,11 +67,11 @@
 		"is_enabled": true,
 		"world": {
 			"name": "ghostlylobby",
-			"min-void": 85
+			"min-void": 40
 		},
 		"pos": {
 			"x": 0.4828,
-			"y": 112.6436,
+			"y": 68.6436,
 			"z": 0.5053,
 			"yaw": 358.48937988281,
 			"pitch": -1.44476318359375

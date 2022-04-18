@@ -60,7 +60,7 @@ final class ServerManager
         Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM servers"), function($rows) use ($cServerName, $player) {
             foreach ($rows as $row) {
                 $server = new Server($row['name'], $row['ip'], (int)$row['port'], (bool)$row['online'], (int)$row['maxplayers'], (int)$row['onlineplayers'], (bool)$row['whitelisted'], $row['category']);
-                if ($row['server'] === $cServerName) {
+                if ($row['name'] === $cServerName) {
                     $this->current_server = $server;
                 } else {
                     $this->servers[] = $server;

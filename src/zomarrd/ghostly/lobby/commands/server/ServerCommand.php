@@ -38,6 +38,6 @@ final class ServerCommand extends BaseCommand
     protected function prepare(): void
     {
         $this->setPermission(PermissionKey::GHOSTLY_COMMAND_SERVER);
-        $this->registerSubCommand(new ServerReloadCommand('reload', 'Reload servers from database'));
+        $this->registerSubCommand(new ServerReloadCommand('reload', 'Reload servers from database_backup'));
     }
 }
