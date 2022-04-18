@@ -12,11 +12,19 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\database\mysql\queries;
 
 use mysqli;
-use zomarrd\ghostly\lobby\database\mysql\Query;
+use zomarrd\ghostly\database\mysql\Query;
 
 class UpdateRowQuery extends Query
 {
-    public function __construct(private string $updates, private string $conditionKey, private string $conditionValue, private string $table) {}
+    public function __construct(
+        private string $updates,
+        private string $conditionKey,
+        private string $conditionValue,
+        private string $table
+    )
+    {
+        parent::__construct();
+    }
 
     final public function query(mysqli $mysqli): void
     {

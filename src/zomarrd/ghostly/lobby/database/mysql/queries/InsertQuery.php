@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\database\mysql\queries;
 
 use mysqli;
-use zomarrd\ghostly\lobby\database\mysql\Query;
+use zomarrd\ghostly\database\mysql\Query;
 
 final class InsertQuery extends Query
 {
 
-    public function __construct(private string $query) {}
+    public function __construct(private string $query) { parent::__construct(); }
 
     public function query(mysqli $mysqli): void
     {

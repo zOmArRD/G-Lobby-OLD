@@ -12,27 +12,34 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\database\mysql\queries;
 
 use mysqli;
-use zomarrd\ghostly\lobby\database\mysql\MySQL;
-use zomarrd\ghostly\lobby\database\mysql\Query;
 use zomarrd\ghostly\lobby\Ghostly;
 
-final class RegisterServerQuery extends Query
+final class RegisterServerQuery
 {
-    public function __construct(private string $serverName) {}
+    public function __construct(string $name) { $this->registerServer($name); }
 
-    public function query(mysqli $mysqli): void
+    public function registerServer(string $name): void
     {
-        $result = $mysqli->query("SELECT * FROM ghostly_servers WHERE server_name = '" . $this->serverName . "';");
+        $mysqli = new mysqli(MySQL['host'], MySQL['user'], MySQL['pass'], MySQL['db'], MySQL['port']);
+        if ($mysqli->connect_error) {
+            die(PREFIX . 'Could not connect to the database!');
+        }
+
+        $result = $mysqli->query("SELECT * FROM servers WHERE name = '$name';");
         if ($result !== false) {
             $assoc = $result->fetch_assoc();
             if (is_array($assoc)) {
-                $mysqli->query("UPDATE ghostly_servers SET online = 1 WHERE server_name = '" . $this->serverName . "';");
+                $mysqli->query("UPDATE servers SET online = 1 WHERE name = '$name';");
             } else {
-                $category = Ghostly::CATEGORY;
-                $mysqli->query("INSERT INTO ghostly_servers(server_name, players, max_players, online, whitelist, category) VALUES ('$this->serverName', 0, 0, true, true, '$category');");
+                $mysqli->query(sprintf("INSERT INTO servers(name, ip, port, category) VALUES('%s', '%s', %s, '%s');", Server['name'], Server['ip'], Server['port'], Server['category']));
             }
         } else {
-            MySQL::runAsync(new self($this->serverName));
+            $mysqli->close();
+            new self($name);
+            return;
         }
+
+        $mysqli->close();
+        Ghostly::$logger->info(PREFIX . 'Registering the server in the database - Successful');
     }
 }
