@@ -68,6 +68,10 @@ final class LobbySelector
         $servers[] = ServerManager::getInstance()->getCurrentServer();
 
         foreach ($servers as $server) {
+            if (!isset($server)) {
+                continue;
+            }
+
             if ($server->getCategory() !== "Lobby") {
                 continue;
             }
@@ -92,15 +96,15 @@ final class LobbySelector
 
         if ($server->isOnline()) {
             $arrayOriginal = Ghostly::$server_items->get('Lobby')['online'];
-            $arrayOriginal[0] = sprintf("§r§7Players: §f%s§7/§f%s\n", $server->getPlayers(), $server->getMaxPlayers());
+            $arrayOriginal[0] = sprintf("§r§7Players: §f%s§7/§f%s\n", $server->getOnlinePlayers(), $server->getMaxPlayers());
             $item->setLore($arrayOriginal);
         } else {
             $item->setLore(Ghostly::$server_items->get('Lobby')['offline']);
         }
 
-        if ($server->getName() === Ghostly::SERVER) {
+        if ($server->getName() === Server['name']) {
             $arrayOriginal = Ghostly::$server_items->get('Lobby')['already-connected'];
-            $arrayOriginal[0] = sprintf("§r§7Players: §f%s§7/§f%s\n", $server->getPlayers(), $server->getMaxPlayers());
+            $arrayOriginal[0] = sprintf("§r§7Players: §f%s§7/§f%s\n", $server->getOnlinePlayers(), $server->getMaxPlayers());
             $item->setLore($arrayOriginal);
         }
 
@@ -152,18 +156,18 @@ final class LobbySelector
     {
         $text = "§r";
 
-        if ($server->getName() === Ghostly::SERVER) {
-            $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
+        if ($server->getName() === Server['name']) {
+            $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
         if ($server->isOnline()) {
-            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         } else {
-            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
-        if ($server->isWhitelist()) {
-            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
+        if ($server->isWhitelisted()) {
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
         $form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());

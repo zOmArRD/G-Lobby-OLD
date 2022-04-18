@@ -32,7 +32,7 @@ use zomarrd\ghostly\lobby\commands\language\LangCommand;
 use zomarrd\ghostly\lobby\commands\mute\GlobalMuteCommand;
 use zomarrd\ghostly\lobby\commands\server\ServerCommand;
 use zomarrd\ghostly\lobby\config\ConfigManager;
-use zomarrd\ghostly\lobby\database\mysql\MySQL;
+use zomarrd\ghostly\lobby\database\Database;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\events\HumanListener;
 use zomarrd\ghostly\lobby\events\ItemInteractListener;
@@ -49,9 +49,6 @@ use zomarrd\ghostly\lobby\task\GlobalTask;
 
 final class Ghostly extends PluginBase
 {
-    public const SERVER = "Lobby-1";
-    public const CATEGORY = "Lobby";
-
     public static Ghostly $instance;
     public static AttachableLogger $logger;
     public static array $colors;
@@ -96,7 +93,11 @@ final class Ghostly extends PluginBase
 
         self::$queueManager = new QueueManager();
         new ConfigManager();
-        MySQL::createTables();
+
+        /** It is responsible for registering all providers for connections to databases */
+        new Database();
+
+        Database::getMysql()->createTables();
     }
 
     /**
@@ -205,9 +206,8 @@ INFO
 
     public function registerEvents(array $listeners): void
     {
-        $manager = $this->getServer()->getPluginManager();
         foreach ($listeners as $listener) {
-            $manager->registerEvents($listener, $this);
+            $this->getServer()->getPluginManager()->registerEvents($listener, $this);
         }
     }
 

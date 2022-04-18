@@ -30,7 +30,7 @@ final class ServerManagerForm
             switch ($data) {
                 case "reload_servers":
                     ServerManager::getInstance()->reloadServers($player);
-                    $player->sendMessage(PREFIX . "Servers have been reloaded from the database!");
+                    $player->sendMessage(PREFIX . "Servers have been reloaded from the database_backup!");
                     break;
                 case "proxy_detect":
                     $form = new CustomForm(function(GhostlyPlayer $player, $data): void {

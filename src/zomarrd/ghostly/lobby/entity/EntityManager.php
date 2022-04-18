@@ -292,12 +292,12 @@ final class EntityManager
                     break;
                 }
 
-                $entity->setNameTag(sprintf("§7Players: §f%s§7/§f%s", $server->getPlayers(), $server->getMaxPlayers()));
+                $entity->setNameTag(sprintf("§7Players: §f%s§7/§f%s", $server->getOnlinePlayers(), $server->getMaxPlayers()));
 
                 if (!$this->exist_text($serverName . Entity::EXTRA)) {
                     $location = $entity->getLocation();
 
-                    if ($server->isWhitelist()) {
+                    if ($server->isWhitelisted()) {
                         $this->floating_text('§cWHITELISTED', $serverName . Entity::EXTRA, new Location($location->x, $location->y + 1.50, $location->z, $location->getWorld(), 0.0, 0.0));
                         break;
                     }
@@ -306,7 +306,7 @@ final class EntityManager
                     break;
                 }
 
-                if ($server->isWhitelist()) {
+                if ($server->isWhitelisted()) {
                     $this->update_text('§cWHITELISTED', $serverName . Entity::EXTRA);
                 } else {
                     $this->update_text('§eClick to join ' . $serverName . '.', $serverName . Entity::EXTRA);

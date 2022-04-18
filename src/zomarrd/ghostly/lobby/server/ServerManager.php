@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\server;
 
 use pocketmine\scheduler\ClosureTask;
-use zomarrd\ghostly\lobby\database\mysql\MySQL;
+use zomarrd\ghostly\lobby\database\Database;
 use zomarrd\ghostly\lobby\database\mysql\queries\RegisterServerQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -34,25 +34,22 @@ final class ServerManager
 
     public function init(): void
     {
-        $cServerName = $this->getCurrentServerName();
-
         Ghostly::$logger->info(PREFIX . 'Registering the server in the database');
-        MySQL::runAsync(new RegisterServerQuery($cServerName));
-
-        sleep(1); //WHY YES ?
+        new RegisterServerQuery(Server['name']);
+        //sleep(1); //WHY YES ?
         $this->reloadServers();
 
         Ghostly::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
-            $this->getCurrentServer()?->sync_local();
+            $this->getCurrentServer()?->sync();
             foreach ($this->getServers() as $server) {
-                $server->sync_remote();
+                $server->syncRemote();
             }
         }), 60);
     }
 
     public function getCurrentServerName(): string
     {
-        return Ghostly::SERVER;
+        return Server['name'];
     }
 
     public function reloadServers(GhostlyPlayer $player = null): void
@@ -60,18 +57,17 @@ final class ServerManager
         $this->servers = [];
         $cServerName = $this->getCurrentServerName();
 
-        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers"), function($rows) use ($cServerName, $player) {
+        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM servers"), function($rows) use ($cServerName, $player) {
             foreach ($rows as $row) {
-                $server = new Server($row['server_name'], (int)$row['players'], (int)$row['max_players'], (bool)$row['online'], (bool)$row['whitelist'], $row["category"]);
-
-                if ($row['server_name'] === $cServerName) {
+                $server = new Server($row['name'], $row['ip'], (int)$row['port'], (bool)$row['online'], (int)$row['maxplayers'], (int)$row['onlineplayers'], (bool)$row['whitelisted'], $row['category']);
+                if ($row['server'] === $cServerName) {
                     $this->current_server = $server;
                 } else {
                     $this->servers[] = $server;
                 }
 
-                Ghostly::$logger->info(sprintf("%sThe server (%s) has been registered in the database!", PREFIX, $server->getName()));
-                $player?->sendMessage(sprintf("%sThe server (%s) has been registered in the database!", PREFIX, $server->getName()));
+                Ghostly::$logger->info(sprintf("%sThe server (%s) has been registered in the database_backup!", PREFIX, $server->getName()));
+                $player?->sendMessage(sprintf("%sThe server (%s) has been registered in the database_backup!", PREFIX, $server->getName()));
             }
         });
     }
@@ -81,6 +77,9 @@ final class ServerManager
         return $this->current_server;
     }
 
+    /**
+     * @return Server[]
+     */
     public function getServers(): array
     {
         return $this->servers;
@@ -100,7 +99,7 @@ final class ServerManager
      */
     public function getServerByName(string $name): ?Server
     {
-        if ($name === Ghostly::SERVER) {
+        if ($name === Server['name']) {
             return $this->getCurrentServer();
         }
 
@@ -123,7 +122,7 @@ final class ServerManager
         $players = 0;
 
         foreach ($this->getServers() as $server) {
-            $players += $server->getPlayers();
+            $players += $server->getOnlinePlayers();
         }
 
         $players += count(Ghostly::getInstance()->getServer()->getOnlinePlayers());

@@ -23,7 +23,7 @@ final class ConfigManager
     public static ConfigManager $instance;
     private static Config $server_config;
 
-    private array $files = ['server_config.json' => 4.1];
+    private array $files = ['server_config.json' => 4.5];
 
     public function __construct()
     {
@@ -33,11 +33,6 @@ final class ConfigManager
 
     public function init(): void
     {
-        /** This can be erased? */
-        /*if (!@mkdir($concurrentDirectory = $this->getDataFolder()) && !is_dir($concurrentDirectory)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-        }*/
-
         foreach ($this->files as $file => $version) {
             $this->saveResource($file);
             $tempFile = $this->getFile($file);
@@ -56,6 +51,7 @@ final class ConfigManager
         Ghostly::$is_proxy_server = self::getServerConfig()->get('is_proxy_server');
 
         define('PREFIX', self::getServerConfig()?->get('prefix'));
+        define('Server', self::getServerConfig()?->get('server.info'));
         define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
 
         $data = self::$server_config->get("player-spawn");

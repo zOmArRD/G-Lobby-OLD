@@ -15,7 +15,7 @@ use pocketmine\scheduler\Task;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\entity\EntityManager;
 use zomarrd\ghostly\lobby\menu\Menu;
-use zomarrd\ghostly\lobby\server\Server;
+use zomarrd\ghostly\lobby\server\ServerList;
 
 final class  GlobalTask extends Task
 {
@@ -39,12 +39,12 @@ final class  GlobalTask extends Task
                 EntityManager::$count = 0;
             }
 
-            Entity::ENTITY()->update_server_status(Server::HCF, EntityManager::$count);
-            Entity::ENTITY()->update_server_status(Server::COMBO, EntityManager::$count);
-            Entity::ENTITY()->update_server_status(Server::PRACTICE, EntityManager::$count);
-            Entity::ENTITY()->update_server_status(Server::KITMAP, EntityManager::$count);
-            Entity::ENTITY()->update_server_status(Server::UHC, EntityManager::$count);
-            Entity::ENTITY()->update_server_status(Server::UHC_RUN, EntityManager::$count);
+            Entity::ENTITY()->update_server_status(ServerList::HCF, EntityManager::$count);
+            Entity::ENTITY()->update_server_status(ServerList::COMBO, EntityManager::$count);
+            Entity::ENTITY()->update_server_status(ServerList::PRACTICE, EntityManager::$count);
+            Entity::ENTITY()->update_server_status(ServerList::KITMAP, EntityManager::$count);
+            Entity::ENTITY()->update_server_status(ServerList::UHC, EntityManager::$count);
+            Entity::ENTITY()->update_server_status(ServerList::UHCRUN, EntityManager::$count);
 
             EntityManager::$count++;
         }

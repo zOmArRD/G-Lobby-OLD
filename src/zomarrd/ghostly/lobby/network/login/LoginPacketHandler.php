@@ -98,12 +98,10 @@ final class LoginPacketHandler extends PacketHandler
 
         $ev = new PlayerPreLoginEvent($playerInfo, $this->session->getIp(), $this->session->getPort(), $this->server->requiresAuthentication());
 
-        /** @todo do this in the onJoin? */
         if ($this->server->getNetwork()->getConnectionCount() > $this->server->getMaxPlayers()) {
             $ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_FULL, PREFIX . "This server has reached its maximum capacity, please try again later!");
         }
 
-        /** @todo do this in the onJoin? */
         if (!$this->server->isWhitelisted($playerInfo->getUsername())) {
             $ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_WHITELISTED, PREFIX . "We are in maintenance!");
         }

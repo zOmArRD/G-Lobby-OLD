@@ -19,6 +19,7 @@ use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\player\language\LangKey;
 use zomarrd\ghostly\lobby\player\permission\PermissionKey;
 use zomarrd\ghostly\lobby\server\Server;
+use zomarrd\ghostly\lobby\server\ServerList;
 use zomarrd\ghostly\lobby\server\ServerManager;
 
 final class QueueManager
@@ -29,25 +30,18 @@ final class QueueManager
 
     public function enable(Ghostly $ghostly): void
     {
-        foreach ([
-            Server::HCF,
-            Server::COMBO,
-            Server::PRACTICE,
-            Server::KITMAP,
-            Server::UHC,
-            Server::UHC_RUN
-        ] as $server) {
+        foreach (ServerList::SERVERS as $server) {
             $this->queue[$server] = [];
         }
 
         $ghostly->getScheduler()->scheduleRepeatingTask(new ClosureTask(function() {
 
-            $this->updateQueue(Server::HCF);
-            $this->updateQueue(Server::COMBO);
-            $this->updateQueue(Server::PRACTICE);
-            $this->updateQueue(Server::KITMAP);
-            $this->updateQueue(Server::UHC);
-            $this->updateQueue(Server::UHC_RUN);
+            $this->updateQueue(ServerList::HCF);
+            $this->updateQueue(ServerList::COMBO);
+            $this->updateQueue(ServerList::PRACTICE);
+            $this->updateQueue(ServerList::KITMAP);
+            $this->updateQueue(ServerList::UHC);
+            $this->updateQueue(ServerList::UHCRUN);
 
         }), 60);
     }

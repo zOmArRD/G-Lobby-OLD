@@ -23,6 +23,7 @@ use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\player\language\LangKey;
 use zomarrd\ghostly\lobby\server\Server;
 use zomarrd\ghostly\lobby\server\ServerItems;
+use zomarrd\ghostly\lobby\server\ServerList;
 use zomarrd\ghostly\lobby\server\ServerManager;
 use zomarrd\ghostly\lobby\utils\menu\MenuButton;
 
@@ -66,28 +67,28 @@ final class ServerSelector
 
     public function prepare(): void
     {
-        $this->addButton(new MenuButton(ServerItems::get(Server::PRACTICE, VanillaItems::DIAMOND_SWORD()), function(GhostlyPlayer $player): void {
-            $this->callable($player, Server::PRACTICE);
+        $this->addButton(new MenuButton(ServerItems::get(ServerList::PRACTICE, VanillaItems::DIAMOND_SWORD()), function(GhostlyPlayer $player): void {
+            $this->callable($player, ServerList::PRACTICE);
         }), 12);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::COMBO, VanillaItems::ENDER_PEARL()), function(GhostlyPlayer $player): void {
-            $this->callable($player, Server::COMBO);
+        $this->addButton(new MenuButton(ServerItems::get(ServerList::COMBO, VanillaItems::ENDER_PEARL()), function(GhostlyPlayer $player): void {
+            $this->callable($player, ServerList::COMBO);
         }), 14);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::HCF, VanillaItems::DIAMOND_PICKAXE()), function(GhostlyPlayer $player): void {
-            $this->callable($player, Server::HCF);
+        $this->addButton(new MenuButton(ServerItems::get(ServerList::HCF, VanillaItems::DIAMOND_PICKAXE()), function(GhostlyPlayer $player): void {
+            $this->callable($player, ServerList::HCF);
         }), 38);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::KITMAP, VanillaItems::GOLDEN_PICKAXE()), function(GhostlyPlayer $player): void {
-            $this->callable($player, Server::KITMAP);
+        $this->addButton(new MenuButton(ServerItems::get(ServerList::KITMAP, VanillaItems::GOLDEN_PICKAXE()), function(GhostlyPlayer $player): void {
+            $this->callable($player, ServerList::KITMAP);
         }), 39);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::UHC, VanillaItems::GOLDEN_APPLE()), function(GhostlyPlayer $player): void {
-            $this->callable($player, Server::UHC);
+        $this->addButton(new MenuButton(ServerItems::get(ServerList::UHC, VanillaItems::GOLDEN_APPLE()), function(GhostlyPlayer $player): void {
+            $this->callable($player, ServerList::UHC);
         }), 41);
 
-        $this->addButton(new MenuButton(ServerItems::get(Server::UHC_RUN, VanillaItems::APPLE()), function(GhostlyPlayer $player): void {
-            $this->callable($player, Server::UHC_RUN);
+        $this->addButton(new MenuButton(ServerItems::get(ServerList::UHCRUN, VanillaItems::APPLE()), function(GhostlyPlayer $player): void {
+            $this->callable($player, ServerList::UHCRUN);
         }), 42);
     }
 
@@ -134,14 +135,14 @@ final class ServerSelector
     {
         $text = "§r";
 
-        if ($server->getName() === Ghostly::SERVER) {
-            $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
+        if ($server->getName() === Server['name']) {
+            $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
-        $text = $server->isOnline() ? ($text . sprintf("§a%s §7[§f%s§f/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getPlayers(), $server->getMaxPlayers())) : ($text . sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getPlayers(), $server->getMaxPlayers()));
+        $text = $server->isOnline() ? ($text . sprintf("§a%s §7[§f%s§f/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers())) : ($text . sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers()));
 
-        if ($server->isWhitelist()) {
-            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getPlayers(), $server->getMaxPlayers());
+        if ($server->isWhitelisted()) {
+            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
         $form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
