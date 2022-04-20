@@ -199,14 +199,14 @@ final class GhostlyPlayer extends Player
         $session->removeCurrentMenu();
     }
 
-    public function sendSound(int $sound, string $type = "level-sound"): void
+    public function sendSound(int $sound, string $type = 'level-sound'): void
     {
         switch ($type) {
-            case "level-event":
+            case 'level-event':
                 $this->getNetworkSession()->sendDataPacket(LevelEventPacket::create($sound, 0, $this->getLocation()->asVector3()));
                 break;
-            case "level-sound":
-                $this->getNetworkSession()->sendDataPacket(LevelSoundEventPacket::create($sound, $this->getLocation()->asVector3(), -1, ":", false, false));
+            case 'level-sound':
+                $this->getNetworkSession()->sendDataPacket(LevelSoundEventPacket::create($sound, $this->getLocation()->asVector3(), -1, ':', false, false));
                 break;
         }
     }
@@ -261,7 +261,7 @@ final class GhostlyPlayer extends Player
             return;
         }
 
-        $this->sendTranslated(LangKey::SERVER_CONNECTING, ["{SERVER-NAME}" => $server->getName()]);
+        $this->sendTranslated(LangKey::SERVER_CONNECTING, ['{SERVER-NAME}' => $server->getName()]);
         $this->transfer($server->getName(), 0, "Transfer to {$server->getName()}");
     }
 
@@ -330,7 +330,7 @@ final class GhostlyPlayer extends Player
 
     public function getLeaveMessage(): string
     {
-        return "";
+        return '';
     }
 
     public function doFirstSpawn(): void
@@ -398,7 +398,7 @@ final class GhostlyPlayer extends Player
 
         $message = TextFormat::clean($message, false);
         foreach (explode("\n", $message) as $messagePart) {
-            if (trim($messagePart) !== "" and strlen($messagePart) <= 255 && $this->messageCounter-- > 0) {
+            if (($this->messageCounter-- > 0) && trim($messagePart) !== '' && strlen($messagePart) <= 255) {
                 if (str_starts_with($messagePart, './')) {
                     $messagePart = substr($messagePart, 1);
                 }
@@ -410,7 +410,7 @@ final class GhostlyPlayer extends Player
                     break;
                 }
 
-                if (str_starts_with($ev->getMessage(), "/")) {
+                if (str_starts_with($ev->getMessage(), '/')) {
                     Timings::$playerCommand->startTiming();
                     $this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
                     Timings::$playerCommand->stopTiming();

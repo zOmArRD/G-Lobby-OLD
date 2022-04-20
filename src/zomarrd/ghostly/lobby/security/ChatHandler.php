@@ -61,7 +61,7 @@ final class ChatHandler
     {
         $result = [];
         $lowerCaseMsg = strtolower($msg);
-        $words = explode(" ", $lowerCaseMsg);
+        $words = explode(' ', $lowerCaseMsg);
 
         foreach ($words as $word) {
             $lowerCaseWord = strtolower($word);

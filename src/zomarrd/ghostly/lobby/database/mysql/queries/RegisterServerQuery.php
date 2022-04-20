@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\database\mysql\queries;
 
 use mysqli;
+use zomarrd\ghostly\lobby\database\mysql\SQLStrings;
 use zomarrd\ghostly\lobby\Ghostly;
 
 final class RegisterServerQuery
@@ -31,7 +32,7 @@ final class RegisterServerQuery
             if (is_array($assoc)) {
                 $mysqli->query("UPDATE servers SET online = 1 WHERE name = '$name';");
             } else {
-                $mysqli->query(sprintf("INSERT INTO servers (name, ip, port, online, maxplayers, onlineplayers, whitelisted, category) VALUES ('$name', '%s', %s, 1, %s, 0, 1, '%s');", Server['ip'], Server['port'], Ghostly::getInstance()->getServer()->getMaxPlayers(), Server['category']));
+                $mysqli->query(sprintf(SQLStrings::INSERT_INTO_SERVERS, $name, Server['ip'], Server['port'], 1, Ghostly::getInstance()->getServer()->getMaxPlayers(), 0, 1, Server['category']));
             }
         } else {
             $mysqli->close();

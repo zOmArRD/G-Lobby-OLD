@@ -1,12 +1,13 @@
-<?php
+<?php /** @noinspection ALL */
 /*
  * Created by PhpStorm.
  *
  * User: zOmArRD
- * Date: 16/3/2022
+ * Date: 18/4/2022
  *
  * Copyright © 2022 GhostlyMC Network (omar@ghostlymc.live) - All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\network\login;
@@ -21,8 +22,16 @@ use pocketmine\network\mcpe\JwtUtils;
 use pocketmine\network\mcpe\protocol\types\login\JwtChainLinkBody;
 use pocketmine\network\mcpe\protocol\types\login\JwtHeader;
 use pocketmine\scheduler\AsyncTask;
+use function base64_decode;
+use function igbinary_serialize;
+use function igbinary_unserialize;
+use function openssl_error_string;
+use function time;
 
-class ProcessLoginTask extends AsyncTask
+/**
+ * ProcessLoginTask.php from PocketMine-MP
+ */
+final class ProcessLoginTask extends AsyncTask
 {
     private const TLS_KEY_ON_COMPLETION = "completion";
 
@@ -30,15 +39,13 @@ class ProcessLoginTask extends AsyncTask
 
     private const CLOCK_DRIFT_MAX = 60;
 
-    /** @var string */
-    private string $chain;
-    /** @var string */
+    private ?string $chain;
     private string $clientDataJwt;
 
     /**
      * @var string|null
      * Whether the keychain signatures were validated correctly. This will be set to an error message if any link in the
-     * keychain is invalid for whatever reason (bad signature, not in nbf-exp window, etc). If this is non-null, the
+     * keychain is invalid for whatever reason (bad signature, not in nbf-exp window, etc.). If this is non-null, the
      * keychain might have been tampered with. The player will always be disconnected if this is non-null.
      */
     private ?string $error = "Unknown";
@@ -62,7 +69,7 @@ class ProcessLoginTask extends AsyncTask
         $this->authRequired = $authRequired;
     }
 
-    final public function onRun(): void
+    public function onRun(): void
     {
         try {
             $this->clientPublicKey = $this->validateChain();
@@ -112,8 +119,8 @@ class ProcessLoginTask extends AsyncTask
         $mapper->bEnforceMapType = false;
 
         try {
-            /** @var JwtHeader $headers */
             $headers = $mapper->map($headersArray, new JwtHeader());
+            assert($headers instanceof JwtHeader);
         } catch (JsonMapper_Exception $e) {
             throw new VerifyLoginException("Invalid JWT header: " . $e->getMessage(), 0, $e);
         }
@@ -145,8 +152,6 @@ class ProcessLoginTask extends AsyncTask
             throw new VerifyLoginException($e->getMessage(), 0, $e);
         }
 
-        @openssl_free_key($signingKeyOpenSSL);
-
         if ($headers->x5u === self::MOJANG_ROOT_PUBLIC_KEY) {
             $this->authenticated = true; //we're signed into xbox live
         }
@@ -157,18 +162,18 @@ class ProcessLoginTask extends AsyncTask
         $mapper->bEnforceMapType = false;
         $mapper->bRemoveUndefinedAttributes = true;
         try {
-            /** @var JwtChainLinkBody $claims */
             $claims = $mapper->map($claimsArray, new JwtChainLinkBody());
+            assert($claims instanceof JwtChainLinkBody);
         } catch (JsonMapper_Exception $e) {
             throw new VerifyLoginException("Invalid chain link body: " . $e->getMessage(), 0, $e);
         }
 
         $time = time();
-        if (isset($claims->nbf) and $claims->nbf > $time + self::CLOCK_DRIFT_MAX) {
+        if (isset($claims->nbf) && $claims->nbf > $time + self::CLOCK_DRIFT_MAX) {
             throw new VerifyLoginException(KnownTranslationKeys::POCKETMINE_DISCONNECT_INVALIDSESSION_TOOEARLY);
         }
 
-        if (isset($claims->exp) and $claims->exp < $time - self::CLOCK_DRIFT_MAX) {
+        if (isset($claims->exp) && $claims->exp < $time - self::CLOCK_DRIFT_MAX) {
             throw new VerifyLoginException(KnownTranslationKeys::POCKETMINE_DISCONNECT_INVALIDSESSION_TOOLATE);
         }
 
@@ -181,7 +186,7 @@ class ProcessLoginTask extends AsyncTask
         }
     }
 
-    final public function onCompletion(): void
+    public function onCompletion(): void
     {
         $callback = $this->fetchLocal(self::TLS_KEY_ON_COMPLETION);
         $callback($this->authenticated, $this->authRequired, $this->error, $this->clientPublicKey);

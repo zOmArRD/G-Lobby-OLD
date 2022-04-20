@@ -31,13 +31,13 @@ final class EntityKillCommand extends BaseSubCommand
             return;
         }
 
-        if (isset($args["isAll"]) && $args["isAll"] === true) {
+        if (isset($args['isAll']) && ($args['isAll'] === true)) {
             Entity::ENTITY()->purge_all();
             $sender->sendMessage(PREFIX . '§aYou have purged all entities!');
             return;
         }
 
-        $type = $args["EntityId"];
+        $type = $args['EntityId'];
 
         switch ($type) {
             case Entity::COMBO:
@@ -49,11 +49,11 @@ final class EntityKillCommand extends BaseSubCommand
             case Entity::DISCORD:
             case Entity::STORE:
                 Entity::ENTITY()->remove_entity($type);
-                $sender->sendMessage(sprintf("%s§aYou have purged the entity %s!", PREFIX, $type));
+                $sender->sendMessage(sprintf('%s§aYou have purged the entity %s!', PREFIX, $type));
                 return;
             default:
                 Entity::ENTITY()->remove_entity($type);
-                $sender->sendMessage(PREFIX . "§cWe will try to delete this entity!");
+                $sender->sendMessage(PREFIX . '§cWe will try to delete this entity!');
                 break;
         }
     }
@@ -63,7 +63,7 @@ final class EntityKillCommand extends BaseSubCommand
      */
     protected function prepare(): void
     {
-        $this->registerArgument(0, new BooleanArgument("isAll", false));
-        $this->registerArgument(0, new RawStringArgument("EntityId", true));
+        $this->registerArgument(0, new BooleanArgument('isAll', false));
+        $this->registerArgument(0, new RawStringArgument('EntityId', true));
     }
 }

@@ -15,7 +15,7 @@ use Closure;
 use pocketmine\item\Item;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 
-class MenuButton
+final class MenuButton
 {
     public function __construct(private Item $item, private ?Closure $closure = null) {}
 

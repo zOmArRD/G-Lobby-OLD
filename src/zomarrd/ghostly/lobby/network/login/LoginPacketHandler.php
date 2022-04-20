@@ -61,7 +61,7 @@ final class LoginPacketHandler extends PacketHandler
         $extraData = $this->fetchAuthData($packet->chainDataJwt);
 
         if (!Player::isValidUserName($extraData->displayName)) {
-            $this->session->disconnect(PREFIX . "§cYou can not enter with this name, try to change it!");
+            $this->session->disconnect(PREFIX . '§cYou can not enter with this name, try to change it!');
             return true;
         }
 
@@ -70,25 +70,25 @@ final class LoginPacketHandler extends PacketHandler
         try {
             $skin = SkinAdapterSingleton::get()->fromSkinData(ClientDataToSkinDataHelper::fromClientData($clientData));
         } catch (InvalidArgumentException|InvalidSkinException $e) {
-            $this->session->getLogger()->debug("Invalid skin: " . $e->getMessage());
-            $this->session->disconnect(PREFIX . "§cTry to change your skin to be able to enter the network!");
+            $this->session->getLogger()->debug('Invalid skin: ' . $e->getMessage());
+            $this->session->disconnect(PREFIX . '§cTry to change your skin to be able to enter the network!');
             return true;
         }
 
         if (!Uuid::isValid($extraData->identity)) {
-            throw new PacketHandlingException("Invalid login UUID");
+            throw new PacketHandlingException('Invalid login UUID');
         }
 
         $uuid = Uuid::fromString($extraData->identity);
 
         $class = new ReflectionClass($this->session);
-        $property = $class->getProperty("ip");
+        $property = $class->getProperty('ip');
         $property->setAccessible(true);
 
         if (isset($clientData->Waterdog_IP, $clientData->Waterdog_XUID, $extraData->XUID)) {
             $property->setValue($this->session, $clientData->Waterdog_IP);
         } else {
-            $this->session->disconnect(PREFIX . "Login without proxy is not allowed!");
+            $this->session->disconnect(PREFIX . 'Login without proxy is not allowed!');
             return true;
         }
 
@@ -99,11 +99,11 @@ final class LoginPacketHandler extends PacketHandler
         $ev = new PlayerPreLoginEvent($playerInfo, $this->session->getIp(), $this->session->getPort(), $this->server->requiresAuthentication());
 
         if ($this->server->getNetwork()->getConnectionCount() > $this->server->getMaxPlayers()) {
-            $ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_FULL, PREFIX . "This server has reached its maximum capacity, please try again later!");
+            $ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_FULL, PREFIX . 'This server has reached its maximum capacity, please try again later!');
         }
 
         if (!$this->server->isWhitelisted($playerInfo->getUsername())) {
-            $ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_WHITELISTED, PREFIX . "We are in maintenance!");
+            $ev->setKickReason(PlayerPreLoginEvent::KICK_REASON_SERVER_WHITELISTED, PREFIX . 'We are in maintenance!');
         }
 
         $ev->call();
@@ -130,19 +130,19 @@ final class LoginPacketHandler extends PacketHandler
     {
         /** @var AuthenticationData|null $extraData */
         $extraData = null;
-        foreach ($chain->chain as $k => $jwt) {
+        foreach ($chain->chain as $jwt) {
             //validate every chain element
             try {
                 [, $claims,] = JwtUtils::parse($jwt);
             } catch (JwtException $e) {
                 throw PacketHandlingException::wrap($e);
             }
-            if (isset($claims["extraData"])) {
+            if (isset($claims['extraData'])) {
                 if ($extraData !== null) {
                     throw new PacketHandlingException("Found 'extraData' more than once in chainData");
                 }
 
-                if (!is_array($claims["extraData"])) {
+                if (!is_array($claims['extraData'])) {
                     throw new PacketHandlingException("'extraData' key should be an array");
                 }
                 $mapper = new JsonMapper;
@@ -150,8 +150,7 @@ final class LoginPacketHandler extends PacketHandler
                 $mapper->bExceptionOnMissingData = true;
                 $mapper->bExceptionOnUndefinedProperty = true;
                 try {
-                    /** @var AuthenticationData $extraData */
-                    $extraData = $mapper->map($claims["extraData"], new AuthenticationData);
+                    $extraData = $mapper->map($claims['extraData'], new AuthenticationData);
                 } catch (JsonMapper_Exception $e) {
                     throw PacketHandlingException::wrap($e);
                 }

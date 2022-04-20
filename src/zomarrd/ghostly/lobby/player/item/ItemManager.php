@@ -20,15 +20,16 @@ use zomarrd\ghostly\lobby\player\IPlayer;
 
 final class ItemManager extends IPlayer
 {
-    public const SERVER_SELECTOR = "server-selector";
-    public const COSMETICS_SELECTOR = "cosmetics-selector";
-    public const LOBBY_SELECTOR = "lobby-selector";
-    public const VISIBILITY_ALL = "visibility-all";
-    public const VISIBILITY_STAFF = "visibility-staff";
-    public const VISIBILITY_NOBODY = "visibility-nobody";
-    public const PERSONAL_SETTINGS = "personal-settings";
-    public const QUEUE_EXIT = "queue-exit";
+    public const SERVER_SELECTOR = 'server-selector';
+    public const COSMETICS_SELECTOR = 'cosmetics-selector';
+    public const LOBBY_SELECTOR = 'lobby-selector';
+    public const VISIBILITY_ALL = 'visibility-all';
+    public const VISIBILITY_STAFF = 'visibility-staff';
+    public const VISIBILITY_NOBODY = 'visibility-nobody';
+    public const PERSONAL_SETTINGS = 'personal-settings';
+    public const QUEUE_EXIT = 'queue-exit';
 
+    /** @noinspection PhpDeprecationInspection */
     public function get(string $name): Item
     {
         return match ($name) {

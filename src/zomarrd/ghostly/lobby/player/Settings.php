@@ -34,7 +34,7 @@ final class Settings
 
     public function registerChest(): void
     {
-        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName("Global Settings | 1/1")->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
+        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName('Global Settings | 1/1')->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
             $player = $transaction->getPlayer();
             $button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 
@@ -49,7 +49,7 @@ final class Settings
             return $transaction->continue();
         });
 
-        $close = VanillaItems::RED_BED()->setCustomName("§r§cClose");
+        $close = VanillaItems::RED_BED()->setCustomName('§r§cClose');
         $this->addButton(new MenuButton($close, function(GhostlyPlayer $player): void {
             $player->closeInventory();
         }), 0);

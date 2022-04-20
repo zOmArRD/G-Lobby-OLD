@@ -32,7 +32,7 @@ use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
-use zomarrd\ghostly\lobby\database\Database;
+use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\InsertQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -58,11 +58,11 @@ final class PlayerListener implements Listener
         $name = $playerInfo->getUsername();
         $locale = $playerInfo->getLocale();
 
-        DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()["UIProfile"]);
+        DeviceData::saveUIProfile($playerInfo->getUsername(), $playerInfo->getExtraData()['UIProfile']);
 
-        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function($result) use ($name, $locale): void {
+        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$name';"), static function($result) use ($name, $locale): void {
             if (count($result) === 0) {
-                Database::getMysql()->runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
+                MySQL::getInstance()->runAsync(new InsertQuery("INSERT INTO player_config(player, lang, scoreboard) VALUES ('$name', '$locale', true);"));
             }
         });
     }
@@ -77,9 +77,9 @@ final class PlayerListener implements Listener
 
         $player_name = $player->getName();
 
-        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function($result) use ($player): void {
+        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM player_config WHERE player = '$player_name';"), static function($result) use ($player): void {
             if (count($result) === 0) {
-                $player->transfer("ghostlymc.live");
+                $player->transfer('ghostlymc.live');
                 return;
             }
 
@@ -91,7 +91,7 @@ final class PlayerListener implements Listener
 
     public function PlayerQuitEvent(PlayerQuitEvent $event): void
     {
-        $event->setQuitMessage("");
+        $event->setQuitMessage('');
         $player = $event->getPlayer();
 
         if ($player instanceof GhostlyPlayer) {
@@ -149,7 +149,7 @@ final class PlayerListener implements Listener
         $event->cancel();
         $player->setMotion($motion->add(-sin($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI), $motion->y + 0.75, cos($location->yaw / 180 * M_PI) * cos($location->pitch / 180 * M_PI)));
 
-        $player->sendSound(LevelEvent::SOUND_BLAZE_SHOOT, "level-event");
+        $player->sendSound(LevelEvent::SOUND_BLAZE_SHOOT, 'level-event');
     }
 
     /**
@@ -178,7 +178,7 @@ final class PlayerListener implements Listener
                     }
                 }
 
-                $player->sendMessage(PREFIX . "§cYou have tried to send an ip address, which is not allowed in our network, be careful, you can be sanctioned!");
+                $player->sendMessage(PREFIX . '§cYou have tried to send an ip address, which is not allowed in our network, be careful, you can be sanctioned!');
             }
         }
 
@@ -221,8 +221,8 @@ final class PlayerListener implements Listener
                 $targets = $event->getTargets();
 
                 foreach ($targets as $target) {
-                    if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== "X6JGT") {
-                        $packet->commandData = array_intersect_key($packet->commandData, ["help"]);
+                    if ($target->getPlayer() !== null && $target->getPlayer()->getName() !== 'X6JGT') {
+                        $packet->commandData = array_intersect_key($packet->commandData, ['help']);
                     }
                 }
             }

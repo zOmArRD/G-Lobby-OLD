@@ -37,7 +37,6 @@ final class ItemInteractListener implements Listener
         $packet = $event->getPacket();
 
         if ($packet instanceof InventoryTransactionPacket || $player instanceof GhostlyPlayer) {
-            $pn = $player->getName();
 
             if (!isset($packet->trData)) {
                 return;
@@ -80,7 +79,7 @@ final class ItemInteractListener implements Listener
 
     public function handleInteract(GhostlyPlayer $player, Item $item): void
     {
-        $itemId = $item->getNamedTag()->getString("ItemID", "");
+        $itemId = $item->getNamedTag()->getString('ItemID', '');
         switch ($itemId) {
             case ItemManager::LOBBY_SELECTOR:
                 if ($player->hasClassicProfile()) {
@@ -127,7 +126,6 @@ final class ItemInteractListener implements Listener
     {
         $player = $event->getPlayer();
         $item = $event->getItem();
-        $block = $event->getBlock();
         $event->cancel();
 
         if (!$player instanceof GhostlyPlayer) {

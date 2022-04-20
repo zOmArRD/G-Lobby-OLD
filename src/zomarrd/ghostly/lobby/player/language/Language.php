@@ -19,7 +19,7 @@ use zomarrd\ghostly\lobby\utils\Utils;
  */
 final class Language
 {
-    public const ENGLISH_US = "en_US";
+    public const ENGLISH_US = 'en_US';
 
     /**
      * @param string        $locale
@@ -56,9 +56,9 @@ final class Language
     /**
      * @return bool Determines if the language contains the name. Can be strict based on locale.
      */
-    public function hasName(string $name, string $locale = ""): bool
+    public function hasName(string $name, string $locale = ''): bool
     {
-        if ($locale === "" || !isset($this->names[$locale])) {
+        if ($locale === '' || !isset($this->names[$locale])) {
             $values = array_values($this->names);
             return in_array($name, $values);
         }
@@ -83,7 +83,7 @@ final class Language
     public function getMessage(string $type, array $replaceable = []): string
     {
         if (!isset($this->messages[$type])) {
-            return "";
+            return '';
         }
 
         $message = Utils::checkStrings($this->messages[$type]);
@@ -104,7 +104,7 @@ final class Language
 
     public function hasAuthors(): bool
     {
-        return $this->getAuthors() !== "";
+        return $this->getAuthors() !== '';
     }
 
     public function getAuthors(): string

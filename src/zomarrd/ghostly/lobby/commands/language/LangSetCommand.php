@@ -16,7 +16,7 @@ use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
-use zomarrd\ghostly\lobby\database\mysql\MySQL;
+use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\player\language\LangHandler;
@@ -27,8 +27,8 @@ final class LangSetCommand extends BaseSubCommand
 {
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        if ((count($args) === 1) && isset($args["language|player"])) {
-            $target = $args["language|player"];
+        if ((count($args) === 1) && isset($args['language|player'])) {
+            $target = $args['language|player'];
             if (!$sender instanceof GhostlyPlayer) {
                 $sender->sendMessage(PREFIX . '§c' . 'This command must be executed in-game.');
             } else {
@@ -39,19 +39,19 @@ final class LangSetCommand extends BaseSubCommand
                     }
 
                     $sender->setLanguage($target);
-                    $sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $target]);
-                    MySQL::runAsync(new UpdateRowQuery(serialize(["lang" => $target]), "player", $sender->getName(), "player_config"));
+                    $sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $target]);
+                    MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize(['lang' => $target]), 'player', $sender->getName(), 'player_config'));
                     $sender->getLobbyItems();
                 }
             }
         }
 
-        if (!isset($args["language"])) {
+        if (!isset($args['language'])) {
             return;
         }
 
-        $target = $args["language|player"];
-        $newLang = $args["language"];
+        $target = $args['language|player'];
+        $newLang = $args['language'];
         $isPlayer = Server::getInstance()->getPlayerByPrefix($target);
 
         if ($target === $sender->getName()) {
@@ -69,7 +69,7 @@ final class LangSetCommand extends BaseSubCommand
 
         if (!$isPlayer instanceof GhostlyPlayer || !$isPlayer->isOnline()) {
             if ($sender instanceof GhostlyPlayer) {
-                $sender->sendTranslated(LangKey::PLAYER_NOT_ONLINE, ["{PLAYER-NAME}" => $target]);
+                $sender->sendTranslated(LangKey::PLAYER_NOT_ONLINE, ['{PLAYER-NAME}' => $target]);
             } else {
                 $sender->sendMessage(PREFIX . "Player $target is not connected.");
             }
@@ -89,8 +89,8 @@ final class LangSetCommand extends BaseSubCommand
             }
 
             $isPlayer->setLanguage($newLang);
-            $isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ["{NEW-LANG}" => $newLang]);
-            MySQL::runAsync(new UpdateRowQuery(serialize(["lang" => $newLang]), "player", $isPlayer->getName(), "player_config"));
+            $isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $newLang]);
+            MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize(['lang' => $newLang]), 'player', $isPlayer->getName(), 'player_config'));
             $isPlayer->getLobbyItems();
         }
     }

@@ -20,7 +20,7 @@ final class ServerReloadCommand extends BaseSubCommand
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         ServerManager::getInstance()->reloadServers();
-        $sender->sendMessage(PREFIX . "Servers have been reloaded from the database_backup!");
+        $sender->sendMessage(PREFIX . 'Servers have been reloaded from the database_backup!');
     }
 
     protected function prepare(): void {}

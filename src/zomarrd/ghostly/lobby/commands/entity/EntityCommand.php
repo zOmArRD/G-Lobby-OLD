@@ -20,7 +20,7 @@ final class EntityCommand extends BaseCommand
 {
     public function __construct(Plugin $plugin, string $name)
     {
-        parent::__construct($plugin, $name, "Entity manager", ['npc']);
+        parent::__construct($plugin, $name, 'Entity manager', ['npc']);
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void

@@ -22,7 +22,7 @@ final class LangCommand extends BaseCommand
 
     public function __construct(Plugin $plugin, string $name)
     {
-        parent::__construct($plugin, $name, "Change language", ['idioma', 'language']);
+        parent::__construct($plugin, $name, 'Change language', ['idioma', 'language']);
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
@@ -37,7 +37,7 @@ final class LangCommand extends BaseCommand
 
     protected function prepare(): void
     {
-        $this->registerSubCommand(new LangListCommand('list', "List of available languages"));
+        $this->registerSubCommand(new LangListCommand('list', 'List of available languages'));
         $this->registerSubCommand(new LangSetCommand('set', "Set your language, or someone else's"));
     }
 }

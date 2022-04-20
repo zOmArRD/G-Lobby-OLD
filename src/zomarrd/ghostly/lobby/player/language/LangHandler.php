@@ -32,7 +32,7 @@ final class LangHandler
     public function __construct()
     {
         self::$instance = $this;
-        $resourcesFolder = Ghostly::getInstance()->getResourcesFolder() . "lang";
+        $resourcesFolder = Ghostly::getInstance()->getResourcesFolder() . 'lang';
         $files = scandir($resourcesFolder);
 
         foreach ($files as $file) {
@@ -42,11 +42,11 @@ final class LangHandler
 
             $path = $resourcesFolder . "/$file";
             $data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
-            $languageData = $data["language_data"];
-            $default = $languageData["default"];
+            $languageData = $data['language_data'];
+            $default = $languageData['default'];
             $locale = str_replace('.json', '', $file);
 
-            $lang = new Language($locale, $languageData["names"], $data["messages"], $data["item_data"], $languageData["author"]);
+            $lang = new Language($locale, $languageData['names'], $data['messages'], $data['item_data'], $languageData['author']);
 
             $this->languages[$locale] = $lang;
 
@@ -73,7 +73,7 @@ final class LangHandler
         return $this->languages;
     }
 
-    public function getLanguageFromName(string $name, string $locale = ""): ?Language
+    public function getLanguageFromName(string $name, string $locale = ''): ?Language
     {
         foreach ($this->languages as $language) {
             if (!$language->hasName($name, $locale)) {

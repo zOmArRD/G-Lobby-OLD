@@ -33,12 +33,12 @@ final class EntityCreateCommand extends BaseSubCommand
             return;
         }
 
-        $type = $args["type"];
+        $type = $args['type'];
 
         switch ($type) {
             case $sender->getName():
                 if (isset($args['format'])) {
-                    $explode = explode(":", $args['format']);
+                    $explode = explode(':', $args['format']);
                     Entity::ENTITY()->spawnHuman($sender, $type, $explode);
                 }
                 break;
@@ -57,11 +57,11 @@ final class EntityCreateCommand extends BaseSubCommand
                 Entity::ENTITY()->createEntityServer($sender, $type);
                 break;
             default:
-                $sender->sendMessage(PREFIX . "§cThis entity does not exist!");
+                $sender->sendMessage(PREFIX . '§cThis entity does not exist!');
                 return;
         }
 
-        $sender->sendMessage(sprintf("%s§aThe entity %s has been spawned!", PREFIX, $args["type"]));
+        $sender->sendMessage(sprintf('%s§aThe entity %s has been spawned!', PREFIX, $args['type']));
     }
 
     /**

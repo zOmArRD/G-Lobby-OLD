@@ -17,7 +17,7 @@ use zomarrd\ghostly\lobby\server\Server;
 final class Queue
 {
     public int $position = 0;
-    public string $positionFormatted = "";
+    public string $positionFormatted = '';
 
     public function __construct(private GhostlyPlayer $player, private string|Server $server) {}
 

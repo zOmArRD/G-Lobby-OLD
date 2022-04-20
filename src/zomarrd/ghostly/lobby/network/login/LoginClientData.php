@@ -86,7 +86,7 @@ class LoginClientData
     /** @required */
     public string $PlatformOnlineId;
 
-    public string $PlatformUserId = ""; //xbox-only, apparently
+    public string $PlatformUserId = ''; //xbox-only, apparently
 
     /** @required */
     public string $PlayFabId;

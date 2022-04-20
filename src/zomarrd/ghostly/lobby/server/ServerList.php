@@ -13,12 +13,12 @@ namespace zomarrd\ghostly\lobby\server;
 
 final class ServerList
 {
-    public const PRACTICE = "Practice";
-    public const COMBO = "Combo";
-    public const UHC = "UHC";
-    public const UHCRUN = "UHCRun";
-    public const KITMAP = "KitMap";
-    public const HCF = "HCF";
+    public const PRACTICE = 'Practice';
+    public const COMBO = 'Combo';
+    public const UHC = 'UHC';
+    public const UHCRUN = 'UHCRun';
+    public const KITMAP = 'KitMap';
+    public const HCF = 'HCF';
 
     public const SERVERS = [
         self::PRACTICE,

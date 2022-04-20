@@ -18,17 +18,17 @@ final class ExtensionMissing extends RuntimeException
 {
     public function __construct(string $extension)
     {
-        $instructions = sprintf("Please install PHP according to the instructions from https://pmmp.readthedocs.io/en/rtfd/installation.html which provides the %s extension.", $extension);
+        $instructions = sprintf('Please install PHP according to the instructions from https://pmmp.readthedocs.io/en/rtfd/installation.html which provides the %s extension.', $extension);
 
         $ini = php_ini_loaded_file();
         if ($ini && is_file($ini)) {
             foreach (file($ini) as $i => $line) {
-                if (str_contains($line, ";extension=") && stripos($line, $extension) !== false) {
-                    $instructions = sprintf("%sPlease remove the leading semicolon on line %d of %s and restart the server %sso that the %s extension can be loaded.", TextFormat::GOLD, $i + 1, $ini, TextFormat::RED, $extension);
+                if (str_contains($line, ';extension=') && stripos($line, $extension) !== false) {
+                    $instructions = sprintf('%sPlease remove the leading semicolon on line %d of %s and restart the server %sso that the %s extension can be loaded.', TextFormat::GOLD, $i + 1, $ini, TextFormat::RED, $extension);
                 }
             }
         }
 
-        parent::__construct(sprintf("The %s extension is missing. %s", $extension, $instructions));
+        parent::__construct(sprintf('The %s extension is missing. %s', $extension, $instructions));
     }
 }

@@ -36,22 +36,22 @@ final class EntityManager
     {
         EntityFactory::getInstance()->register(HumanType::class, function(World $world, CompoundTag $tag): HumanType {
             return new HumanType(EntityDataHelper::parseLocation($tag, $world), HumanType::parseSkinNBT($tag), $tag);
-        }, ["HumanType"]);
+        }, ['HumanType']);
 
         EntityFactory::getInstance()->register(FloatingTextType::class, function(World $world, CompoundTag $tag): FloatingTextType {
             return new FloatingTextType(EntityDataHelper::parseLocation($tag, $world), $tag);
-        }, ["FloatingTextType"]);
+        }, ['FloatingTextType']);
     }
 
     public function entity_discord(GhostlyPlayer $player): void
     {
         $nbt = new CompoundTag();
-        $nbt->setString("npcId", Entity::DISCORD);
+        $nbt->setString('npcId', Entity::DISCORD);
 
         $this->remove_entity(Entity::DISCORD);
 
         $entity = $this->create($player, $nbt);
-        $entity->setNameTag("");
+        $entity->setNameTag('');
         $entity->setNameTagVisible(false);
         $entity->setNameTagAlwaysVisible(false);
         $entity->spawnToAll();
@@ -63,12 +63,12 @@ final class EntityManager
         $z = $eLocation->getZ();
 
         foreach ([
-            "§l§9Discord Server" => 3.20,
-            "Join our Discord community to keep" => 2.90,
-            "up-to-date about recent updates," => 2.60,
-            "giveaways, suggest us ideas or" => 2.30,
-            "appeal a punishment." => 2.00,
-            "§eClick to view Discord." => 1.40
+            '§l§9Discord Server' => 3.20,
+            'Join our Discord community to keep' => 2.90,
+            'up-to-date about recent updates,' => 2.60,
+            'giveaways, suggest us ideas or' => 2.30,
+            'appeal a punishment.' => 2.00,
+            '§eClick to view Discord.' => 1.40
         ] as $text => $mY) {
             $this->floating_text($text, Entity::DISCORD, new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
         }
@@ -116,10 +116,10 @@ final class EntityManager
     public function floating_text(string $text, string $id, Location $location, bool $spawnToAll = true, GhostlyPlayer $player = null): void
     {
         $nbt = new CompoundTag();
-        $nbt->setString("TextId", $id);
+        $nbt->setString('TextId', $id);
 
         $entity = new FloatingTextType($location, $nbt);
-        $entity->setNameTag("§r§7" . $text);
+        $entity->setNameTag('§r§7' . $text);
 
         if ($spawnToAll) {
             $entity->spawnToAll();
@@ -127,7 +127,7 @@ final class EntityManager
         }
 
         if (!isset($player)) {
-            throw new RuntimeException("Player is NULL");
+            throw new RuntimeException('Player is NULL');
         }
 
         $entity->spawnTo($player);
@@ -136,12 +136,12 @@ final class EntityManager
     public function entity_store(GhostlyPlayer $player): void
     {
         $nbt = new CompoundTag();
-        $nbt->setString("npcId", Entity::STORE);
+        $nbt->setString('npcId', Entity::STORE);
 
         $this->remove_entity(Entity::STORE);
 
         $entity = $this->create($player, $nbt);
-        $entity->setNameTag("");
+        $entity->setNameTag('');
         $entity->setNameTagVisible(false);
         $entity->setNameTagAlwaysVisible(false);
         $entity->spawnToAll();
@@ -153,10 +153,10 @@ final class EntityManager
         $z = $eLocation->getZ();
 
         foreach ([
-            "§l§aStore" => 2.60,
-            "You can purchase G-Coins, ranks" => 2.30,
-            "and tags on our store!." => 2.00,
-            "§eClick to view store." => 1.40
+            '§l§aStore' => 2.60,
+            'You can purchase G-Coins, ranks' => 2.30,
+            'and tags on our store!.' => 2.00,
+            '§eClick to view store.' => 1.40
         ] as $text => $mY) {
             $this->floating_text($text, Entity::STORE, new Location($x, $y + $mY, $z, $eLocation->getWorld(), 0.0, 0.0));
         }
@@ -165,14 +165,12 @@ final class EntityManager
     public function spawnHuman(GhostlyPlayer $player, string $npcId, array $texts): void
     {
         $nbt = new CompoundTag();
-        $nbt->setString("npcId", $npcId);
-
-        $location = $player->getLocation();
+        $nbt->setString('npcId', $npcId);
 
         $this->remove_entity($npcId);
 
         $entity = $this->create($player, $nbt);
-        $entity->setNameTag("");
+        $entity->setNameTag('');
         $entity->setNameTagVisible(false);
         $entity->setNameTagAlwaysVisible(false);
         $entity->spawnToAll();
@@ -185,7 +183,7 @@ final class EntityManager
 
         $textPos = 1.50;
         foreach ($texts as $text) {
-            if ($text === "{LINE}") {
+            if ($text === '{LINE}') {
                 $textPos += 0.30;
                 continue;
             }
@@ -198,11 +196,11 @@ final class EntityManager
     public function createEntityServer(GhostlyPlayer $player, string $server): void
     {
         $nbt = new CompoundTag();
-        $nbt->setString("npcId", $server);
-        $nbt->setString("server_name", $server);
+        $nbt->setString('npcId', $server);
+        $nbt->setString('server_name', $server);
         $this->remove_entity($server);
         $entity = $this->create($player, $nbt);
-        $entity->setNameTag("§7Players: §f??§7/§f??");
+        $entity->setNameTag('§7Players: §f??§7/§f??');
         $eLocation = $entity->getLocation();
         $x = $eLocation->getX();
         $y = $eLocation->getY();
@@ -266,7 +264,7 @@ final class EntityManager
     {
         $lobby = Lobby::getInstance();
         $world = isset($lobby) ? $lobby->getWorld() : Server::getInstance()->getWorldManager()->getDefaultWorld();
-        $offline = ["§cOffline.", "§cOffline..", "§cOffline..."];
+        $offline = ['§cOffline.', '§cOffline..', '§cOffline...'];
 
         if (!isset($world)) {
             return;
@@ -292,7 +290,7 @@ final class EntityManager
                     break;
                 }
 
-                $entity->setNameTag(sprintf("§7Players: §f%s§7/§f%s", $server->getOnlinePlayers(), $server->getMaxPlayers()));
+                $entity->setNameTag(sprintf('§7Players: §f%s§7/§f%s', $server->getOnlinePlayers(), $server->getMaxPlayers()));
 
                 if (!$this->exist_text($serverName . Entity::EXTRA)) {
                     $location = $entity->getLocation();

@@ -32,7 +32,7 @@ use zomarrd\ghostly\lobby\commands\language\LangCommand;
 use zomarrd\ghostly\lobby\commands\mute\GlobalMuteCommand;
 use zomarrd\ghostly\lobby\commands\server\ServerCommand;
 use zomarrd\ghostly\lobby\config\ConfigManager;
-use zomarrd\ghostly\lobby\database\Database;
+use zomarrd\ghostly\lobby\database\mysql\MySQLProvider;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\events\HumanListener;
 use zomarrd\ghostly\lobby\events\ItemInteractListener;
@@ -85,19 +85,16 @@ final class Ghostly extends PluginBase
         self::$instance = $this;
         self::$logger = $this->getLogger();
         //self::$colors = json_decode(file_get_contents($this->getFile() . "resources/colors.json"), true, 512, JSON_THROW_ON_ERROR);
-        self::$server_items = new Config($this->getFile() . "resources/servers_items.yml");
+        self::$server_items = new Config($this->getFile() . 'resources/servers_items.yml');
 
         if (!extension_loaded('mysqli')) {
-            throw new ExtensionMissing("mysqli");
+            throw new ExtensionMissing('mysqli');
         }
 
         self::$queueManager = new QueueManager();
         new ConfigManager();
 
-        /** It is responsible for registering all providers for connections to databases */
-        new Database();
-
-        Database::getMysql()->createTables();
+        MySQLProvider::createTables();
     }
 
     /**
@@ -129,9 +126,9 @@ final class Ghostly extends PluginBase
 
         $this->registerEvents([new PlayerListener(), new ItemInteractListener(), new HumanListener()]);
 
-        $this->registerCommands("bukkit", [
+        $this->registerCommands('bukkit', [
             new ServerCommand($this),
-            new LangCommand($this, "lang"),
+            new LangCommand($this, 'lang'),
             new GlobalMuteCommand($this, 'globalmute'),
             new EntityCommand($this, 'entity'),
         ]);
@@ -169,7 +166,7 @@ final class Ghostly extends PluginBase
                 $event->getOrigin()->setHandler(new LoginPacketHandler($this->getServer(), $event->getOrigin(), function(PlayerInfo $info) use ($event): void {
                     (function() use ($info): void {
                         $this->info = $info;
-                        $this->getLogger()->info("Player: " . TextFormat::RED . $info->getUsername() . TextFormat::RESET);
+                        $this->getLogger()->info('Player: ' . TextFormat::RED . $info->getUsername() . TextFormat::RESET);
                         $this->getLogger()->setPrefix($this->getLogPrefix());
                     })->call($event->getOrigin());
                 }, function(bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
@@ -182,7 +179,7 @@ final class Ghostly extends PluginBase
 
         $this->getScheduler()->scheduleRepeatingTask(new GlobalTask(), 1);
 
-        $this->getServer()->getNetwork()->setName("§l§cGhostlyMC §f» §r§aOPEN!!");
+        $this->getServer()->getNetwork()->setName('§l§cGhostlyMC §f» §r§aOPEN!!');
         self::$logger->notice('§c' . <<<INFO
 
 

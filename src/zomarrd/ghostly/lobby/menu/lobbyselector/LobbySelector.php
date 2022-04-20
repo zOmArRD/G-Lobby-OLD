@@ -33,7 +33,7 @@ final class LobbySelector
 
     public function register(): void
     {
-        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST)->setName("§l§cGhostly §f» §r§6Lobby Selector")->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
+        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST)->setName('§l§cGhostly §f» §r§6Lobby Selector')->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
             $player = $transaction->getPlayer();
             $button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 
@@ -48,7 +48,7 @@ final class LobbySelector
             return $transaction->continue();
         });
 
-        $close = VanillaItems::RED_BED()->setCustomName("§r§cClose");
+        $close = VanillaItems::RED_BED()->setCustomName('§r§cClose');
         $this->addButton(new MenuButton($close, function(GhostlyPlayer $player): void {
             $player->closeInventory();
         }), 0);
@@ -72,19 +72,19 @@ final class LobbySelector
                 continue;
             }
 
-            if ($server->getCategory() !== "Lobby") {
+            if ($server->getCategory() !== 'Lobby') {
                 continue;
             }
 
-            if ($server->getName() === "Lobby-1") {
+            if ($server->getName() === 'Lobby-1') {
                 $this->addServer($server, 10);
             }
 
-            if ($server->getName() === "Lobby-2") {
+            if ($server->getName() === 'Lobby-2') {
                 $this->addServer($server, 11);
             }
 
-            if ($server->getName() === "Lobby-3") {
+            if ($server->getName() === 'Lobby-3') {
                 $this->addServer($server, 12);
             }
         }
@@ -92,7 +92,7 @@ final class LobbySelector
 
     public function addServer(Server $server, int $slot): void
     {
-        $item = VanillaItems::NETHER_STAR()->setCustomName("§r§a" . $server->getName());
+        $item = VanillaItems::NETHER_STAR()->setCustomName('§r§a' . $server->getName());
 
         if ($server->isOnline()) {
             $arrayOriginal = Ghostly::$server_items->get('Lobby')['online'];
@@ -127,7 +127,7 @@ final class LobbySelector
         } else {
             $form = new SimpleForm(function(GhostlyPlayer $player, $data): void {
                 if (isset($data)) {
-                    if ($data === "close") {
+                    if ($data === 'close') {
                         return;
                     }
 
@@ -135,12 +135,12 @@ final class LobbySelector
                 }
             });
 
-            $form->setTitle("§l§cGhostly §f» §r§6Lobby Selector");
+            $form->setTitle('§l§cGhostly §f» §r§6Lobby Selector');
             $servers = ServerManager::getInstance()->getServers();
 
             $this->addServerButton(ServerManager::getInstance()->getCurrentServer(), $form);
             foreach ($servers as $server) {
-                if ($server->getCategory() !== "Lobby") {
+                if ($server->getCategory() !== 'Lobby') {
                     continue;
                 }
 
@@ -154,7 +154,7 @@ final class LobbySelector
 
     public function addServerButton(Server $server, SimpleForm $form): void
     {
-        $text = "§r";
+        $text = '§r';
 
         if ($server->getName() === Server['name']) {
             $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
@@ -170,7 +170,7 @@ final class LobbySelector
             $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
-        $form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
+        $form->addButton($text, $form::IMAGE_TYPE_NULL, '', $server->getName());
     }
 
     public function getMenu(): InvMenu

@@ -33,16 +33,16 @@ final class MojangAdapter implements SkinAdapter
             return $this->personaSkins[$skin->getSkinId()];
         }
         $capeData = $skin->getCapeData();
-        $capeImage = $capeData === "" ? new SkinImage(0, 0, "") : new SkinImage(32, 64, $capeData);
+        $capeImage = $capeData === '' ? new SkinImage(0, 0, '') : new SkinImage(32, 64, $capeData);
         $geometryName = $skin->getGeometryName();
-        if ($geometryName === "") {
-            $geometryName = "geometry.humanoid.custom";
+        if ($geometryName === '') {
+            $geometryName = 'geometry.humanoid.custom';
         }
-        $resourcePatch = json_encode(["geometry" => ["default" => $geometryName]], JSON_THROW_ON_ERROR);
+        $resourcePatch = json_encode(['geometry' => ['default' => $geometryName]], JSON_THROW_ON_ERROR);
         if ($resourcePatch === false) {
-            throw new RuntimeException("json_encode() failed: " . json_last_error_msg());
+            throw new RuntimeException('json_encode() failed: ' . json_last_error_msg());
         }
-        return new SkinData($skin->getSkinId(), "", //TODO: playfab ID
+        return new SkinData($skin->getSkinId(), '', //TODO: playfab ID
             $resourcePatch, SkinImage::fromLegacy($skin->getSkinData()), [], $capeImage, $skin->getGeometryData());
     }
 
@@ -60,10 +60,10 @@ final class MojangAdapter implements SkinAdapter
         }
 
         $resourcePatch = json_decode($data->getResourcePatch(), true, 512, JSON_THROW_ON_ERROR);
-        if (is_array($resourcePatch) && isset($resourcePatch["geometry"]["default"]) && is_string($resourcePatch["geometry"]["default"])) {
-            $geometryName = $resourcePatch["geometry"]["default"];
+        if (is_array($resourcePatch) && isset($resourcePatch['geometry']['default']) && is_string($resourcePatch['geometry']['default'])) {
+            $geometryName = $resourcePatch['geometry']['default'];
         } else {
-            throw new InvalidSkinException("Missing geometry name field");
+            throw new InvalidSkinException('Missing geometry name field');
         }
 
         return new Skin($data->getSkinId(), $data->getSkinImage()->getData(), $capeData, $geometryName, $data->getGeometryData());

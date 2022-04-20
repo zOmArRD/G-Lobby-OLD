@@ -36,7 +36,7 @@ final class ServerSelector
 
     public function register(): void
     {
-        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName("§l§cGhostly §f» §r§6Server Selector")->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
+        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName('§l§cGhostly §f» §r§6Server Selector')->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
             $player = $transaction->getPlayer();
             $button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 
@@ -51,7 +51,7 @@ final class ServerSelector
             return $transaction->continue();
         });
 
-        $close = VanillaItems::RED_BED()->setCustomName("§r§cClose");
+        $close = VanillaItems::RED_BED()->setCustomName('§r§cClose');
         $this->addButton(new MenuButton($close, function(GhostlyPlayer $player): void {
             $player->closeInventory();
         }), 0);
@@ -106,7 +106,7 @@ final class ServerSelector
         } else {
             $form = new SimpleForm(function(GhostlyPlayer $player, $data): void {
                 if (isset($data)) {
-                    if ($data === "close") {
+                    if ($data === 'close') {
                         return;
                     }
 
@@ -115,11 +115,11 @@ final class ServerSelector
                 }
             });
 
-            $form->setTitle("§l§cGhostly §f» §r§6Server Selector");
+            $form->setTitle('§l§cGhostly §f» §r§6Server Selector');
             $servers = ServerManager::getInstance()->getServers();
 
             foreach ($servers as $server) {
-                if ($server->getCategory() === "Lobby") {
+                if ($server->getCategory() === 'Lobby') {
                     continue;
                 }
 
@@ -133,7 +133,7 @@ final class ServerSelector
 
     public function addServerButton(Server $server, SimpleForm $form): void
     {
-        $text = "§r";
+        $text = '§r';
 
         if ($server->getName() === Server['name']) {
             $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
@@ -145,7 +145,7 @@ final class ServerSelector
             $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
-        $form->addButton($text, $form::IMAGE_TYPE_NULL, "", $server->getName());
+        $form->addButton($text, $form::IMAGE_TYPE_NULL, '', $server->getName());
     }
 
     public function getMenu(): InvMenu

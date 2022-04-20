@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\entity\type;
 
 use Exception;
-use pocketmine\entity\ExperienceManager;
 use pocketmine\entity\Human;
 use pocketmine\entity\HungerManager;
 use pocketmine\entity\Location;
@@ -24,9 +23,7 @@ use pocketmine\inventory\PlayerOffHandInventory;
 use pocketmine\item\Item;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\utils\Limits;
 
 final class HumanType extends Human
 {
@@ -38,8 +35,8 @@ final class HumanType extends Human
 
     public function __construct(Location $location, Skin $skin, CompoundTag $nbt)
     {
-        $this->npcId = $nbt->getString("npcId", "");
-        $this->server_name = $nbt->getString("server_name", "");
+        $this->npcId = $nbt->getString('npcId', '');
+        $this->server_name = $nbt->getString('server_name', '');
         parent::__construct($location, $skin, $nbt);
         $this->setNameTagAlwaysVisible();
         $this->setNameTagVisible();
@@ -79,18 +76,13 @@ final class HumanType extends Human
     {
         $nbt = parent::saveNBT();
 
-        $nbt->setInt("foodLevel", (int)$this->hungerManager->getFood());
-        $nbt->setFloat("foodExhaustionLevel", $this->hungerManager->getExhaustion());
-        $nbt->setFloat("foodSaturationLevel", $this->hungerManager->getSaturation());
-        $nbt->setInt("foodTickTimer", $this->hungerManager->getFoodTickTimer());
-
-        $nbt->setInt("XpLevel", $this->xpManager->getXpLevel());
-        $nbt->setFloat("XpP", $this->xpManager->getXpProgress());
-        $nbt->setInt("XpTotal", $this->xpManager->getLifetimeTotalXp());
-        $nbt->setInt("XpSeed", $this->xpSeed);
+        $nbt->setInt('foodLevel', (int)$this->hungerManager->getFood());
+        $nbt->setFloat('foodExhaustionLevel', $this->hungerManager->getExhaustion());
+        $nbt->setFloat('foodSaturationLevel', $this->hungerManager->getSaturation());
+        $nbt->setInt('foodTickTimer', $this->hungerManager->getFoodTickTimer());
 
         $inventoryTag = new ListTag([], NBT::TAG_Compound);
-        $nbt->setTag("Inventory", $inventoryTag);
+        $nbt->setTag('Inventory', $inventoryTag);
         if ($this->inventory !== null) {
             //Normal inventory
             $slotCount = $this->inventory->getSize() + $this->inventory->getHotbarSize();
@@ -109,34 +101,19 @@ final class HumanType extends Human
                 }
             }
 
-            $nbt->setInt("SelectedInventorySlot", $this->inventory->getHeldItemIndex());
+            $nbt->setInt('SelectedInventorySlot', $this->inventory->getHeldItemIndex());
         }
         $offHandItem = $this->offHandInventory->getItem(0);
         if (!$offHandItem->isNull()) {
-            $nbt->setTag("OffHandItem", $offHandItem->nbtSerialize());
-        }
-
-        if ($this->enderInventory !== null) {
-            /** @var CompoundTag[] $items */
-            $items = [];
-
-            $slotCount = $this->enderInventory->getSize();
-            for ($slot = 0; $slot < $slotCount; ++$slot) {
-                $item = $this->enderInventory->getItem($slot);
-                if (!$item->isNull()) {
-                    $items[] = $item->nbtSerialize($slot);
-                }
-            }
-
-            $nbt->setTag("EnderChestInventory", new ListTag($items, NBT::TAG_Compound));
+            $nbt->setTag('OffHandItem', $offHandItem->nbtSerialize());
         }
 
         if ($this->skin !== null) {
-            $nbt->setTag("Skin", CompoundTag::create()->setString("Name", $this->skin->getSkinId())->setByteArray("Data", $this->skin->getSkinData())->setByteArray("CapeData", $this->skin->getCapeData())->setString("GeometryName", $this->skin->getGeometryName())->setByteArray("GeometryData", $this->skin->getGeometryData()));
+            $nbt->setTag('Skin', CompoundTag::create()->setString('Name', $this->skin->getSkinId())->setByteArray('Data', $this->skin->getSkinData())->setByteArray('CapeData', $this->skin->getCapeData())->setString('GeometryName', $this->skin->getGeometryName())->setByteArray('GeometryData', $this->skin->getGeometryData()));
         }
 
-        $nbt->setString("server_name", $this->server_name);
-        $nbt->setString("npcId", $this->npcId);
+        $nbt->setString('server_name', $this->server_name);
+        $nbt->setString('npcId', $this->npcId);
 
         return $nbt;
     }
@@ -148,11 +125,10 @@ final class HumanType extends Human
     {
         parent::initEntity($nbt);
 
-        $this->server_name = $nbt->getString("server_name", "");
-        $this->npcId = $nbt->getString("npcId", "");
+        $this->server_name = $nbt->getString('server_name', '');
+        $this->npcId = $nbt->getString('npcId', '');
 
         $this->hungerManager = new HungerManager($this);
-        $this->xpManager = new ExperienceManager($this);
 
         $this->inventory = new PlayerInventory($this);
 
@@ -175,16 +151,16 @@ final class HumanType extends Human
         $this->offHandInventory = new PlayerOffHandInventory($this);
         $this->initHumanData($nbt);
 
-        $inventoryTag = $nbt->getListTag("Inventory");
+        $inventoryTag = $nbt->getListTag('Inventory');
         if ($inventoryTag !== null) {
             $armorListeners = $this->armorInventory->getListeners()->toArray();
             $this->armorInventory->getListeners()->clear();
             $inventoryListeners = $this->inventory->getListeners()->toArray();
             $this->inventory->getListeners()->clear();
 
-            foreach ($inventoryTag as $i => $item) {
+            foreach ($inventoryTag as $item) {
                 assert($item instanceof CompoundTag);
-                $slot = $item->getByte("Slot");
+                $slot = $item->getByte('Slot');
                 if ($slot >= 100 && $slot < 104) { //Armor
                     $this->armorInventory->setItem($slot - 100, Item::nbtDeserialize($item));
                 } else if ($slot >= 9 && $slot < $this->inventory->getSize() + 9) {
@@ -196,7 +172,7 @@ final class HumanType extends Human
             $this->inventory->getListeners()->add(...$inventoryListeners);
         }
 
-        $offHand = $nbt->getCompoundTag("OffHandItem");
+        $offHand = $nbt->getCompoundTag('OffHandItem');
 
         if ($offHand !== null) {
             $this->offHandInventory->setItem(0, Item::nbtDeserialize($offHand));
@@ -208,25 +184,16 @@ final class HumanType extends Human
             }
         }));
 
-        $this->inventory->setHeldItemIndex($nbt->getInt("SelectedInventorySlot", 0));
+        $this->inventory->setHeldItemIndex($nbt->getInt('SelectedInventorySlot', 0));
         $this->inventory->getHeldItemIndexChangeListeners()->add(function(): void {
             foreach ($this->getViewers() as $viewer) {
                 $viewer->getNetworkSession()->onMobMainHandItemChange($this);
             }
         });
 
-        $this->hungerManager->setFood((float)$nbt->getInt("foodLevel", (int)$this->hungerManager->getFood()));
-        $this->hungerManager->setExhaustion($nbt->getFloat("foodExhaustionLevel", $this->hungerManager->getExhaustion()));
-        $this->hungerManager->setSaturation($nbt->getFloat("foodSaturationLevel", $this->hungerManager->getSaturation()));
-        $this->hungerManager->setFoodTickTimer($nbt->getInt("foodTickTimer", $this->hungerManager->getFoodTickTimer()));
-
-        $this->xpManager->setXpAndProgressNoEvent($nbt->getInt("XpLevel", 0), $nbt->getFloat("XpP", 0.0));
-        $this->xpManager->setLifetimeTotalXp($nbt->getInt("XpTotal", 0));
-
-        if (($xpSeedTag = $nbt->getTag("XpSeed")) instanceof IntTag) {
-            $this->xpSeed = $xpSeedTag->getValue();
-        } else {
-            $this->xpSeed = random_int(Limits::INT32_MIN, Limits::INT32_MAX);
-        }
+        $this->hungerManager->setFood((float)$nbt->getInt('foodLevel', (int)$this->hungerManager->getFood()));
+        $this->hungerManager->setExhaustion($nbt->getFloat('foodExhaustionLevel', $this->hungerManager->getExhaustion()));
+        $this->hungerManager->setSaturation($nbt->getFloat('foodSaturationLevel', $this->hungerManager->getSaturation()));
+        $this->hungerManager->setFoodTickTimer($nbt->getInt('foodTickTimer', $this->hungerManager->getFoodTickTimer()));
     }
 }

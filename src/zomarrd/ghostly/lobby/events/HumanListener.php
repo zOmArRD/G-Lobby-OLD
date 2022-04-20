@@ -32,8 +32,8 @@ final class HumanListener implements Listener
         $i = $entity->getNpcId();
 
         switch ($i) {
-            case "X6JGT":
-                $player->sendMessage("§c(From zOmArRD: §8Hi, I am the creator of this network!§c)");
+            case 'X6JGT':
+                $player->sendMessage('§c(From zOmArRD: §8Hi, I am the creator of this network!§c)');
                 /*$packet = new SetActorLinkPacket();
                 $packet->link = new EntityLink($entity->getId(), $player->getId(), EntityLink::TYPE_RIDER, true, true);
                 Server::getInstance()->broadcastPackets(Server::getInstance()->getOnlinePlayers(), [$packet]);*/
@@ -47,7 +47,7 @@ final class HumanListener implements Listener
             default:
                 $serverName = $entity->getServerName();
 
-                if ($serverName === "") {
+                if ($serverName === '') {
                     # DO NOTHING LOL
                     return;
                 }

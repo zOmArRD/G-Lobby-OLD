@@ -55,7 +55,7 @@ final class QueueManager
             assert($queue instanceof Queue);
             if ($queue->getPlayer()->isOnline()) {
                 $queue->setPosition($key + 1);
-                $queue->setPositionFormatted(sprintf("§f%s§7/§f%s", $queue->getPosition(), count($this->queue[$serverName])));
+                $queue->setPositionFormatted(sprintf('§f%s§7/§f%s', $queue->getPosition(), count($this->queue[$serverName])));
             }
 
             if (($key !== 0) && !$queue->getPlayer()->isOnline()) {
@@ -72,7 +72,7 @@ final class QueueManager
 
             if (!$queue->getPlayer()->getMessageReceivedDelay(10)) {
                 $queue->getPlayer()->setMessageReceivedDelay();
-                $queue->getPlayer()->sendTranslated(LangKey::QUEUE_SERVER_OFFLINE, ["{POSITION-QUEUE}" => $queue->getPositionFormatted()]);
+                $queue->getPlayer()->sendTranslated(LangKey::QUEUE_SERVER_OFFLINE, ['{POSITION-QUEUE}' => $queue->getPositionFormatted()]);
             }
         }
     }
@@ -115,7 +115,7 @@ final class QueueManager
         }
 
         if ($this->exist($player)) {
-            $player->sendTranslated(LangKey::QUEUE_PLAYER_EXIST, ["{SERVER-NAME}" => $player->getQueue()?->getServer()]);
+            $player->sendTranslated(LangKey::QUEUE_PLAYER_EXIST, ['{SERVER-NAME}' => $player->getQueue()?->getServer()]);
             return;
         }
 
@@ -133,11 +133,11 @@ final class QueueManager
         $position = array_search($player->getQueue(), $this->queue[$queue->getServer()], true);
 
         $queue->setPosition((int)$position + 1);
-        $queue->setPositionFormatted(sprintf("§f%s§7/§f%s", $queue->getPosition(), count($this->queue[$queue->getServer()])));
+        $queue->setPositionFormatted(sprintf('§f%s§7/§f%s', $queue->getPosition(), count($this->queue[$queue->getServer()])));
 
         $player->sendTranslated(LangKey::QUEUE_PLAYER_ADDED, [
-            "{SERVER-NAME}" => $server,
-            "{POSITION-QUEUE}" => $queue->getPositionFormatted()
+            '{SERVER-NAME}' => $server,
+            '{POSITION-QUEUE}' => $queue->getPositionFormatted()
         ]);
     }
 }

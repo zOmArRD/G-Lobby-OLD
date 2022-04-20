@@ -28,18 +28,18 @@ final class GlobalMuteCommand extends BaseCommand
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        $value = $args["value"];
+        $value = $args['value'];
         if ($value) {
             if (!Ghostly::isGlobalMute()) {
-                $sender->sendMessage(PREFIX . "§aYou have activated the global mute");
+                $sender->sendMessage(PREFIX . '§aYou have activated the global mute');
             } else {
-                $sender->sendMessage(PREFIX . "§cYou cannot activate the global mute, apparently it is already activated!");
+                $sender->sendMessage(PREFIX . '§cYou cannot activate the global mute, apparently it is already activated!');
                 return;
             }
         } else if (Ghostly::isGlobalMute()) {
-            $sender->sendMessage("§aYou have deactivated the global mute");
+            $sender->sendMessage('§aYou have deactivated the global mute');
         } else {
-            $sender->sendMessage("§cYou cannot deactivate the global mute, apparently it is already deactivated!");
+            $sender->sendMessage('§cYou cannot deactivate the global mute, apparently it is already deactivated!');
             return;
         }
 

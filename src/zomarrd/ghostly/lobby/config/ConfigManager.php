@@ -54,20 +54,20 @@ final class ConfigManager
         define('Server', self::getServerConfig()?->get('server.info'));
         define('MySQL', self::getServerConfig()?->get('mysql.credentials'));
 
-        $data = self::$server_config->get("player-spawn");
+        $data = self::$server_config->get('player-spawn');
 
-        if (!$data["is_enabled"]) {
+        if (!$data['is_enabled']) {
             return;
         }
 
-        $levelName = $data["world"]["name"];
+        $levelName = $data['world']['name'];
 
         if (!$this->getWorldManager()->isWorldLoaded($levelName)) {
             $this->getWorldManager()->loadWorld($levelName);
         }
 
         if ($this->getWorldManager()->isWorldLoaded($levelName)) {
-            $lobby = new Lobby(Server::getInstance()->getWorldManager()->getWorldByName($levelName), $data["pos"]["x"], $data["pos"]["y"], $data["pos"]["z"], $data["pos"]["yaw"], $data["pos"]["pitch"], $data["world"]["min-void"]);
+            $lobby = new Lobby(Server::getInstance()->getWorldManager()->getWorldByName($levelName), $data['pos']['x'], $data['pos']['y'], $data['pos']['z'], $data['pos']['yaw'], $data['pos']['pitch'], $data['world']['min-void']);
 
             $lobby->getWorld()->stopTime();
             $lobby->getWorld()->setTime(World::TIME_DAY);

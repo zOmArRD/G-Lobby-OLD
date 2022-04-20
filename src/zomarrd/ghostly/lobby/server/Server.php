@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\server;
 
-use zomarrd\ghostly\lobby\database\Database;
+use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -67,7 +67,7 @@ final class Server
     public function setOnline(bool $online): void
     {
         if (!$online) {
-            Database::getMysql()->runAsync(new UpdateRowQuery(serialize([
+            MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
                 'online' => 0,
                 'onlineplayers' => 0
             ]), 'name', $this->name, 'servers'));
@@ -123,7 +123,7 @@ final class Server
         $this->setOnlinePlayers(count(Ghostly::getInstance()->getServer()->getOnlinePlayers()));
         $this->setIsWhitelisted(Ghostly::getInstance()->getServer()->hasWhitelist());
 
-        Database::getMysql()->runAsync(new UpdateRowQuery(serialize([
+        MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
             'maxplayers' => $this->maxPlayers,
             'onlineplayers' => $this->onlinePlayers,
             'whitelisted' => (int)$this->isWhitelisted,
@@ -132,7 +132,7 @@ final class Server
 
     public function syncRemote(): void
     {
-        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM servers WHERE name = '$this->name';"), function($rows) {
+        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM servers WHERE name = '$this->name';"), function($rows) {
             $row = $rows[0];
             if ($row !== null) {
                 $this->setOnline((bool)$row['online']);

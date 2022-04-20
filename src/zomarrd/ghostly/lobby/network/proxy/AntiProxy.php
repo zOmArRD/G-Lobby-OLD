@@ -15,7 +15,7 @@ use Exception;
 use pocketmine\player\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use zomarrd\ghostly\lobby\database\Database;
+use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\InsertQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
@@ -28,12 +28,12 @@ final class AntiProxy extends AsyncTask
 
     public function onRun(): void
     {
-        $url = "https://vpnapi.io/api/" . $this->getIp() . "?key=368a3b3454284459a204f5808e02f581";
+        $url = 'https://vpnapi.io/api/' . $this->getIp() . '?key=368a3b3454284459a204f5808e02f581';
 
         try {
             $this->setResult(json_decode(file_get_contents($url), false, 512, JSON_THROW_ON_ERROR));
         } catch (Exception) {
-            $this->getPlayer()->kick(PREFIX . "Your login could not be confirmed, contact our support!");
+            $this->getPlayer()->kick(PREFIX . 'Your login could not be confirmed, contact our support!');
         }
     }
 
@@ -52,12 +52,12 @@ final class AntiProxy extends AsyncTask
         $result = $this->getResult();
         $playerName = $this->player;
 
-        if ($this->player === "") {
+        if ($this->player === '') {
             return;
         }
 
         if (!isset($result->{'security'}, $result->{'location'})) {
-            $this->getPlayer()->disconnect(PREFIX . "Your login could not be confirmed, contact our support!");
+            $this->getPlayer()->disconnect(PREFIX . 'Your login could not be confirmed, contact our support!');
             return;
         }
 
@@ -67,25 +67,25 @@ final class AntiProxy extends AsyncTask
 
         if (!$this->getPlayer()->hasPermission(PermissionKey::GHOSTLY_PROXY_BYPASS)) {
             if ($security->vpn || $security->tor || $security->proxy) {
-                $this->getPlayer()->disconnect(PREFIX . "We do not accept VPN on our network, if you want to enter with VPN buy rank!");
+                $this->getPlayer()->disconnect(PREFIX . 'We do not accept VPN on our network, if you want to enter with VPN buy rank!');
             }
         }
 
         $ip = $result->{'ip'};
 
         // Make a ban system that detects alts (ip with the same accounts, etc.)
-        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM player_location WHERE xuid = '$xuid';"), static function($result) use ($playerName, $xuid, $ip, $location): void {
+        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM player_location WHERE xuid = '$xuid';"), static function($result) use ($playerName, $xuid, $ip, $location): void {
             if (count($result) === 0) {
-                Database::getMysql()->runAsync(new InsertQuery(sprintf("INSERT INTO player_location(player, xuid, ip, city, region, country, continent) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');", $playerName, $xuid, $ip, $location->{'city'}, $location->{'region'}, $location->{'country'}, $location->{'continent'})));
+                MySQL::getInstance()->runAsync(new InsertQuery(sprintf("INSERT INTO player_location(player, xuid, ip, city, region, country, continent) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');", $playerName, $xuid, $ip, $location->{'city'}, $location->{'region'}, $location->{'country'}, $location->{'continent'})));
             } else {
                 /** Add a method to find alts */
-                Database::getMysql()->runAsync(new UpdateRowQuery(serialize([
-                    "ip" => $ip,
-                    "city" => $location->{'city'},
-                    "region" => $location->{'region'},
-                    "country" => $location->{'country'},
-                    "continent" => $location->{'continent'}
-                ]), "xuid", $xuid, "player_location"));
+                MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
+                    'ip' => $ip,
+                    'city' => $location->{'city'},
+                    'region' => $location->{'region'},
+                    'country' => $location->{'country'},
+                    'continent' => $location->{'continent'}
+                ]), 'xuid', $xuid, 'player_location'));
             }
         });
     }

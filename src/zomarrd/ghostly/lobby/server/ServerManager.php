@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\server;
 
 use pocketmine\scheduler\ClosureTask;
-use zomarrd\ghostly\lobby\database\Database;
+use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\RegisterServerQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -57,7 +57,7 @@ final class ServerManager
         $this->servers = [];
         $cServerName = $this->getCurrentServerName();
 
-        Database::getMysql()->runAsync(new SelectQuery("SELECT * FROM servers"), function($rows) use ($cServerName, $player) {
+        MySQL::getInstance()->runAsync(new SelectQuery('SELECT * FROM servers'), function($rows) use ($cServerName, $player) {
             foreach ($rows as $row) {
                 $server = new Server($row['name'], $row['ip'], (int)$row['port'], (bool)$row['online'], (int)$row['maxplayers'], (int)$row['onlineplayers'], (bool)$row['whitelisted'], $row['category']);
                 if ($row['name'] === $cServerName) {
@@ -66,8 +66,8 @@ final class ServerManager
                     $this->servers[] = $server;
                 }
 
-                Ghostly::$logger->info(sprintf("%sThe server (%s) has been registered in the database_backup!", PREFIX, $server->getName()));
-                $player?->sendMessage(sprintf("%sThe server (%s) has been registered in the database_backup!", PREFIX, $server->getName()));
+                Ghostly::$logger->info(sprintf('%sThe server (%s) has been registered in the database_backup!', PREFIX, $server->getName()));
+                $player?->sendMessage(sprintf('%sThe server (%s) has been registered in the database_backup!', PREFIX, $server->getName()));
             }
         });
     }
