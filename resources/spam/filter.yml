@@ -10,6 +10,7 @@ allowedIps:
 
 domains:
   - ".net"
+  - ".dev"
   - ".es"
   - ".com"
   - ".sytes"
@@ -23,6 +24,7 @@ domains:
   - ".rip"
   - "play."
   - ",net"
+  - ",dev"
   - ",es"
   - ",com"
   - ",sytes"
@@ -82,6 +84,7 @@ domains:
   - ":ml"
   - ":tk"
   - ":pro"
+  - ":dev"
   - ":us"
   - ":eu"
   - ":land"
@@ -108,6 +111,7 @@ domains:
   - " .us"
   - " .eu"
   - " .land"
+  - " .dev"
   - " .rip"
   - " play."
   - " ,net"
