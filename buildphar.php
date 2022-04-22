@@ -28,9 +28,7 @@ if (!is_dir($buildDir) && !mkdir($buildDir) && !is_dir($buildDir)) {
     exit(1);
 }
 
-preg_match('/^version: ?(.+)$/m', $description, $matches);
-
-$pharFile = sprintf('%s/GhostlyMC-%s.phar', $buildDir, $matches[1]);
+$pharFile = sprintf('%s/GhostlyMC.phar', $buildDir);
 
 if (file_exists($pharFile)) {
     unlink($pharFile);
@@ -59,7 +57,8 @@ $phar->buildFromIterator(new class($iterator) extends FilterIterator {
 
         return $current === 'plugin.yml'
             || str_starts_with($current, 'src/')
-            || str_starts_with($current, 'vendor/');
+            || str_starts_with($current, 'vendor/')
+            || str_starts_with($current, 'resources/');
     }
 }, __DIR__);
 
