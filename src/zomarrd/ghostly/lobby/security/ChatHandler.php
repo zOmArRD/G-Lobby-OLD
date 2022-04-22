@@ -13,7 +13,6 @@ namespace zomarrd\ghostly\lobby\security;
 
 use pocketmine\utils\Config;
 use zomarrd\ghostly\lobby\Ghostly;
-use zomarrd\ghostly\lobby\utils\Utils;
 
 final class ChatHandler
 {
@@ -45,7 +44,7 @@ final class ChatHandler
                 $replacedWords[$key] = $val;
             }
 
-            $result = Utils::str_replace($result, $replacedWords);
+            $result = strReplace($result, $replacedWords);
         }
 
         return $result;
@@ -68,12 +67,12 @@ final class ChatHandler
 
             if (isset(self::$contents[$lowerCaseWord])) {
                 $len = strlen($lowerCaseWord);
-                $indexes = Utils::str_indexes($lowerCaseWord, $lowerCaseMsg);
+                $indexes = strIndexes($lowerCaseWord, $lowerCaseMsg);
 
                 foreach ($indexes as $index) {
                     $str = substr($msg, $index, $len);
 
-                    if (!Utils::arr_contains_value($str, $result)) {
+                    if (!arrContainsValue($str, $result)) {
                         $result[] = $str;
                     }
                 }

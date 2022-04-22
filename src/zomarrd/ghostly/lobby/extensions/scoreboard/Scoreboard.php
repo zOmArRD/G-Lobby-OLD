@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\extensions\scoreboard;
 
 use zomarrd\ghostly\lobby\config\ConfigManager;
-use zomarrd\ghostly\lobby\utils\Utils;
 
 class Scoreboard extends ScoreAPI
 {
@@ -77,6 +76,6 @@ class Scoreboard extends ScoreAPI
 
     final public function replaceData(int $line, string $string): string
     {
-        return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : Utils::checkStrings($string, $this->getPlayer());
+        return empty($string) ? self::EMPTY_CACHE[$line] ?? '' : checkStrings($string, $this->getPlayer());
     }
 }

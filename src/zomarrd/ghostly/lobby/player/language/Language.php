@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\player\language;
 
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
-use zomarrd\ghostly\lobby\utils\Utils;
 
 /**
  * @copyright GitHub Open Source lmao
@@ -86,7 +85,7 @@ final class Language
             return '';
         }
 
-        $message = Utils::checkStrings($this->messages[$type]);
+        $message = checkStrings($this->messages[$type]);
 
         foreach ($replaceable as $key => $value) {
             if (str_contains((string)$message, (string)$key)) {
@@ -99,7 +98,7 @@ final class Language
 
     public function getItemNames(string $type): ?string
     {
-        return isset($this->item_names[$type]) ? Utils::checkStrings($this->item_names[$type]) : null;
+        return isset($this->item_names[$type]) ? checkStrings($this->item_names[$type]) : null;
     }
 
     public function hasAuthors(): bool

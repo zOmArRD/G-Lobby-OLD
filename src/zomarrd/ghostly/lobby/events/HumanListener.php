@@ -29,9 +29,9 @@ final class HumanListener implements Listener
     {
         $player = $event->getPlayer();
         $entity = $event->getEntity();
-        $i = $entity->getNpcId();
+        $npcId = $entity->getNpcId();
 
-        switch ($i) {
+        switch ($npcId) {
             case 'X6JGT':
                 $player->sendMessage('§c(From zOmArRD: §8Hi, I am the creator of this network!§c)');
                 /*$packet = new SetActorLinkPacket();
@@ -45,14 +45,12 @@ final class HumanListener implements Listener
                 $player->sendTranslated(LangKey::DISCORD_INVITATION_MESSAGE);
                 break;
             default:
-                $serverName = $entity->getServerName();
-
-                if ($serverName === '') {
+                if ($npcId === '') {
                     # DO NOTHING LOL
                     return;
                 }
 
-                $server = ServerManager::getInstance()->getServerByName($serverName);
+                $server = ServerManager::getInstance()->getServerByName($npcId);
                 if (is_null($server)) {
                     $player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x)), ($player->getLocation()->z - ($entity->getLocation()->z)), (20 / 0xa));
                     $player->sendSound(LevelSoundEvent::EXPLODE);
@@ -60,7 +58,7 @@ final class HumanListener implements Listener
                     return;
                 }
 
-                Ghostly::getQueueManager()->add($player, $entity->getServerName());
+                Ghostly::getQueueManager()->add($player, $npcId);
                 break;
         }
     }

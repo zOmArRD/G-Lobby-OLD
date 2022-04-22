@@ -18,7 +18,7 @@ use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
-use zomarrd\ghostly\lobby\utils\Utils;
+use zomarrd\ghostly\lobby\server\ServerList;
 
 /**
  * Here we handle the creation of the entities on the server.
@@ -29,7 +29,7 @@ final class EntityCreateCommand extends BaseSubCommand
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         if (!$sender instanceof GhostlyPlayer) {
-            $sender->sendMessage(Utils::ONLY_PLAYER);
+            $sender->sendMessage(ONLY_PLAYERS);
             return;
         }
 
@@ -38,7 +38,7 @@ final class EntityCreateCommand extends BaseSubCommand
         switch ($type) {
             case $sender->getName():
                 if (isset($args['format'])) {
-                    $explode = explode(':', $args['format']);
+                    $explode = explode(':', $args['formEat']);
                     Entity::ENTITY()->spawnHuman($sender, $type, $explode);
                 }
                 break;
@@ -48,12 +48,12 @@ final class EntityCreateCommand extends BaseSubCommand
             case Entity::STORE:
                 Entity::ENTITY()->entity_store($sender);
                 break;
-            case Entity::COMBO:
-            case Entity::PRACTICE:
-            case Entity::UHC:
-            case Entity::UHC_RUN:
-            case Entity::HCF:
-            case Entity::KITMAP:
+            case ServerList::COMBO:
+            case ServerList::PRACTICE:
+            case ServerList::UHC:
+            case ServerList::UHCRUN:
+            case ServerList::HCF:
+            case ServerList::KITMAP:
                 Entity::ENTITY()->createEntityServer($sender, $type);
                 break;
             default:

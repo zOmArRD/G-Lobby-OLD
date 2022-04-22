@@ -13,7 +13,6 @@ namespace zomarrd\ghostly\lobby\server;
 
 use pocketmine\item\Item;
 use zomarrd\ghostly\lobby\Ghostly;
-use zomarrd\ghostly\lobby\utils\Utils;
 
 final class ServerItems
 {
@@ -26,7 +25,7 @@ final class ServerItems
         if (isset($final)) {
             if ($final->isOnline()) {
                 $array = Ghostly::$server_items->get($server)['online'];
-                $final = Utils::array_replace_values($array, "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n", sprintf("§r§7Players: §f%s§7/§f%s\n", $final->getOnlinePlayers(), $final->getMaxPlayers()));
+                $final = arrayReplaceValues($array, "§r§7Players: §f{SERVER_GET-PLAYERS}§7/§f{SERVER_GET-MAX-PLAYERS}\n", sprintf("§r§7Players: §f%s§7/§f%s\n", $final->getOnlinePlayers(), $final->getMaxPlayers()));
                 $item->setLore($final);
             } else {
                 $item->setLore(Ghostly::$server_items->get($server)['offline']);

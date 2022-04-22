@@ -25,6 +25,7 @@ use RuntimeException;
 use zomarrd\ghostly\lobby\entity\type\FloatingTextType;
 use zomarrd\ghostly\lobby\entity\type\HumanType;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
+use zomarrd\ghostly\lobby\server\ServerList;
 use zomarrd\ghostly\lobby\server\ServerManager;
 use zomarrd\ghostly\lobby\world\Lobby;
 
@@ -197,7 +198,6 @@ final class EntityManager
     {
         $nbt = new CompoundTag();
         $nbt->setString('npcId', $server);
-        $nbt->setString('server_name', $server);
         $this->remove_entity($server);
         $entity = $this->create($player, $nbt);
         $entity->setNameTag('§7Players: §f??§7/§f??');
@@ -207,22 +207,22 @@ final class EntityManager
         $z = $eLocation->getZ();
 
         switch ($server) {
-            case Entity::PRACTICE:
+            case ServerList::PRACTICE:
                 $this->setEntityItems(VanillaItems::DIAMOND_SWORD(), $entity);
                 break;
-            case Entity::COMBO:
+            case ServerList::COMBO:
                 $this->setEntityItems(VanillaItems::ENDER_PEARL(), $entity);
                 break;
-            case Entity::HCF:
+            case ServerList::HCF:
                 $this->setEntityItems(VanillaItems::DIAMOND_PICKAXE(), $entity);
                 break;
-            case Entity::UHC_RUN:
+            case ServerList::UHCRUN:
                 $this->setEntityItems(VanillaItems::APPLE(), $entity);
                 break;
-            case Entity::UHC:
+            case ServerList::UHC:
                 $this->setEntityItems(VanillaItems::GOLDEN_APPLE(), $entity);
                 break;
-            case Entity::KITMAP:
+            case ServerList::KITMAP:
                 $this->setEntityItems(VanillaItems::GOLDEN_PICKAXE(), $entity);
                 break;
         }

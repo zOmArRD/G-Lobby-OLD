@@ -13,7 +13,6 @@ namespace zomarrd\ghostly\lobby\entity\type;
 
 use Exception;
 use pocketmine\entity\Human;
-use pocketmine\entity\HungerManager;
 use pocketmine\entity\Location;
 use pocketmine\entity\Skin;
 use pocketmine\inventory\CallbackInventoryListener;
@@ -30,13 +29,11 @@ final class HumanType extends Human
     public $canCollide = false;
     protected $immobile = true;
     protected $gravity = 0.0;
-    protected string $server_name;
     protected string $npcId;
 
     public function __construct(Location $location, Skin $skin, CompoundTag $nbt)
     {
         $this->npcId = $nbt->getString('npcId', '');
-        $this->server_name = $nbt->getString('server_name', '');
         parent::__construct($location, $skin, $nbt);
         $this->setNameTagAlwaysVisible();
         $this->setNameTagVisible();
@@ -52,16 +49,6 @@ final class HumanType extends Human
         $this->npcId = $npcId;
     }
 
-    public function getServerName(): string
-    {
-        return $this->server_name;
-    }
-
-    public function setServerName(string $server_name): void
-    {
-        $this->server_name = $server_name;
-    }
-
     public function canBeMovedByCurrents(): bool
     {
         return false;
@@ -75,11 +62,6 @@ final class HumanType extends Human
     public function saveNBT(): CompoundTag
     {
         $nbt = parent::saveNBT();
-
-        $nbt->setInt('foodLevel', (int)$this->hungerManager->getFood());
-        $nbt->setFloat('foodExhaustionLevel', $this->hungerManager->getExhaustion());
-        $nbt->setFloat('foodSaturationLevel', $this->hungerManager->getSaturation());
-        $nbt->setInt('foodTickTimer', $this->hungerManager->getFoodTickTimer());
 
         $inventoryTag = new ListTag([], NBT::TAG_Compound);
         $nbt->setTag('Inventory', $inventoryTag);
@@ -112,7 +94,6 @@ final class HumanType extends Human
             $nbt->setTag('Skin', CompoundTag::create()->setString('Name', $this->skin->getSkinId())->setByteArray('Data', $this->skin->getSkinData())->setByteArray('CapeData', $this->skin->getCapeData())->setString('GeometryName', $this->skin->getGeometryName())->setByteArray('GeometryData', $this->skin->getGeometryData()));
         }
 
-        $nbt->setString('server_name', $this->server_name);
         $nbt->setString('npcId', $this->npcId);
 
         return $nbt;
@@ -124,11 +105,7 @@ final class HumanType extends Human
     protected function initEntity(CompoundTag $nbt): void
     {
         parent::initEntity($nbt);
-
-        $this->server_name = $nbt->getString('server_name', '');
         $this->npcId = $nbt->getString('npcId', '');
-
-        $this->hungerManager = new HungerManager($this);
 
         $this->inventory = new PlayerInventory($this);
 
@@ -190,10 +167,5 @@ final class HumanType extends Human
                 $viewer->getNetworkSession()->onMobMainHandItemChange($this);
             }
         });
-
-        $this->hungerManager->setFood((float)$nbt->getInt('foodLevel', (int)$this->hungerManager->getFood()));
-        $this->hungerManager->setExhaustion($nbt->getFloat('foodExhaustionLevel', $this->hungerManager->getExhaustion()));
-        $this->hungerManager->setSaturation($nbt->getFloat('foodSaturationLevel', $this->hungerManager->getSaturation()));
-        $this->hungerManager->setFoodTickTimer($nbt->getInt('foodTickTimer', $this->hungerManager->getFoodTickTimer()));
     }
 }

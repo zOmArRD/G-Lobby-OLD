@@ -22,12 +22,6 @@ final class Entity
     public const DISCORD = 'discord';
     public const STORE = 'store';
     public const OMAR = 'zomarrd';
-    public const COMBO = 'Combo';
-    public const PRACTICE = 'Practice';
-    public const UHC = 'UHC';
-    public const UHC_RUN = 'UHC Run';
-    public const HCF = 'HCF';
-    public const KITMAP = 'KITMAP';
 
     use EnumTrait;
 

@@ -3,9 +3,9 @@
  * Created by PhpStorm.
  *
  * User: zOmArRD
- * Date: 4/1/2022
+ * Date: 22/4/2022
  *
- * Copyright © 2021 GhostlyMC Network - All Rights Reserved.
+ * Copyright © 2022 GhostlyMC Network (omar@ghostlymc.live) - All Rights Reserved.
  */
 declare(strict_types=1);
 

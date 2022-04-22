@@ -66,8 +66,8 @@ final class ServerManager
                     $this->servers[] = $server;
                 }
 
-                Ghostly::$logger->info(sprintf('%sThe server (%s) has been registered in the database_backup!', PREFIX, $server->getName()));
-                $player?->sendMessage(sprintf('%sThe server (%s) has been registered in the database_backup!', PREFIX, $server->getName()));
+                Ghostly::$logger->info(sprintf('%sThe server (%s) has been loaded from the database!', PREFIX, $server->getName()));
+                $player?->sendMessage(sprintf('%sThe server (%s) has been loaded from the database_backup!', PREFIX, $server->getName()));
             }
         });
     }

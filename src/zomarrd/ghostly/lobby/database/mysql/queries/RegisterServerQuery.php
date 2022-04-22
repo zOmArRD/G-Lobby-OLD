@@ -36,7 +36,7 @@ final class RegisterServerQuery
             }
         } else {
             $mysqli->close();
-            new self($name);
+            $this->registerServer($name);
             return;
         }
 
