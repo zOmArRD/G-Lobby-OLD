@@ -4,3 +4,6 @@
 [submodule "src/zomarrd/ghostly/database"]
 	path = src/zomarrd/ghostly/database
 	url = https://github.com/GhostlyMC/DatabaseAPI
+[submodule "src/zomarrd/ghostly/gcoins"]
+	path = src/zomarrd/ghostly/gcoins
+	url = https://github.com/GhostlyMC/G-Coins
