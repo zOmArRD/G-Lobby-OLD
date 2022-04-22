@@ -49,7 +49,7 @@ function stringifyKeys(array $array): Generator
 
 function constantify(string $permissionName): string
 {
-    return strtoupper(str_replace([".", "-"], "_", $permissionName));
+    return strtoupper(str_replace(['.', '-'], '_', $permissionName));
 }
 
 function generate_lang_keys(array $array): void
@@ -69,10 +69,10 @@ HEADER;
     foreach (stringifyKeys($array) as $key => $_) {
         echo "\tpublic const ";
         echo constantify($key);
-        echo " = \"" . $key . "\";\n";
+        echo ' = "' . $key . "\";\n";
     }
 
-    echo "}";
+    echo '}';
     file_put_contents(dirname(__DIR__) . '/src/zomarrd/ghostly/player/language/LangKey.php', ob_get_clean());
     echo "Done generating LangKey.\n";
 }
