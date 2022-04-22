@@ -1,8 +1,10 @@
 name: G-Lobby
+version: 4.5.0
 main: zomarrd\ghostly\lobby\Ghostly
 api: 4.0.0
+
+website: https://GhostlyMC.live/
 description: Ghostly Lobby Plugin
-version: 4.5.0
 author: zOmArRD
 
 permissions:
