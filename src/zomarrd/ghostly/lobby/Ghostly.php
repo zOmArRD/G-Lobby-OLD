@@ -82,6 +82,8 @@ final class Ghostly extends PluginBase
 
     protected function onLoad(): void
     {
+        require_once __DIR__ . '/../../../../vendor/autoload.php';
+
         self::$instance = $this;
         self::$logger = $this->getLogger();
         //self::$colors = json_decode(file_get_contents($this->getFile() . "resources/colors.json"), true, 512, JSON_THROW_ON_ERROR);
@@ -130,7 +132,7 @@ final class Ghostly extends PluginBase
             new ServerCommand($this),
             new LangCommand($this, 'lang'),
             new GlobalMuteCommand($this, 'globalmute'),
-            new EntityCommand($this, 'entity'),
+            new EntityCommand($this, 'entity')
         ]);
 
         $this->getServer()->getPluginManager()->registerEvent(QueryRegenerateEvent::class, function(QueryRegenerateEvent $event): void {
@@ -198,7 +200,6 @@ final class Ghostly extends PluginBase
          $prefix §fCreated by zOmArRD :)                                                                     
 INFO
         );
-
     }
 
     public function registerEvents(array $listeners): void
