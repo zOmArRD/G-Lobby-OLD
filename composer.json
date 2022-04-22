@@ -1,0 +1,23 @@
+{
+  "name": "zomarrd/g-lobby",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "zOmArRD",
+      "email": "omar@ghostlymc.live"
+    }
+  ],
+  "require": {
+    "ext-mysqli": "*",
+    "ext-mbstring": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "G\\Lobby\\": "src/"
+    },
+    "files": [
+      "src/zomarrd/ghostly/lobby/functions/Utilities.php"
+    ]
+  }
+}
