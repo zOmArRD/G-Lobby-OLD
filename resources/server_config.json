@@ -1,80 +1,80 @@
 {
-	"version": 4.6,
-	"prefix": "§l§cGhostly §f» §r",
-	"proxy_detect": false,
-	"is_proxy_server": false,
-	"server.info": {
-		"name": "Lobby-1",
-		"category": "Lobby",
-		"ip": "play.ghostlymc.live",
-		"port": 19132
-	},
-	"mysql.credentials": {
-		"host": "localhost",
-		"port": 3306,
-		"user": "root",
-		"pass": "omar",
-		"db": "ghostly_lobby",
-		"prefix": "ghostly_"
-	},
-	"scoreboard": {
-		"display": [
-			"§l§cGhostly §fNetwork",
-			"§l§fG§chostly §fNetwork",
-			"§l§cG§fh§costly §fNetwork",
-			"§l§cGh§fo§cstly §fNetwork",
-			"§l§cGho§fs§ctly §fNetwork",
-			"§l§cGhos§ft§cly §fNetwork",
-			"§l§cGhost§fl§cy §fNetwork",
-			"§l§cGhostl§fy Network",
-			"§l§cGhostly §cN§fetwork",
-			"§l§cGhostly §fN§ce§ftwork",
-			"§l§cGhostly §fNe§ct§fwork",
-			"§l§cGhostly §fNet§cw§fork",
-			"§l§cGhostly §fNetw§co§frk",
-			"§l§cGhostly §fNetwo§cr§fk",
-			"§l§cGhostly §fNetwor§ck"
-		],
-		"lines-normal": [
-			"\uE001",
-			" §7{date}",
-			"",
-			" §fNetwork:",
-			" §c{NETWORK.GET-PLAYERS}/{NETWORK.GET-MAX_PLAYERS}",
-			"",
-			" §fRank: §7Default",
-			" §fG-Coins: §c{PLAYER.G-COINS}",
-			"",
-			" §7GhostlyMC.live",
-			"§c\uE001"
-		],
-		"lines-queue": [
-			"\uE001",
-			" §7{date}",
-			"",
-			" §fNetwork:",
-			" §c{NETWORK.GET-PLAYERS}/{NETWORK.GET-MAX_PLAYERS}",
-			"",
-			" §cQueue:",
-			" §7 Server:§f {PLAYER.QUEUE-SERVER}",
-			" §7 Position:§f {PLAYER.QUEUE-POSITION}",
-			"",
-			" §7GhostlyMC.live",
-			"§c\uE001"
-		]
-	},
-	"player-spawn": {
-		"is_enabled": true,
-		"world": {
-			"name": "ghostlylobby",
-			"min-void": 40
-		},
-		"pos": {
-			"x": 0.4828,
-			"y": 68.6436,
-			"z": 0.5053,
-			"yaw": 358.48937988281,
-			"pitch": -1.44476318359375
-		}
-	}
+  "version": 4.7,
+  "prefix": "§l§cGhostly §f» §r",
+  "proxy_detect": false,
+  "is_proxy_server": false,
+  "server.info": {
+    "name": "Lobby-1",
+    "category": "Lobby",
+    "ip": "play.ghostlymc.live",
+    "port": 19132
+  },
+  "mysql.credentials": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "pass": "omar",
+    "db": "ghostly_lobby",
+    "prefix": "ghostly_"
+  },
+  "scoreboard": {
+    "display": [
+      "§l§cGhostly §fNetwork",
+      "§l§fG§chostly §fNetwork",
+      "§l§cG§fh§costly §fNetwork",
+      "§l§cGh§fo§cstly §fNetwork",
+      "§l§cGho§fs§ctly §fNetwork",
+      "§l§cGhos§ft§cly §fNetwork",
+      "§l§cGhost§fl§cy §fNetwork",
+      "§l§cGhostl§fy Network",
+      "§l§cGhostly §cN§fetwork",
+      "§l§cGhostly §fN§ce§ftwork",
+      "§l§cGhostly §fNe§ct§fwork",
+      "§l§cGhostly §fNet§cw§fork",
+      "§l§cGhostly §fNetw§co§frk",
+      "§l§cGhostly §fNetwo§cr§fk",
+      "§l§cGhostly §fNetwor§ck"
+    ],
+    "lines-normal": [
+      "\uE001",
+      " §7{date}",
+      "",
+      " §fNetwork:",
+      " §c{NETWORK.GET-PLAYERS}/{NETWORK.GET-MAX_PLAYERS}",
+      "",
+      " §fRank: §7Default",
+      " §fG-Coins: §c{PLAYER.G-COINS}",
+      "",
+      " §7GhostlyMC.live",
+      "§c\uE001"
+    ],
+    "lines-queue": [
+      "\uE001",
+      " §7{date}",
+      "",
+      " §fNetwork:",
+      " §c{NETWORK.GET-PLAYERS}/{NETWORK.GET-MAX_PLAYERS}",
+      "",
+      " §cQueue:",
+      " §7 Server:§f {PLAYER.QUEUE-SERVER}",
+      " §7 Position:§f {PLAYER.QUEUE-POSITION}",
+      "",
+      " §7GhostlyMC.live",
+      "§c\uE001"
+    ]
+  },
+  "player-spawn": {
+    "is_enabled": true,
+    "world": {
+      "name": "ghostlylobby",
+      "min-void": 40
+    },
+    "pos": {
+      "x": 0.4828,
+      "y": 68.6436,
+      "z": 0.5053,
+      "yaw": 358.48937988281,
+      "pitch": -1.44476318359375
+    }
+  }
 }
