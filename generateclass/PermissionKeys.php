@@ -34,7 +34,7 @@ const LANG_HEADER = <<<'HEADER'
  */
 declare(strict_types=1);
 
-namespace zomarrd\ghostly\player\permission;
+namespace zomarrd\ghostly\lobby\player\permission;
 
 
 HEADER;
@@ -72,7 +72,7 @@ HEADER;
     }
 
     echo '}';
-    file_put_contents(dirname(__DIR__) . '/src/zomarrd/ghostly/player/permission/PermissionKey.php', ob_get_clean());
+    file_put_contents(dirname(__DIR__) . '/src/zomarrd/ghostly/lobby/player/permission/PermissionKey.php', ob_get_clean());
     echo "Done generating PermissionKey.\n";
 }
 
