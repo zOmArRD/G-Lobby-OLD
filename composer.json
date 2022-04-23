@@ -19,5 +19,9 @@
     "files": [
       "src/zomarrd/ghostly/lobby/functions/Utilities.php"
     ]
+  },
+  "scripts": {
+    "permskey": "C:/php/php.exe generateclass/PermissionKeys.php",
+    "langkey": "C:/php/php.exe generateclass/LangKeys.php"
   }
 }
