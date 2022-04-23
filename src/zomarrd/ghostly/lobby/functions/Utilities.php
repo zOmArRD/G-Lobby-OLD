@@ -9,6 +9,9 @@
  */
 declare(strict_types=1);
 
+use pocketmine\player\OfflinePlayer;
+use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\server\ServerManager;
@@ -123,4 +126,22 @@ function checkStrings(string $string, ?GhostlyPlayer $player = null): string
     }
 
     return $msg;
+}
+
+/**
+ * Try to locate a player by name.
+ *
+ * @param string $name
+ *
+ * @return Player|OfflinePlayer
+ */
+function findPlayer(string $name): Player|OfflinePlayer
+{
+    $player = Server::getInstance()->getPlayerByPrefix($name);
+
+    if (!isset($player)) {
+        $player = Server::getInstance()->getOfflinePlayer($name);
+    }
+
+    return $player;
 }
