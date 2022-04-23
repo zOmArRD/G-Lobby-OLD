@@ -27,6 +27,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use ReflectionException;
+use zomarrd\ghostly\gcoins\GCoins;
 use zomarrd\ghostly\lobby\commands\entity\EntityCommand;
 use zomarrd\ghostly\lobby\commands\language\LangCommand;
 use zomarrd\ghostly\lobby\commands\mute\GlobalMuteCommand;
@@ -112,6 +113,9 @@ final class Ghostly extends PluginBase
         new ServerManager();
         new LangHandler();
         new ChatHandler();
+
+        // Load G-Coins API
+        GCoins::getInstance()->init($this);
 
         SkinAdapterSingleton::set(new MojangAdapter());
 
