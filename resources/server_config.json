@@ -14,7 +14,7 @@
     "port": 3306,
     "user": "root",
     "pass": "omar",
-    "db": "ghostly_lobby",
+    "db": "ghostly",
     "prefix": "ghostly_"
   },
   "scoreboard": {
