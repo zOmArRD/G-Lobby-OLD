@@ -16,8 +16,6 @@ use pocketmine\player\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use zomarrd\ghostly\database\mysql\MySQL;
-use zomarrd\ghostly\lobby\database\mysql\queries\InsertQuery;
-use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\lobby\player\permission\PermissionKey;
 
@@ -50,7 +48,6 @@ final class AntiProxy extends AsyncTask
     public function onCompletion(): void
     {
         $result = $this->getResult();
-        $playerName = $this->player;
 
         if ($this->player === '') {
             return;
@@ -74,19 +71,13 @@ final class AntiProxy extends AsyncTask
         $ip = $result->{'ip'};
 
         // Make a ban system that detects alts (ip with the same accounts, etc.)
-        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM player_location WHERE xuid = '$xuid';"), static function($result) use ($playerName, $xuid, $ip, $location): void {
-            if (count($result) === 0) {
-                MySQL::getInstance()->runAsync(new InsertQuery(sprintf("INSERT INTO player_location(player, xuid, ip, city, region, country, continent) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');", $playerName, $xuid, $ip, $location->{'city'}, $location->{'region'}, $location->{'country'}, $location->{'continent'})));
-            } else {
-                /** Add a method to find alts */
-                MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
-                    'ip' => $ip,
-                    'city' => $location->{'city'},
-                    'region' => $location->{'region'},
-                    'country' => $location->{'country'},
-                    'continent' => $location->{'continent'}
-                ]), 'xuid', $xuid, 'player_location'));
-            }
-        });
+        /** Add a method to find alts */
+        MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
+            'ip' => $ip,
+            'city' => $location->{'city'},
+            'region' => $location->{'region'},
+            'country' => $location->{'country'},
+            'continent' => $location->{'continent'}
+        ]), 'xuid', $xuid, 'ghostly_playerdata'));
     }
 }
