@@ -36,6 +36,7 @@ use pocketmine\player\PlayerInfo;
 use pocketmine\Server as PMServer;
 use pocketmine\timings\Timings;
 use pocketmine\utils\TextFormat;
+use zomarrd\ghostly\gcoins\Balance;
 use zomarrd\ghostly\lobby\config\ConfigManager;
 use zomarrd\ghostly\lobby\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -63,6 +64,17 @@ final class GhostlyPlayer extends Player
     private ItemManager $itemManager;
     private bool $canInteractItem = true;
     private Cooldown $cooldown;
+    private Balance $balanceAPI;
+
+    public function setBalanceAPI(Balance $balanceAPI): void
+    {
+        $this->balanceAPI = $balanceAPI;
+    }
+
+    public function getBalanceAPI(): Balance
+    {
+        return $this->balanceAPI;
+    }
 
     public function __construct
     (
