@@ -30,6 +30,7 @@ final class PermissionKey
     public const GHOSTLY_COMMAND_LANG_SET_OTHER = 'ghostly.command.lang.set-other';
     public const GHOSTLY_COMMAND_NPC = 'ghostly.command.npc';
     public const GHOSTLY_COMMAND_SERVER = 'ghostly.command.server';
+    public const GHOSTLY_GCOINS_OWNER = 'ghostly.gcoins.owner';
     public const GHOSTLY_GLOBAL_MUTE_BYPASS = 'ghostly.global-mute.bypass';
     public const GHOSTLY_PROXY_BYPASS = 'ghostly.proxy-bypass';
     public const GHOSTLY_SERVER_CONNECT_WHITELISTED = 'ghostly.server.connect-whitelisted';

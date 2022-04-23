@@ -26,3 +26,5 @@ permissions:
     default: op
   ghostly.proxy-bypass:
     default: op
+  ghostly.gcoins.owner:
+    default: op
