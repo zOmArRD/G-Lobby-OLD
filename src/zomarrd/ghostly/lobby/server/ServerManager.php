@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\server;
 
+use GhostlyMC\DatabaseAPI\mysql\MySQL;
 use pocketmine\scheduler\ClosureTask;
-use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\RegisterServerQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -47,17 +47,12 @@ final class ServerManager
         }), 60);
     }
 
-    public function getCurrentServerName(): string
-    {
-        return Server['name'];
-    }
-
     public function reloadServers(GhostlyPlayer $player = null): void
     {
         $this->servers = [];
         $cServerName = $this->getCurrentServerName();
 
-        MySQL::getInstance()->runAsync(new SelectQuery('SELECT * FROM servers'), function($rows) use ($cServerName, $player) {
+        MySQL::runAsync(new SelectQuery('SELECT * FROM ghostly_servers'), function($rows) use ($cServerName, $player) {
             foreach ($rows as $row) {
                 $server = new Server($row['name'], $row['ip'], (int)$row['port'], (bool)$row['online'], (int)$row['maxplayers'], (int)$row['onlineplayers'], (bool)$row['whitelisted'], $row['category']);
                 if ($row['name'] === $cServerName) {
@@ -67,9 +62,19 @@ final class ServerManager
                 }
 
                 Ghostly::$logger->info(sprintf('%sThe server (%s) has been loaded from the database!', PREFIX, $server->getName()));
-                $player?->sendMessage(sprintf('%sThe server (%s) has been loaded from the database_backup!', PREFIX, $server->getName()));
+                $player?->sendMessage(sprintf('%sThe server (%s) has been loaded from the database!', PREFIX, $server->getName()));
             }
         });
+    }
+
+    public function getCurrentServerName(): string
+    {
+        return Server['name'];
+    }
+
+    public static function getInstance(): ServerManager
+    {
+        return self::$instance;
     }
 
     public function getCurrentServer(): ?Server
@@ -83,11 +88,6 @@ final class ServerManager
     public function getServers(): array
     {
         return $this->servers;
-    }
-
-    public static function getInstance(): ServerManager
-    {
-        return self::$instance;
     }
 
     /**

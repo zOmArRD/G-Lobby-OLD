@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\player;
 
+use GhostlyMC\GCoinsAPI\Balance;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\entity\animation\ArmSwingAnimation;
 use pocketmine\entity\Entity;
@@ -36,7 +37,6 @@ use pocketmine\player\PlayerInfo;
 use pocketmine\Server as PMServer;
 use pocketmine\timings\Timings;
 use pocketmine\utils\TextFormat;
-use zomarrd\ghostly\gcoins\Balance;
 use zomarrd\ghostly\lobby\config\ConfigManager;
 use zomarrd\ghostly\lobby\extensions\scoreboard\Scoreboard;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -49,32 +49,20 @@ use zomarrd\ghostly\lobby\player\permission\PermissionKey;
 use zomarrd\ghostly\lobby\server\queue\Queue;
 use zomarrd\ghostly\lobby\server\Server;
 use zomarrd\ghostly\lobby\server\ServerManager;
+use zomarrd\ghostly\lobby\utils\VISIBILITY;
 use zomarrd\ghostly\lobby\world\Lobby;
 
-/**
- * @todo check<PARTICLE_EYE_DESPAWN>
- */
 final class GhostlyPlayer extends Player
 {
     public int|float $messageReceivedDelay = 0;
     public ?Queue $queue = null;
     private string $currentLang = Language::ENGLISH_US;
-    private bool $loaded = false, $scoreboard = true;
+    private bool $loaded = false, $scoreboard = true, $canInteractItem = true;
     private Scoreboard $scoreboard_session;
     private ItemManager $itemManager;
-    private bool $canInteractItem = true;
     private Cooldown $cooldown;
     private Balance $balanceAPI;
-
-    public function setBalanceAPI(Balance $balanceAPI): void
-    {
-        $this->balanceAPI = $balanceAPI;
-    }
-
-    public function getBalanceAPI(): Balance
-    {
-        return $this->balanceAPI;
-    }
+    private int $visibilityMode = VISIBILITY::ALL;
 
     public function __construct
     (
@@ -83,10 +71,42 @@ final class GhostlyPlayer extends Player
         PlayerInfo     $playerInfo,
         bool           $authenticated,
         Location       $spawnLocation,
-        ?CompoundTag   $namedtag)
-    {
+        ?CompoundTag   $namedtag
+    ) {
         parent::__construct($server, $session, $playerInfo, $authenticated, $spawnLocation, $namedtag);
         $this->cooldown = new Cooldown();
+    }
+
+    public function getVisibilityMode(): string
+    {
+        return match ($this->visibilityMode) {
+            VISIBILITY::STAFF => ItemManager::VISIBILITY_STAFF,
+            VISIBILITY::NOBODY => ItemManager::VISIBILITY_NOBODY,
+            default => ItemManager::VISIBILITY_ALL,
+        };
+    }
+
+    public function setVisibilityMode(int $visibilityMode): void
+    {
+        $this->visibilityMode = $visibilityMode;
+
+        $message = match ($visibilityMode) {
+            VISIBILITY::STAFF => "Staff",
+            VISIBILITY::NOBODY => "Nobody",
+            default => "All",
+        };
+
+        $this->sendTranslated(LangKey::VISIBILITY_MODE_UPDATED, ["{VISIBILITY-MODE}" => $message]);
+    }
+
+    public function getBalanceAPI(): Balance
+    {
+        return $this->balanceAPI;
+    }
+
+    public function setBalanceAPI(Balance $balanceAPI): void
+    {
+        $this->balanceAPI = $balanceAPI;
     }
 
     public function getQueue(): ?Queue
@@ -117,11 +137,6 @@ final class GhostlyPlayer extends Player
     public function isScoreboard(): bool
     {
         return $this->scoreboard;
-    }
-
-    public function setScoreboard(bool $scoreboard): void
-    {
-        $this->scoreboard = $scoreboard;
     }
 
     public function hasClassicProfile(): bool
@@ -176,6 +191,11 @@ final class GhostlyPlayer extends Player
     private function setLoaded(): void
     {
         $this->loaded = true;
+    }
+
+    public function setScoreboard(bool $scoreboard): void
+    {
+        $this->scoreboard = $scoreboard;
     }
 
     public function getScoreboardSession(): Scoreboard
@@ -295,13 +315,15 @@ final class GhostlyPlayer extends Player
     public function getLobbyItems(): void
     {
         $this->getInventory()?->clearAll();
-        foreach ([
-            ItemManager::SERVER_SELECTOR => 0,
-            ItemManager::COSMETICS_SELECTOR => 4,
-            ItemManager::VISIBILITY_ALL => 6,
-            ItemManager::PERSONAL_SETTINGS => 7,
-            ItemManager::LOBBY_SELECTOR => 8
-        ] as $item => $index) {
+
+        foreach (
+            [
+                ItemManager::SERVER_SELECTOR => 0,
+                ItemManager::COSMETICS_SELECTOR => 4,
+                $this->getVisibilityMode() => 6,
+                ItemManager::PERSONAL_SETTINGS => 7,
+                ItemManager::LOBBY_SELECTOR => 8
+            ] as $item => $index) {
             $this->setItem($index, $this->getItemManager()->get($item));
         }
     }
@@ -372,10 +394,11 @@ final class GhostlyPlayer extends Player
 
     private function recheckBroadcastPermissions(): void
     {
-        foreach ([
-            DefaultPermissionNames::BROADCAST_ADMIN => PMServer::BROADCAST_CHANNEL_ADMINISTRATIVE,
-            DefaultPermissionNames::BROADCAST_USER => PMServer::BROADCAST_CHANNEL_USERS
-        ] as $permission => $channel) {
+        foreach (
+            [
+                DefaultPermissionNames::BROADCAST_ADMIN => PMServer::BROADCAST_CHANNEL_ADMINISTRATIVE,
+                DefaultPermissionNames::BROADCAST_USER => PMServer::BROADCAST_CHANNEL_USERS
+            ] as $permission => $channel) {
             if ($this->hasPermission($permission)) {
                 $this->server->subscribeToBroadcastChannel($channel, $this);
             } else {

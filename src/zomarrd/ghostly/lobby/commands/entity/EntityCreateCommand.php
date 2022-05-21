@@ -38,7 +38,7 @@ final class EntityCreateCommand extends BaseSubCommand
         switch ($type) {
             case $sender->getName():
                 if (isset($args['format'])) {
-                    $explode = explode(':', $args['formEat']);
+                    $explode = explode(':', $args['format']);
                     Entity::ENTITY()->spawnHuman($sender, $type, $explode);
                 }
                 break;

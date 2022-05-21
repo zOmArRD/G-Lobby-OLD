@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\player\item;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
@@ -29,8 +30,19 @@ final class ItemManager extends IPlayer
     public const PERSONAL_SETTINGS = 'personal-settings';
     public const QUEUE_EXIT = 'queue-exit';
 
+    public const ALL_ITEMS = [
+        self::SERVER_SELECTOR,
+        self::COSMETICS_SELECTOR,
+        self::LOBBY_SELECTOR,
+        self::VISIBILITY_ALL,
+        self::VISIBILITY_STAFF,
+        self::VISIBILITY_NOBODY,
+        self::PERSONAL_SETTINGS,
+        self::QUEUE_EXIT
+    ];
+
     /** @noinspection PhpDeprecationInspection */
-    public function get(string $name): Item
+    public function get(#[ExpectedValues(self::ALL_ITEMS)] string $name): Item
     {
         return match ($name) {
             self::SERVER_SELECTOR => $this->getFormatted($name, VanillaItems::COMPASS()),

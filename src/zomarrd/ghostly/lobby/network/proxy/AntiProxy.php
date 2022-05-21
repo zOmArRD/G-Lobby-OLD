@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace zomarrd\ghostly\lobby\network\proxy;
 
 use Exception;
+use GhostlyMC\DatabaseAPI\mysql\MySQL;
 use pocketmine\player\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\lobby\player\permission\PermissionKey;
 
@@ -72,7 +72,7 @@ final class AntiProxy extends AsyncTask
 
         // Make a ban system that detects alts (ip with the same accounts, etc.)
         /** Add a method to find alts */
-        MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
+        MySQL::runAsync(new UpdateRowQuery(serialize([
             'ip' => $ip,
             'city' => $location->{'city'},
             'region' => $location->{'region'},

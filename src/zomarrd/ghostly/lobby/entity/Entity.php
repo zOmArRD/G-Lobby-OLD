@@ -21,11 +21,8 @@ final class Entity
     public const EXTRA = '{JOIN}';
     public const DISCORD = 'discord';
     public const STORE = 'store';
-    public const OMAR = 'zomarrd';
-
     use EnumTrait;
 
-    /** @noinspection MethodCanBePrivateInspection */
     protected static function setup(): void
     {
         self::_registryRegister('entity', new EntityManager());

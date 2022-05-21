@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\database\mysql\queries;
 
+use GhostlyMC\DatabaseAPI\mysql\Query;
 use mysqli;
-use zomarrd\ghostly\database\mysql\Query;
 
 class SelectQuery extends Query
 {

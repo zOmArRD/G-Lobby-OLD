@@ -23,7 +23,7 @@ final class ConfigManager
     public static ConfigManager $instance;
     private static Config $server_config;
 
-    private array $files = ['server_config.json' => 4.7];
+    private array $files = ['server_config.json' => 4.8];
 
     public function __construct()
     {
@@ -79,6 +79,11 @@ final class ConfigManager
         Ghostly::getInstance()->saveResource($file, $replace);
     }
 
+    public static function getInstance(): ConfigManager
+    {
+        return self::$instance;
+    }
+
     public function getFile(string $file): Config
     {
         return new Config($this->getDataFolder() . $file);
@@ -97,10 +102,5 @@ final class ConfigManager
     public function getWorldManager(): WorldManager
     {
         return Server::getInstance()->getWorldManager();
-    }
-
-    public static function getInstance(): ConfigManager
-    {
-        return self::$instance;
     }
 }

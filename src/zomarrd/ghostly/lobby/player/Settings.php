@@ -27,11 +27,6 @@ final class Settings
 
     public function __construct(private GhostlyPlayer $player) {}
 
-    public function getPlayer(): GhostlyPlayer
-    {
-        return $this->player;
-    }
-
     public function registerChest(): void
     {
         $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName('Global Settings | 1/1')->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
@@ -53,6 +48,11 @@ final class Settings
         $this->addButton(new MenuButton($close, function(GhostlyPlayer $player): void {
             $player->closeInventory();
         }), 0);
+    }
+
+    public function getPlayer(): GhostlyPlayer
+    {
+        return $this->player;
     }
 
     public function addButton(MenuButton $button, int $slot): void

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\events;
 
+use GhostlyMC\DatabaseAPI\mysql\MySQL;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\event\block\BlockBurnEvent;
 use pocketmine\event\block\BlockFormEvent;
@@ -33,7 +34,6 @@ use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\XboxLivePlayerInfo;
-use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\InsertQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -67,9 +67,9 @@ final class PlayerListener implements Listener
 
         DeviceData::saveUIProfile($name, $info->getExtraData()['UIProfile']);
 
-        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM ghostly_playerdata WHERE xuid = '$xuid';"), static function($result) use ($xuid, $name, $locale): void {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_playerdata WHERE xuid = '$xuid';"), static function($result) use ($xuid, $name, $locale): void {
             if (count($result) === 0) {
-                MySQL::getInstance()->runAsync(new InsertQuery(sprintf("INSERT INTO ghostly_playerdata(xuid, username, language, scoreboard) VALUES ('%s', '%s', '%s', true);", $xuid, $name, $locale)));
+                MySQL::runAsync(new InsertQuery(sprintf("INSERT INTO ghostly_playerdata(xuid, username, language, scoreboard) VALUES ('%s', '%s', '%s', true);", $xuid, $name, $locale)));
             }
         });
     }
@@ -84,13 +84,14 @@ final class PlayerListener implements Listener
 
         $xuid = $player->getXuid();
 
-        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM ghostly_playerdata WHERE xuid = '$xuid';"), static function($result) use ($player): void {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_playerdata WHERE xuid = '$xuid';"), static function($result) use ($player): void {
             if (count($result) === 0) {
                 $player->transfer('ghostlymc.live');
                 return;
             }
 
             $data = $result[0];
+            $player->setVisibilityMode($data->visibilityMode);
             $player->setLanguage($data->language);
             $player->setScoreboard((bool)$data->scoreboard);
         });

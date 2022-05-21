@@ -1,5 +1,4 @@
 <?php
-/** @noinspection MethodVisibilityInspection */
 /*
  * Created by PhpStorm.
  *
@@ -15,6 +14,7 @@ namespace zomarrd\ghostly\lobby;
 use AttachableLogger;
 use CortexPE\Commando\exception\HookAlreadyRegistered;
 use CortexPE\Commando\PacketHooker;
+use GhostlyMC\GCoinsAPI\GCoins;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\event\EventPriority;
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -27,7 +27,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use ReflectionException;
-use zomarrd\ghostly\gcoins\GCoins;
 use zomarrd\ghostly\lobby\commands\entity\EntityCommand;
 use zomarrd\ghostly\lobby\commands\language\LangCommand;
 use zomarrd\ghostly\lobby\commands\mute\GlobalMuteCommand;
@@ -57,11 +56,6 @@ final class Ghostly extends PluginBase
     public static Config $server_items;
     public static QueueManager $queueManager;
     private static bool $globalMute = false;
-
-    public static function getInstance(): Ghostly
-    {
-        return self::$instance;
-    }
 
     public static function isGlobalMute(): bool
     {
@@ -101,8 +95,8 @@ final class Ghostly extends PluginBase
     }
 
     /**
-     * @throws HookAlreadyRegistered
      * @throws ReflectionException
+     * @throws HookAlreadyRegistered
      * @noinspection PhpUndefinedMethodInspection
      * @noinspection PhpUndefinedFieldInspection
      */
@@ -159,9 +153,7 @@ final class Ghostly extends PluginBase
             $interface->setPacketLimit(PHP_INT_MAX);
         }
 
-        /**
-         * If the server is proxy, it will establish a custom login method.
-         */
+        // If the server is proxy, it will establish a custom login method.
         if (self::$is_proxy_server) {
             $this->getServer()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, function(DataPacketReceiveEvent $event): void {
                 $packet = $event->getPacket();
@@ -204,6 +196,11 @@ final class Ghostly extends PluginBase
          $prefix §fCreated by zOmArRD :)                                                                     
 INFO
         );
+    }
+
+    public static function getInstance(): Ghostly
+    {
+        return self::$instance;
     }
 
     public function registerEvents(array $listeners): void

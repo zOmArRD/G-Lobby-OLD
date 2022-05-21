@@ -10,7 +10,7 @@
 
 namespace zomarrd\ghostly\lobby\menu\lobbyselector;
 
-use jojoe77777\FormAPI\SimpleForm;
+use GhostlyMC\FormAPI\SimpleForm;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\InvMenuTransaction;
 use muqsit\invmenu\transaction\InvMenuTransactionResult;
@@ -157,17 +157,13 @@ final class LobbySelector
         $text = '§r';
 
         if ($server->getName() === Server['name']) {
-            $text .= sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
-        }
-
-        if ($server->isOnline()) {
-            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
+            $text = sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         } else {
-            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
+            $text = $server->isOnline() ? sprintf("§a%s §7[§f%s§7/§7%s§7]\n§eClick to transfer!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers()) : sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cOFFLINE", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
         if ($server->isWhitelisted()) {
-            $text .= sprintf("§a%s §7[§f%s§f/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
+            $text = sprintf("§a%s §7[§f%s§7/§7%s§7]\n§cWHITELISTED", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         }
 
         $form->addButton($text, $form::IMAGE_TYPE_NULL, '', $server->getName());

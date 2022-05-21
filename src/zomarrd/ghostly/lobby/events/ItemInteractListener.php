@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\events;
 
+use GhostlyMC\DatabaseAPI\mysql\MySQL;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionData;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
@@ -28,6 +30,7 @@ use zomarrd\ghostly\lobby\menu\Menu;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\player\item\ItemManager;
 use zomarrd\ghostly\lobby\player\language\LangKey;
+use zomarrd\ghostly\lobby\utils\VISIBILITY;
 
 final class ItemInteractListener implements Listener
 {
@@ -80,6 +83,8 @@ final class ItemInteractListener implements Listener
     public function handleInteract(GhostlyPlayer $player, Item $item): void
     {
         $itemId = $item->getNamedTag()->getString('ItemID', '');
+        $inventory = $player->getInventory();
+
         switch ($itemId) {
             case ItemManager::LOBBY_SELECTOR:
                 if ($player->hasClassicProfile()) {
@@ -103,6 +108,31 @@ final class ItemInteractListener implements Listener
                 Ghostly::getQueueManager()->remove($player, $player->getQueue()?->getServer());
                 $player->getLobbyItems();
                 $player->sendTranslated(LangKey::QUEUE_PLAYER_LEFT);
+                break;
+            case ItemManager::VISIBILITY_ALL: // change to staff.
+                $inventory->setItem(6, VanillaItems::air());
+
+                MySQL::run(sprintf("UPDATE `ghostly_playerdata` SET `visibilityMode` = '%s' WHERE `xuid` = %s", VISIBILITY::STAFF, $player->getXuid()), function() use ($player, $inventory) {
+                    $player->setVisibilityMode(VISIBILITY::STAFF);
+                    $inventory->setItem(6, $player->getItemManager()->get(ItemManager::VISIBILITY_STAFF));
+
+                });
+                break;
+            case ItemManager::VISIBILITY_STAFF: // change to nobody.
+                $inventory->setItem(6, VanillaItems::air());
+
+                MySQL::run(sprintf("UPDATE `ghostly_playerdata` SET `visibilityMode` = '%s' WHERE `xuid` = %s", VISIBILITY::NOBODY, $player->getXuid()), function() use ($player, $inventory) {
+                    $player->setVisibilityMode(VISIBILITY::NOBODY);
+                    $inventory->setItem(6, $player->getItemManager()->get(ItemManager::VISIBILITY_NOBODY));
+                });
+                break;
+            case ItemManager::VISIBILITY_NOBODY: // change to all.
+                $inventory->setItem(6, VanillaItems::air());
+
+                MySQL::run(sprintf("UPDATE `ghostly_playerdata` SET `visibilityMode` = '%s' WHERE `xuid` = %s", VISIBILITY::ALL, $player->getXuid()), function() use ($player, $inventory) {
+                    $player->setVisibilityMode(VISIBILITY::ALL);
+                    $inventory->setItem(6, $player->getItemManager()->get(ItemManager::VISIBILITY_ALL));
+                });
                 break;
         }
     }

@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\menu\server;
 
-use jojoe77777\FormAPI\CustomForm;
-use jojoe77777\FormAPI\SimpleForm;
+use GhostlyMC\FormAPI\CustomForm;
+use GhostlyMC\FormAPI\SimpleForm;
 use zomarrd\ghostly\lobby\config\ConfigManager;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\player\language\LangKey;

@@ -33,6 +33,7 @@ final class SQLStrings
         `username` VARCHAR(50) NOT NULL,
         `scoreboard` BOOLEAN DEFAULT TRUE,
         `language` VARCHAR(16) DEFAULT \'en_EN\',
+        `visibilityMode` INT DEFAULT 0,
         `ip` VARCHAR(50) DEFAULT \'\',
         `city` VARCHAR(50) DEFAULT \'\',
         `region` VARCHAR(50) DEFAULT \'\',
@@ -47,11 +48,10 @@ final class SQLStrings
         self::CREATE_PLAYER_DATA_TABLE,
     ];
 
-    public const CREATE_DEFAULT_DB = 'CREATE DATABASE IF NOT EXISTS' . MySQL['prefix'] . '`ghostly`;';
+    public const CREATE_DEFAULT_DB = 'CREATE DATABASE IF NOT EXISTS `ghostly`;';
 
     /**
      * TODO: Refactored to better handle the SQL strings.
      */
-    public const INSERT_INTO_SERVERS = "INSERT INTO ghostly_servers (name, ip, port, online, maxplayers, onlineplayers, whitelisted, category) VALUES ('%s', '%s', %s, %s, %s, %s, %s, '%s');";
+    public const INSERT_INTO_SERVERS = "INSERT INTO ghostly_servers (name, ip, port, online, maxplayers, onlineplayers, whitelisted, category) VALUES (?, ?, ?, 0, ?, 0, 1, ?);";
 }
-

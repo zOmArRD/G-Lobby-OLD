@@ -116,7 +116,7 @@ function checkStrings(string $string, ?GhostlyPlayer $player = null): string
         '{NETWORK.GET-MAX_PLAYERS}' => ServerManager::getInstance()->getNetworkMaxPlayers(),
         '{PLAYER.QUEUE-POSITION}' => $player?->getQueue()?->getPositionFormatted(),
         '{PLAYER.QUEUE-SERVER}' => $player?->getQueue()?->getServer(),
-        '{PLAYER.G-COINS}' => '250' /*TODO: ADD GET G-COINS METHOD*/
+        '{PLAYER.G-COINS}' => $player?->getBalanceAPI()->getBalance()
     ];
     $keys = array_keys($toReplace);
     $values = array_values($toReplace);

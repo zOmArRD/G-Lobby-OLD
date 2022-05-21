@@ -11,16 +11,16 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\database\mysql;
 
-use zomarrd\ghostly\database\mysql\MySQL;
+use GhostlyMC\DatabaseAPI\mysql\MySQL;
 
 final class MySQLProvider
 {
     public static function createTables(): void
     {
-        MySQL::getInstance()->run(SQLStrings::CREATE_DEFAULT_DB);
+        MySQL::run(SQLStrings::CREATE_DEFAULT_DB);
 
         foreach (SQLStrings::CREATE_DEFAULT_TABLES as $query) {
-            MySQL::getInstance()->run($query);
+            MySQL::run($query);
         }
     }
 }

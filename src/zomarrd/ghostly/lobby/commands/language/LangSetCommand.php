@@ -14,9 +14,9 @@ namespace zomarrd\ghostly\lobby\commands\language;
 use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
+use GhostlyMC\DatabaseAPI\mysql\MySQL;
 use pocketmine\command\CommandSender;
 use pocketmine\Server;
-use zomarrd\ghostly\database\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\player\language\LangHandler;
@@ -38,10 +38,14 @@ final class LangSetCommand extends BaseSubCommand
                         return;
                     }
 
-                    $sender->setLanguage($target);
-                    $sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $target]);
-                    MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize(['lang' => $target]), 'player', $sender->getName(), 'player_config'));
-                    $sender->getLobbyItems();
+                    MySQL::runAsync(
+                        new UpdateRowQuery(serialize(['lang' => $target]), 'player', $sender->getName(), 'player_config'),
+                        static function() use ($sender, $target) {
+                            $sender->setLanguage($target);
+                            $sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $target]);
+                            $sender->getLobbyItems();
+                        }
+                    );
                 }
             }
         }
@@ -88,10 +92,14 @@ final class LangSetCommand extends BaseSubCommand
                 return;
             }
 
-            $isPlayer->setLanguage($newLang);
-            $isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $newLang]);
-            MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize(['lang' => $newLang]), 'player', $isPlayer->getName(), 'player_config'));
-            $isPlayer->getLobbyItems();
+            MySQL::runAsync(
+                new UpdateRowQuery(serialize(['lang' => $newLang]), 'player', $isPlayer->getName(), 'ghostly_playerdata'),
+                static function() use ($isPlayer, $newLang) {
+                    $isPlayer->setLanguage($newLang);
+                    $isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $newLang]);
+                    $isPlayer->getLobbyItems();
+                }
+            );
         }
     }
 

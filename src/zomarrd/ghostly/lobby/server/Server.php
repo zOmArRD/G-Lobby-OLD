@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\server;
 
-use zomarrd\ghostly\database\mysql\MySQL;
+use GhostlyMC\DatabaseAPI\mysql\MySQL;
 use zomarrd\ghostly\lobby\database\mysql\queries\SelectQuery;
 use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\lobby\Ghostly;
@@ -59,54 +59,6 @@ final class Server
         $this->port = $port;
     }
 
-    public function isOnline(): bool
-    {
-        return $this->online;
-    }
-
-    public function setOnline(bool $online): void
-    {
-        if (!$online) {
-            MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
-                'online' => 0,
-                'onlineplayers' => 0
-            ]), 'name', $this->name, 'servers'));
-            $this->onlinePlayers = 0;
-        }
-
-        $this->online = $online;
-    }
-
-    public function getMaxPlayers(): int
-    {
-        return $this->maxPlayers;
-    }
-
-    public function setMaxPlayers(int $maxPlayers): void
-    {
-        $this->maxPlayers = $maxPlayers;
-    }
-
-    public function getOnlinePlayers(): int
-    {
-        return $this->onlinePlayers;
-    }
-
-    public function setOnlinePlayers(int $onlinePlayers): void
-    {
-        $this->onlinePlayers = $onlinePlayers;
-    }
-
-    public function isWhitelisted(): bool
-    {
-        return $this->isWhitelisted;
-    }
-
-    public function setIsWhitelisted(bool $isWhitelisted): void
-    {
-        $this->isWhitelisted = $isWhitelisted;
-    }
-
     public function getCategory(): string
     {
         return $this->category;
@@ -123,16 +75,41 @@ final class Server
         $this->setOnlinePlayers(count(Ghostly::getInstance()->getServer()->getOnlinePlayers()));
         $this->setIsWhitelisted(Ghostly::getInstance()->getServer()->hasWhitelist());
 
-        MySQL::getInstance()->runAsync(new UpdateRowQuery(serialize([
+        MySQL::runAsync(new UpdateRowQuery(serialize([
             'maxplayers' => $this->maxPlayers,
             'onlineplayers' => $this->onlinePlayers,
             'whitelisted' => (int)$this->isWhitelisted,
-        ]), 'name', $this->name, 'servers'));
+        ]), 'name', $this->name, 'ghostly_servers'));
+    }
+
+    public function setMaxPlayers(int $maxPlayers): void
+    {
+        $this->maxPlayers = $maxPlayers;
+    }
+
+    public function getMaxPlayers(): int
+    {
+        return $this->maxPlayers;
+    }
+
+    public function setOnlinePlayers(int $onlinePlayers): void
+    {
+        $this->onlinePlayers = $onlinePlayers;
+    }
+
+    public function getOnlinePlayers(): int
+    {
+        return $this->onlinePlayers;
+    }
+
+    public function setIsWhitelisted(bool $isWhitelisted): void
+    {
+        $this->isWhitelisted = $isWhitelisted;
     }
 
     public function syncRemote(): void
     {
-        MySQL::getInstance()->runAsync(new SelectQuery("SELECT * FROM servers WHERE name = '$this->name';"), function($rows) {
+        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers WHERE name = '$this->name';"), function($rows) {
             $row = $rows[0];
             if ($row !== null) {
                 $this->setOnline((bool)$row['online']);
@@ -146,6 +123,19 @@ final class Server
         });
     }
 
+    public function setOnline(bool $online): void
+    {
+        if (!$online) {
+            MySQL::runAsync(new UpdateRowQuery(serialize([
+                'online' => 0,
+                'onlineplayers' => 0
+            ]), 'name', $this->name, 'ghostly_servers'));
+            $this->onlinePlayers = 0;
+        }
+
+        $this->online = $online;
+    }
+
     public function getStatus(): string
     {
         if (!$this->isOnline()) {
@@ -157,5 +147,15 @@ final class Server
         }
 
         return sprintf('§r§7Players: §f%s§7/§f%s', $this->getOnlinePlayers(), $this->getMaxPlayers());
+    }
+
+    public function isOnline(): bool
+    {
+        return $this->online;
+    }
+
+    public function isWhitelisted(): bool
+    {
+        return $this->isWhitelisted;
     }
 }

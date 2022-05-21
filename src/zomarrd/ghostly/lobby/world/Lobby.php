@@ -14,6 +14,11 @@ namespace zomarrd\ghostly\lobby\world;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 
+/**
+ * This class is used to register a lobby world.
+ * Necessary for the lobby to work.
+ * Example Usage: for teleporting players to the lobby etc.
+ */
 final class Lobby
 {
     public static ?Lobby $instance = null;
@@ -27,8 +32,8 @@ final class Lobby
         private int|float $spawnZ,
         private float|int $spawnYaw,
         private float|int $spawnPitch,
-        private int       $minVoid)
-    {
+        private int       $minVoid
+    ) {
         self::$instance = $this;
         $this->spawn = new Position($this->getSpawnX(), $this->getSpawnY(), $this->getSpawnZ(), $this->getWorld());
     }
