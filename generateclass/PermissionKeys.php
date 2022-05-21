@@ -9,10 +9,6 @@
  */
 declare(strict_types=1);
 
-namespace build;
-
-use Generator;
-
 const LANG_HEADER = <<<'HEADER'
 <?php
 /*
@@ -82,8 +78,11 @@ foreach ($files as $file) {
         $yml = yaml_parse_file($file);
     }
 }
-if ($yml === false) {
+
+
+if (!isset($yml) || $yml === false) {
     fwrite(STDERR, "Missing Permission files!\n");
     exit(1);
 }
+
 generate_permission_keys($yml['permissions']);
