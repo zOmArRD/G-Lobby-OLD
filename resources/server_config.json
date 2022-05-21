@@ -1,5 +1,5 @@
 {
-  "version": 4.7,
+  "version": 4.8,
   "prefix": "§l§cGhostly §f» §r",
   "proxy_detect": false,
   "is_proxy_server": false,
@@ -10,12 +10,11 @@
     "port": 19132
   },
   "mysql.credentials": {
-    "host": "localhost",
+    "host": "ghostlymc.live",
     "port": 3306,
     "user": "root",
     "pass": "omar",
-    "db": "ghostly",
-    "prefix": "ghostly_"
+    "db": "ghostly"
   },
   "scoreboard": {
     "display": [
