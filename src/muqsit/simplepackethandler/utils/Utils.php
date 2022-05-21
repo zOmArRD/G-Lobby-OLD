@@ -25,11 +25,10 @@ final class Utils
      */
     public static function parseClosureSignature(Closure $closure, array $params, string $return_type): array
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
         $method = new ReflectionFunction($closure);
         $type = $method->getReturnType();
         if (!($type instanceof ReflectionNamedType) || $type->allowsNull() || $type->getName() !== $return_type) {
-            throw new InvalidArgumentException("Return value of {$method->getName()} must be {$return_type}");
+            throw new InvalidArgumentException("Return value of {$method->getName()} must be $return_type");
         }
 
         $parsed_params = [];
@@ -51,7 +50,7 @@ final class Utils
             }
         }
 
-        throw new InvalidArgumentException("Closure must satisfy signature (" . implode(", ", $params) . ") : {$return_type}");
+        throw new InvalidArgumentException("Closure must satisfy signature (" . implode(", ", $params) . ") : $return_type");
     }
 
     /**

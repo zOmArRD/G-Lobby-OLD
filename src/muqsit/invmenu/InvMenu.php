@@ -23,12 +23,12 @@ use pocketmine\player\Player;
 class InvMenu implements InvMenuTypeIds
 {
 
-    private InvMenuType $type;
-    private ?string $name = null;
-    private ?Closure $listener = null;
-    private ?Closure $inventory_close_listener = null;
-    private Inventory $inventory;
-    private ?SharedInvMenuSynchronizer $synchronizer = null;
+    protected InvMenuType $type;
+    protected ?string $name = null;
+    protected ?Closure $listener = null;
+    protected ?Closure $inventory_close_listener = null;
+    protected Inventory $inventory;
+    protected ?SharedInvMenuSynchronizer $synchronizer = null;
 
     public function __construct(InvMenuType $type, ?Inventory $custom_inventory = null)
     {
@@ -52,7 +52,7 @@ class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param Closure|null $listener
+     * @param (Closure(DeterministicInvMenuTransaction) : void)|null $listener
      *
      * @return Closure(InvMenuTransaction) : InvMenuTransactionResult
      */
@@ -84,7 +84,7 @@ class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param Closure|null $listener
+     * @param (Closure(InvMenuTransaction) : InvMenuTransactionResult)|null $listener
      *
      * @return self
      */
@@ -95,9 +95,10 @@ class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param Closure|null $listener
+     * @param (Closure(Player, Inventory) : void)|null $listener
+     *
      * @return self
-*/
+     */
     public function setInventoryCloseListener(?Closure $listener): self
     {
         $this->inventory_close_listener = $listener;
@@ -105,10 +106,10 @@ class InvMenu implements InvMenuTypeIds
     }
 
     /**
-     * @param Player       $player
-     * @param string|null  $name
-     * @param Closure|null $callback
-*/
+     * @param Player      $player
+     * @param string|null $name
+     * @param (Closure(bool) : void)|null $callback
+     */
     final public function send(Player $player, ?string $name = null, ?Closure $callback = null): void
     {
         $player->removeCurrentWindow();

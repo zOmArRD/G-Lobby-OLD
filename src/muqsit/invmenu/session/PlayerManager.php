@@ -49,17 +49,17 @@ final class PlayerManager
         ));
     }
 
+    public function get(Player $player): PlayerSession
+    {
+        return $this->sessions[$player->getId()];
+    }
+
     private function destroy(Player $player): void
     {
         if (isset($this->sessions[$player_id = $player->getId()])) {
             $this->sessions[$player_id]->finalize();
             unset($this->sessions[$player_id]);
         }
-    }
-
-    public function get(Player $player): PlayerSession
-    {
-        return $this->sessions[$player->getId()];
     }
 
     public function getNullable(Player $player): ?PlayerSession

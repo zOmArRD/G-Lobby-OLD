@@ -63,7 +63,9 @@ final class InvMenuEventHandler implements Listener
         }
 
         $session = $this->player_manager->getNullable($target);
-        $session?->getNetwork()->translateContainerOpen($session, $packet);
+        if ($session !== null) {
+            $session->getNetwork()->translateContainerOpen($session, $packet);
+        }
     }
 
     /**

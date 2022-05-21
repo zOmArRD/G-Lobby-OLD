@@ -32,7 +32,7 @@ final class PacketMonitorListener implements IPacketMonitor, Listener
         $this->incoming_handlers[self::getPidFromHandler($handler, ServerboundPacket::class)][spl_object_id($handler)] = $handler;
 
         if ($this->incoming_event_handler === null) {
-            Server::getInstance()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, $this->incoming_event_handler = function (DataPacketReceiveEvent $event): void {
+            Server::getInstance()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, $this->incoming_event_handler = function(DataPacketReceiveEvent $event): void {
                 /** @var DataPacket&ServerboundPacket $packet */
                 $packet = $event->getPacket();
                 if (isset($this->incoming_handlers[$pid = $packet::NETWORK_ID])) {
@@ -69,7 +69,7 @@ final class PacketMonitorListener implements IPacketMonitor, Listener
         $this->outgoing_handlers[self::getPidFromHandler($handler, ClientboundPacket::class)][spl_object_id($handler)] = $handler;
 
         if ($this->outgoing_event_handler === null) {
-            Server::getInstance()->getPluginManager()->registerEvent(DataPacketSendEvent::class, $this->outgoing_event_handler = function (DataPacketSendEvent $event): void {
+            Server::getInstance()->getPluginManager()->registerEvent(DataPacketSendEvent::class, $this->outgoing_event_handler = function(DataPacketSendEvent $event): void {
                 /** @var DataPacket&ClientboundPacket $packet */
                 foreach ($event->getPackets() as $packet) {
                     if (isset($this->outgoing_handlers[$pid = $packet::NETWORK_ID])) {
