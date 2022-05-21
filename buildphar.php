@@ -36,6 +36,7 @@ if (file_exists($pharFile)) {
 
 $phar = new Phar($pharFile);
 $phar->setSignatureAlgorithm(Phar::SHA1);
+$phar->setStub('<?php const AUTHOR ="zOmArRD"; __HALT_COMPILER();');
 $phar->startBuffering();
 
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__));
