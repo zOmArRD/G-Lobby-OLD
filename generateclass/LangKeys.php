@@ -74,9 +74,16 @@ HEADER;
 
 $langFile = file_get_contents(dirname(__DIR__) . '/resources/lang/en_US.json');
 try {
-    $json = json_decode($langFile, false, 512, JSON_THROW_ON_ERROR);
+    $json = json_decode($langFile, true, 512, JSON_THROW_ON_ERROR);
 } catch (JsonException $e) {
     echo $e->getMessage();
     exit(1);
 }
-generate_lang_keys((array)$json->messages);
+generate_lang_keys(array_merge(
+    $json['player-strings'],
+    $json['form-strings'],
+    $json['language-strings'],
+    $json['network-strings'],
+    $json['queue-strings'],
+    $json['item-strings'])
+);
