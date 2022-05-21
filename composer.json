@@ -10,18 +10,22 @@
   ],
   "require": {
     "ext-mysqli": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ghostlymc/database-api": "dev-main",
+    "ghostlymc/gcoins-api": "1.2.3",
+    "ghostlymc/formapi": ">=1.0.0",
+    "cortexpe/commando": "dev-master"
   },
   "autoload": {
-    "psr-4": {
-      "G\\Lobby\\": "src/"
-    },
     "files": [
       "src/zomarrd/ghostly/lobby/functions/Utilities.php"
     ]
   },
   "scripts": {
-    "permskey": "C:/php/php.exe generateclass/PermissionKeys.php",
-    "langkey": "C:/php/php.exe generateclass/LangKeys.php"
+    "makephar": [
+      "@php buildphar.php"
+    ],
+    "permskey": "@php generateclass/PermissionKeys.php",
+    "langkey": "@php generateclass/LangKeys.php"
   }
 }
