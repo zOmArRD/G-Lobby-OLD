@@ -85,5 +85,6 @@ generate_lang_keys(array_merge(
     $json['language-strings'],
     $json['network-strings'],
     $json['queue-strings'],
-    $json['item-strings'])
-);
+    $json['item-strings'],
+    $json['other-strings']
+));

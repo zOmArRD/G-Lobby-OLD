@@ -18,11 +18,16 @@ class SelectQuery extends Query
 {
     public mixed $rows;
 
-    public function __construct(private string $query) { parent::__construct(); }
+    public function __construct(private string $table, private ?string $conditionKey = null, private ?string $key = null) { parent::__construct(); }
 
     final public function query(mysqli $mysqli): void
     {
-        $result = $mysqli->query($this->query);
+        if (!isset($this->conditionKey)) {
+            $result = $mysqli->query(sprintf("SELECT * FROM %s", $this->table));
+        } else {
+            $result = $mysqli->query(sprintf("SELECT * FROM %s WHERE %s = '%s'", $this->table, $this->conditionKey, $this->key));
+        }
+
         $rows = [];
 
         if ($result === false) {

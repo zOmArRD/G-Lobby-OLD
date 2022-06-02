@@ -46,12 +46,10 @@ final class SQLStrings
     public const CREATE_DEFAULT_TABLES = [
         self::CREATE_SERVERS_TABLE,
         self::CREATE_PLAYER_DATA_TABLE,
+        \GhostlyMC\GCoinsAPI\database\mysql\SQLStrings::CREATE_TABLE_GCOINS
     ];
 
     public const CREATE_DEFAULT_DB = 'CREATE DATABASE IF NOT EXISTS `ghostly`;';
 
-    /**
-     * TODO: Refactored to better handle the SQL strings.
-     */
     public const INSERT_INTO_SERVERS = "INSERT INTO ghostly_servers (name, ip, port, online, maxplayers, onlineplayers, whitelisted, category) VALUES (?, ?, ?, 0, ?, 0, 1, ?);";
 }

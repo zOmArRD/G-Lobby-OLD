@@ -21,13 +21,11 @@ final class Language
     public const ENGLISH_US = 'en_US';
 
     /**
-     * @param string        $locale
-     * @param array<string> $names
-     * @param array<string> $messages
-     * @param array<string> $item_names
-     * @param string        $authors
+     * @param string $locale
+     * @param array  $names
+     * @param array  $strings
      */
-    public function __construct(private string $locale, private array $names, private array $messages, private array $item_names, private string $authors) {}
+    public function __construct(private string $locale, private array $names, private array $strings) {}
 
     public static function openLangForm(GhostlyPlayer $player): LangForm
     {
@@ -59,7 +57,7 @@ final class Language
     {
         if ($locale === '' || !isset($this->names[$locale])) {
             $values = array_values($this->names);
-            return in_array($name, $values);
+            return in_array($name, $values, true);
         }
 
         $resultingName = $this->names[$locale];
@@ -79,13 +77,13 @@ final class Language
         return $this->locale;
     }
 
-    public function getMessage(string $type, array $replaceable = []): string
+    public function getStrings(string $type, array $replaceable = []): string
     {
-        if (!isset($this->messages[$type])) {
+        if (!isset($this->strings[$type])) {
             return '';
         }
 
-        $message = checkStrings($this->messages[$type]);
+        $message = checkStrings($this->strings[$type]);
 
         foreach ($replaceable as $key => $value) {
             if (str_contains((string)$message, (string)$key)) {
@@ -94,20 +92,5 @@ final class Language
         }
 
         return $message;
-    }
-
-    public function getItemNames(string $type): ?string
-    {
-        return isset($this->item_names[$type]) ? checkStrings($this->item_names[$type]) : null;
-    }
-
-    public function hasAuthors(): bool
-    {
-        return $this->getAuthors() !== '';
-    }
-
-    public function getAuthors(): string
-    {
-        return $this->authors;
     }
 }

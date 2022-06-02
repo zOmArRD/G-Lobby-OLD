@@ -25,6 +25,7 @@ namespace zomarrd\ghostly\lobby\player\language;
  */
 final class LangKey
 {
+	public const DISCORD_INVITE = "discord.invite";
 	public const FORM_CANCEL = "form.cancel";
 	public const FORM_CLOSE = "form.close";
 	public const FORM_DEFAULT = "form.default";
@@ -41,20 +42,24 @@ final class LangKey
 	public const ITEM_VISIBILITY_STAFF = "item.visibility-staff";
 	public const LANGUAGE_APPLIED = "language.applied";
 	public const LANGUAGE_APPLY_FAILED = "language.apply-failed";
+	public const LANGUAGE_AVAILABLE_LANGUAGES = "language.available-languages";
 	public const LANGUAGE_COMMAND_LIST = "language.command-list";
 	public const LANGUAGE_COMMAND_SET = "language.command-set";
 	public const LANGUAGE_DEFAULT = "language.default";
 	public const LANGUAGE_SELECT = "language.select";
 	public const LANGUAGE_SELECT_DESC = "language.select-desc";
+	public const PLAYER_HAS_COOLDOWN = "player.has-cooldown";
 	public const PLAYER_NO_PERM = "player.no-perm";
 	public const PLAYER_NOT_FOUND = "player.not-found";
 	public const PLAYER_NOT_ONLINE = "player.not-online";
 	public const PLAYER_NOT_SELF = "player.not-self";
 	public const PLAYER_NOT_TARGET = "player.not-target";
+	public const PLAYER_VISIBILITY_UPDATED = "player.visibility-updated";
 	public const QUEUE_ADDED = "queue.added";
 	public const QUEUE_EXISTS = "queue.exists";
 	public const QUEUE_EXITED = "queue.exited";
 	public const QUEUE_NOTICE_POSITION = "queue.notice-position";
+	public const SERVER_ALREADY_CONNECTED = "server.already-connected";
 	public const SERVER_CONNECTED = "server.connected";
 	public const SERVER_CONNECTING = "server.connecting";
 	public const SERVER_IS_FULL = "server.is-full";
@@ -65,4 +70,5 @@ final class LangKey
 	public const SERVER_NOT_ONLINE = "server.not-online";
 	public const SERVER_TRANSFER_FAILED = "server.transfer-failed";
 	public const SERVER_TRANSFER_PROCESSING = "server.transfer-processing";
+	public const STORE_LINK = "store.link";
 }

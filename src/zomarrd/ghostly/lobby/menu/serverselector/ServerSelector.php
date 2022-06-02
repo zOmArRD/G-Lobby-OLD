@@ -94,9 +94,8 @@ final class ServerSelector
 
     public function callable(GhostlyPlayer $player, Server|string $server): void
     {
-        $player->sendTranslated(LangKey::SERVER_SEARCHING);
-        Ghostly::getQueueManager()->add($player, $server);
         $player->closeInventory();
+        Ghostly::getQueueManager()->add($player, $server);
     }
 
     public function sendType(GhostlyPlayer $player, string $type = Menu::GUI_TYPE): void
@@ -110,7 +109,6 @@ final class ServerSelector
                         return;
                     }
 
-                    $player->sendTranslated(LangKey::SERVER_SEARCHING);
                     Ghostly::getQueueManager()->add($player, $data);
                 }
             });
@@ -126,7 +124,7 @@ final class ServerSelector
                 $this->addServerButton($server, $form);
             }
 
-            $form->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
+            $form->addButton($player->getTranslation(LangKey::FORM_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
             $player->sendForm($form);
         }
     }

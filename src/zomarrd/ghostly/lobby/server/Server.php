@@ -75,11 +75,11 @@ final class Server
         $this->setOnlinePlayers(count(Ghostly::getInstance()->getServer()->getOnlinePlayers()));
         $this->setIsWhitelisted(Ghostly::getInstance()->getServer()->hasWhitelist());
 
-        MySQL::runAsync(new UpdateRowQuery(serialize([
+        MySQL::runAsync(new UpdateRowQuery([
             'maxplayers' => $this->maxPlayers,
             'onlineplayers' => $this->onlinePlayers,
             'whitelisted' => (int)$this->isWhitelisted,
-        ]), 'name', $this->name, 'ghostly_servers'));
+        ], 'name', $this->name, 'ghostly_servers'));
     }
 
     public function setMaxPlayers(int $maxPlayers): void
@@ -109,7 +109,7 @@ final class Server
 
     public function syncRemote(): void
     {
-        MySQL::runAsync(new SelectQuery("SELECT * FROM ghostly_servers WHERE name = '$this->name';"), function($rows) {
+        MySQL::runAsync(new SelectQuery('ghostly_servers', 'name', $this->name), function($rows) {
             $row = $rows[0];
             if ($row !== null) {
                 $this->setOnline((bool)$row['online']);
@@ -126,10 +126,10 @@ final class Server
     public function setOnline(bool $online): void
     {
         if (!$online) {
-            MySQL::runAsync(new UpdateRowQuery(serialize([
+            MySQL::runAsync(new UpdateRowQuery([
                 'online' => 0,
                 'onlineplayers' => 0
-            ]), 'name', $this->name, 'ghostly_servers'));
+            ], 'name', $this->name, 'ghostly_servers'));
             $this->onlinePlayers = 0;
         }
 

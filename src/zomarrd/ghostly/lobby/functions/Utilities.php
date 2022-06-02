@@ -14,9 +14,14 @@ use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
+use zomarrd\ghostly\lobby\player\language\LangHandler;
+use zomarrd\ghostly\lobby\player\language\Language;
 use zomarrd\ghostly\lobby\server\ServerManager;
 
 const ONLY_PLAYERS = '§cOnly players can use this command.';
+
+
+/// Strings functions.
 
 function strContains(string $needle, string $haystack, bool $use_mb = false): bool
 {
@@ -116,7 +121,7 @@ function checkStrings(string $string, ?GhostlyPlayer $player = null): string
         '{NETWORK.GET-MAX_PLAYERS}' => ServerManager::getInstance()->getNetworkMaxPlayers(),
         '{PLAYER.QUEUE-POSITION}' => $player?->getQueue()?->getPositionFormatted(),
         '{PLAYER.QUEUE-SERVER}' => $player?->getQueue()?->getServer(),
-        '{PLAYER.G-COINS}' => $player?->getBalanceAPI()->getBalance()
+        '{PLAYER.G-COINS}' => $player?->getBalanceAPI()?->getBalance()
     ];
     $keys = array_keys($toReplace);
     $values = array_values($toReplace);
@@ -127,6 +132,8 @@ function checkStrings(string $string, ?GhostlyPlayer $player = null): string
 
     return $msg;
 }
+
+/// Random functions.
 
 /**
  * Try to locate a player by name.
@@ -144,4 +151,16 @@ function findPlayer(string $name): Player|OfflinePlayer
     }
 
     return $player;
+}
+
+//// Language functions
+
+function getLanguages(): array
+{
+    return LangHandler::getInstance()->getLanguages();
+}
+
+function getLanguage(string $lang): Language
+{
+    return LangHandler::getInstance()->getLanguage($lang);
 }

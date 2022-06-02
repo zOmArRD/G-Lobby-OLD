@@ -133,13 +133,17 @@ final class Ghostly extends PluginBase
             new EntityCommand($this, 'entity')
         ]);
 
-        $this->getServer()->getPluginManager()->registerEvent(QueryRegenerateEvent::class, function(QueryRegenerateEvent $event): void {
-            $info = $event->getQueryInfo();
-            $server_manager = ServerManager::getInstance();
-            $info->setPlugins([$this]);
-            $info->setPlayerCount($server_manager->getNetworkPlayers());
-            $info->setMaxPlayerCount($server_manager->getNetworkMaxPlayers());
-        }, EventPriority::LOWEST, $this);
+        $this->getServer()->getPluginManager()->registerEvent(QueryRegenerateEvent::class,
+            function(QueryRegenerateEvent $event): void {
+                $info = $event->getQueryInfo();
+                $server_manager = ServerManager::getInstance();
+                $info->setPlugins([$this]);
+                $info->setPlayerCount($server_manager->getNetworkPlayers());
+                $info->setMaxPlayerCount($server_manager->getNetworkMaxPlayers());
+            },
+            EventPriority::LOWEST,
+            $this
+        );
 
         Entity::ENTITY()->register();
 
@@ -155,24 +159,29 @@ final class Ghostly extends PluginBase
 
         // If the server is proxy, it will establish a custom login method.
         if (self::$is_proxy_server) {
-            $this->getServer()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class, function(DataPacketReceiveEvent $event): void {
-                $packet = $event->getPacket();
-                if (!$packet instanceof LoginPacket) {
-                    return;
-                }
+            $this->getServer()->getPluginManager()->registerEvent(DataPacketReceiveEvent::class,
+                function(DataPacketReceiveEvent $event): void {
+                    $packet = $event->getPacket();
+                    if (!$packet instanceof LoginPacket) {
+                        return;
+                    }
 
-                $event->getOrigin()->setHandler(new LoginPacketHandler($this->getServer(), $event->getOrigin(), function(PlayerInfo $info) use ($event): void {
-                    (function() use ($info): void {
-                        $this->info = $info;
-                        $this->getLogger()->info('Player: ' . TextFormat::RED . $info->getUsername() . TextFormat::RESET);
-                        $this->getLogger()->setPrefix($this->getLogPrefix());
-                    })->call($event->getOrigin());
-                }, function(bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
-                    (function() use ($authRequired, $error, $clientPubKey): void {
-                        $this->setAuthenticationStatus(true, $authRequired, $error, $clientPubKey);
-                    })->call($event->getOrigin());
-                }));
-            }, EventPriority::LOWEST, $this, true);
+                    $event->getOrigin()->setHandler(new LoginPacketHandler($this->getServer(), $event->getOrigin(), function(PlayerInfo $info) use ($event): void {
+                        (function() use ($info): void {
+                            $this->info = $info;
+                            $this->getLogger()->info('Player: ' . TextFormat::RED . $info->getUsername() . TextFormat::RESET);
+                            $this->getLogger()->setPrefix($this->getLogPrefix());
+                        })->call($event->getOrigin());
+                    }, function(bool $isAuthenticated, bool $authRequired, ?string $error, ?string $clientPubKey) use ($event): void {
+                        (function() use ($authRequired, $error, $clientPubKey): void {
+                            $this->setAuthenticationStatus(true, $authRequired, $error, $clientPubKey);
+                        })->call($event->getOrigin());
+                    }));
+                },
+                EventPriority::LOWEST,
+                $this,
+                true
+            );
         }
 
         $this->getScheduler()->scheduleRepeatingTask(new GlobalTask(), 1);

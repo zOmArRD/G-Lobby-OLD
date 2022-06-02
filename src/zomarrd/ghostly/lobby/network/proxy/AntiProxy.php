@@ -72,12 +72,12 @@ final class AntiProxy extends AsyncTask
 
         // Make a ban system that detects alts (ip with the same accounts, etc.)
         /** Add a method to find alts */
-        MySQL::runAsync(new UpdateRowQuery(serialize([
+        MySQL::runAsync(new UpdateRowQuery([
             'ip' => $ip,
             'city' => $location->{'city'},
             'region' => $location->{'region'},
             'country' => $location->{'country'},
             'continent' => $location->{'continent'}
-        ]), 'xuid', $xuid, 'ghostly_playerdata'));
+        ], 'xuid', $xuid, 'ghostly_playerdata'));
     }
 }

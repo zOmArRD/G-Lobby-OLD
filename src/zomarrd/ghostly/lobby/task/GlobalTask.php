@@ -11,10 +11,13 @@ declare(strict_types=1);
 
 namespace zomarrd\ghostly\lobby\task;
 
+use GhostlyMC\GCoinsAPI\GCoins;
 use pocketmine\scheduler\Task;
+use pocketmine\Server;
 use zomarrd\ghostly\lobby\entity\Entity;
 use zomarrd\ghostly\lobby\entity\EntityManager;
 use zomarrd\ghostly\lobby\menu\Menu;
+use zomarrd\ghostly\lobby\player\GhostlyPlayer;
 use zomarrd\ghostly\lobby\server\ServerList;
 
 final class  GlobalTask extends Task
@@ -53,6 +56,17 @@ final class  GlobalTask extends Task
             Menu::SERVER_SELECTOR()->prepare();
             Menu::LOBBY_SELECTOR()->prepare();
         }
+
+
+        /*if ($currentTick % 100 === 0) {
+            foreach (Server::getInstance()->getOnlinePlayers() as $player) {
+                if (!$player instanceof GhostlyPlayer) {
+                    continue;
+                }
+
+                GCoins::getInstance()->updateBalance($player);
+            }
+        }*/
 
         /*$armors = array_map(function (Armor $armor): Armor {
 

@@ -56,7 +56,7 @@ final class ServerManagerForm
         $form->setTitle('Server Manager');
         $form->addButton("Reload Servers\n§7From Database", $form::IMAGE_TYPE_NULL, '', 'reload_servers');
         $form->addButton("Proxy Detect\n§7Disable/Enable", $form::IMAGE_TYPE_NULL, '', 'proxy_detect');
-        $form->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
+        $form->addButton($player->getTranslation(LangKey::FORM_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
         $player->sendForm($form);
     }
 }

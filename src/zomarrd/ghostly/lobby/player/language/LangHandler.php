@@ -46,7 +46,14 @@ final class LangHandler
             $default = $languageData['default'];
             $locale = str_replace('.json', '', $file);
 
-            $lang = new Language($locale, $languageData['names'], $data['messages'], $data['item_data'], $languageData['author']);
+            $lang = new Language($locale, $languageData['names'], array_merge(
+                $data['player-strings'],
+                $data['form-strings'],
+                $data['language-strings'],
+                $data['network-strings'],
+                $data['queue-strings'],
+                $data['item-strings']
+            ));
 
             $this->languages[$locale] = $lang;
 

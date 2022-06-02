@@ -109,13 +109,15 @@ final class LobbySelector
         }
 
         $this->addButton(new MenuButton($item, function(GhostlyPlayer $player) use ($server): void {
-            $this->callable($player, $server);
+            $this->callable($player, $server->getName());
         }), $slot);
     }
 
     public function callable(GhostlyPlayer $player, Server|string $server): void
     {
-        $player->sendTranslated(LangKey::SERVER_SEARCHING);
+        $player->sendTranslated(LangKey::SERVER_CONNECTING, [
+            '{SERVER-NAME}' => $server
+        ]);
         $player->transferTo($server);
         $player->closeInventory();
     }
@@ -131,6 +133,9 @@ final class LobbySelector
                         return;
                     }
 
+                    $player->sendTranslated(LangKey::SERVER_CONNECTING, [
+                        '{SERVER-NAME}' => $data
+                    ]);
                     $player->transferTo($data);
                 }
             });
@@ -147,15 +152,13 @@ final class LobbySelector
                 $this->addServerButton($server, $form);
             }
 
-            $form->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
+            $form->addButton($player->getTranslation(LangKey::FORM_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
             $player->sendForm($form);
         }
     }
 
     public function addServerButton(Server $server, SimpleForm $form): void
     {
-        $text = '§r';
-
         if ($server->getName() === Server['name']) {
             $text = sprintf("§a%s §7[§f%s§7/§f%s§7]\n§cYou are already connected here!", $server->getName(), $server->getOnlinePlayers(), $server->getMaxPlayers());
         } else {

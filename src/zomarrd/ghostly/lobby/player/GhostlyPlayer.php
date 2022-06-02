@@ -61,7 +61,7 @@ final class GhostlyPlayer extends Player
     private Scoreboard $scoreboard_session;
     private ItemManager $itemManager;
     private Cooldown $cooldown;
-    private Balance $balanceAPI;
+    private ?Balance $balanceAPI = null;
     private int $visibilityMode = VISIBILITY::ALL;
 
     public function __construct
@@ -80,9 +80,9 @@ final class GhostlyPlayer extends Player
     public function getVisibilityMode(): string
     {
         return match ($this->visibilityMode) {
-            VISIBILITY::STAFF => ItemManager::VISIBILITY_STAFF,
-            VISIBILITY::NOBODY => ItemManager::VISIBILITY_NOBODY,
-            default => ItemManager::VISIBILITY_ALL,
+            VISIBILITY::STAFF => LangKey::ITEM_VISIBILITY_STAFF,
+            VISIBILITY::NOBODY => LangKey::ITEM_VISIBILITY_NONE,
+            default => LangKey::ITEM_VISIBILITY_ALL,
         };
     }
 
@@ -96,10 +96,36 @@ final class GhostlyPlayer extends Player
             default => "All",
         };
 
-        $this->sendTranslated(LangKey::VISIBILITY_MODE_UPDATED, ["{VISIBILITY-MODE}" => $message]);
+        $this->hide($visibilityMode);
+        $this->sendTranslated(LangKey::PLAYER_VISIBILITY_UPDATED, ["{VISIBILITY-MODE}" => $message]);
     }
 
-    public function getBalanceAPI(): Balance
+    public function hide(int $mode): void
+    {
+        switch ($mode) {
+            case VISIBILITY::STAFF:
+                foreach ($this->server->getOnlinePlayers() as $player) {
+                    if ($player->hasPermission('ghostly.staff')) {
+                        continue;
+                    }
+
+                    $this->hidePlayer($player);
+                }
+                break;
+            case VISIBILITY::NOBODY:
+                foreach ($this->server->getOnlinePlayers() as $player) {
+                    $this->hidePlayer($player);
+                }
+                break;
+            case VISIBILITY::ALL:
+                foreach ($this->server->getOnlinePlayers() as $player) {
+                    $this->showPlayer($player);
+                }
+                break;
+        }
+    }
+
+    public function getBalanceAPI(): ?Balance
     {
         return $this->balanceAPI;
     }
@@ -157,15 +183,10 @@ final class GhostlyPlayer extends Player
     public function getLang(bool $fromLocale = false): Language
     {
         if ($fromLocale === true) {
-            return $this->getLangHandler()->getLanguage($this->locale);
+            return getLanguage($this->locale);
         }
 
-        return $this->getLangHandler()->getLanguage($this->currentLang);
-    }
-
-    public function getLangHandler(): LangHandler
-    {
-        return LangHandler::getInstance();
+        return getLanguage($this->currentLang);
     }
 
     public function onUpdate(int $currentTick): bool
@@ -211,7 +232,7 @@ final class GhostlyPlayer extends Player
     public function getQueueItem(): void
     {
         $this->getInventory()?->clearAll();
-        $this->setItem(8, $this->getItemManager()->get(ItemManager::QUEUE_EXIT));
+        $this->setItem(8, $this->getItemManager()->get(LangKey::ITEM_QUEUE_EXIT));
     }
 
     private function setItem(int $index, Item $item): void
@@ -245,31 +266,36 @@ final class GhostlyPlayer extends Player
 
     public function transferTo(string|Server $server): void
     {
+
         if (!$this->isOnline()) {
             return;
         }
 
         if (is_string($server)) {
+            $name = $server;
             $server = ServerManager::getInstance()->getServerByName($server);
         }
 
         if (is_null($server)) {
+            $this->sendTranslated(LangKey::SERVER_TRANSFER_FAILED, ['{SERVER-NAME}' => $name ?? '']);
             $this->sendSound(LevelSoundEvent::EXPLODE);
-            $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
+            $this->sendTranslated(LangKey::SERVER_NOT_AVAILABLE);
             $this->setCanInteractItem();
             $this->getLobbyItems();
             return;
         }
 
         if ($server->getName() === Server['name']) {
+            $this->sendTranslated(LangKey::SERVER_TRANSFER_FAILED, ['{SERVER-NAME}' => $server->getName()]);
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
-            $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_1);
+            $this->sendTranslated(LangKey::SERVER_ALREADY_CONNECTED);
             $this->setCanInteractItem();
             $this->getLobbyItems();
             return;
         }
 
         if (!$server->isOnline()) {
+            $this->sendTranslated(LangKey::SERVER_TRANSFER_FAILED, ['{SERVER-NAME}' => $server->getName()]);
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
             $this->sendTranslated(LangKey::SERVER_NOT_ONLINE);
             $this->setCanInteractItem();
@@ -278,6 +304,7 @@ final class GhostlyPlayer extends Player
         }
 
         if ($server->isWhitelisted() && !$this->hasPermission(PermissionKey::GHOSTLY_SERVER_CONNECT_WHITELISTED)) {
+            $this->sendTranslated(LangKey::SERVER_TRANSFER_FAILED, ['{SERVER-NAME}' => $server->getName()]);
             $this->sendSound(LevelSoundEvent::RANDOM_ANVIL_USE);
             $this->sendTranslated(LangKey::SERVER_IS_WHITELISTED);
             $this->setCanInteractItem();
@@ -286,14 +313,16 @@ final class GhostlyPlayer extends Player
         }
 
         if (!$this->hasPermission(PermissionKey::GHOSTLY_SERVER_JOIN_BYPASS) && $server->getOnlinePlayers() >= $server->getMaxPlayers()) {
+            $this->sendTranslated(LangKey::SERVER_TRANSFER_FAILED, ['{SERVER-NAME}' => $server->getName()]);
             $this->sendSound(LevelEvent::SOUND_SHOOT, 'level-event');
-            $this->sendTranslated(LangKey::SERVER_CONNECT_ERROR_4);
+            $this->sendTranslated(LangKey::SERVER_IS_FULL);
             $this->setCanInteractItem();
             $this->getLobbyItems();
             return;
         }
 
-        $this->sendTranslated(LangKey::SERVER_CONNECTING, ['{SERVER-NAME}' => $server->getName()]);
+        $this->sendTranslated(LangKey::SERVER_CONNECTED, ['{SERVER-NAME}' => $server->getName()]);
+        $this->sendTranslated(LangKey::SERVER_TRANSFER_PROCESSING, ['{SERVER-NAME}' => $server->getName()]);
         $this->transfer($server->getName(), 0, "Transfer to {$server->getName()}");
     }
 
@@ -304,7 +333,7 @@ final class GhostlyPlayer extends Player
 
     public function getTranslation(string $string, array $replaceable = []): string
     {
-        return $this->getLang()->getMessage($string, $replaceable);
+        return $this->getLang()->getStrings($string, $replaceable);
     }
 
     public function setCanInteractItem(bool $canInteractItem = true): void
@@ -318,11 +347,11 @@ final class GhostlyPlayer extends Player
 
         foreach (
             [
-                ItemManager::SERVER_SELECTOR => 0,
-                ItemManager::COSMETICS_SELECTOR => 4,
+                LangKey::ITEM_SERVER_SELECTOR => 0,
+                LangKey::ITEM_COSMETICS_SELECTOR => 4,
                 $this->getVisibilityMode() => 6,
-                ItemManager::PERSONAL_SETTINGS => 7,
-                ItemManager::LOBBY_SELECTOR => 8
+                LangKey::ITEM_PLAYER_SETTINGS => 7,
+                LangKey::ITEM_LOBBY_SELECTOR => 8
             ] as $item => $index) {
             $this->setItem($index, $this->getItemManager()->get($item));
         }
@@ -389,7 +418,23 @@ final class GhostlyPlayer extends Player
         }
 
         $this->noDamageTicks = 60;
-        $this->spawnToAll();
+
+        foreach ($this->getServer()->getOnlinePlayers() as $player) {
+            if ($player instanceof self) {
+                switch ($player->getVisibilityMode()) {
+                    case VISIBILITY::ALL:
+                        $this->spawnTo($player);
+                        break;
+                    case VISIBILITY::STAFF:
+                        if ($this->hasPermission('STAFF PERMISSION HERE')) {
+                            $this->spawnTo($player);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     private function recheckBroadcastPermissions(): void

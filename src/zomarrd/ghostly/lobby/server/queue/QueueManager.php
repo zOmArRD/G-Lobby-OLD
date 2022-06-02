@@ -72,7 +72,7 @@ final class QueueManager
 
             if (!$queue->getPlayer()->getMessageReceivedDelay(10)) {
                 $queue->getPlayer()->setMessageReceivedDelay();
-                $queue->getPlayer()->sendTranslated(LangKey::QUEUE_SERVER_OFFLINE, ['{POSITION-QUEUE}' => $queue->getPositionFormatted()]);
+                $queue->getPlayer()->sendTranslated(LangKey::SERVER_NOT_ONLINE);
             }
         }
     }
@@ -115,13 +115,13 @@ final class QueueManager
         }
 
         if ($this->exist($player)) {
-            $player->sendTranslated(LangKey::QUEUE_PLAYER_EXIST, ['{SERVER-NAME}' => $player->getQueue()?->getServer()]);
+            $player->sendTranslated(LangKey::QUEUE_EXISTS, ['{SERVER-NAME}' => $player->getQueue()?->getServer()]);
             return;
         }
 
         if (ServerManager::getInstance()->getServerByName($server) === null) {
             $player->sendSound(LevelSoundEvent::EXPLODE);
-            $player->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
+            $player->sendTranslated(LangKey::SERVER_NOT_FOUND);
             return;
         }
 
@@ -135,9 +135,9 @@ final class QueueManager
         $queue->setPosition((int)$position + 1);
         $queue->setPositionFormatted(sprintf('§f%s§7/§f%s', $queue->getPosition(), count($this->queue[$queue->getServer()])));
 
-        $player->sendTranslated(LangKey::QUEUE_PLAYER_ADDED, [
+        $player->sendTranslated(LangKey::QUEUE_ADDED, [
             '{SERVER-NAME}' => $server,
-            '{POSITION-QUEUE}' => $queue->getPositionFormatted()
+            '{POSITION}' => $queue->getPositionFormatted()
         ]);
     }
 }

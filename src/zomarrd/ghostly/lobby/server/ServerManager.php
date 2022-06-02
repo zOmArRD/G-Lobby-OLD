@@ -52,7 +52,7 @@ final class ServerManager
         $this->servers = [];
         $cServerName = $this->getCurrentServerName();
 
-        MySQL::runAsync(new SelectQuery('SELECT * FROM ghostly_servers'), function($rows) use ($cServerName, $player) {
+        MySQL::runAsync(new SelectQuery('ghostly_servers'), function($rows) use ($cServerName, $player) {
             foreach ($rows as $row) {
                 $server = new Server($row['name'], $row['ip'], (int)$row['port'], (bool)$row['online'], (int)$row['maxplayers'], (int)$row['onlineplayers'], (bool)$row['whitelisted'], $row['category']);
                 if ($row['name'] === $cServerName) {

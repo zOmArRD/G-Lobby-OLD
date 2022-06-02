@@ -18,7 +18,7 @@ use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\item\VanillaItems;
 use zomarrd\ghostly\lobby\utils\menu\MenuButton;
 
-final class Settings
+final class Settings_BK
 {
     private InvMenu $menu;
 
@@ -29,7 +29,7 @@ final class Settings
 
     public function registerChest(): void
     {
-        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName('Global Settings | 1/1')->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
+        $this->menu = InvMenu::create(InvMenuTypeIds::TYPE_DOUBLE_CHEST)->setName('Global SettingsBK | 1/1')->setListener(function(InvMenuTransaction $transaction): InvMenuTransactionResult {
             $player = $transaction->getPlayer();
             $button = $this->buttons[$transaction->getAction()->getSlot()] ?? null;
 

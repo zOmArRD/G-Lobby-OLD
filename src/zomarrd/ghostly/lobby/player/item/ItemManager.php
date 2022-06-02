@@ -18,47 +18,40 @@ use pocketmine\item\ItemIds;
 use pocketmine\item\VanillaItems;
 use pocketmine\nbt\tag\CompoundTag;
 use zomarrd\ghostly\lobby\player\IPlayer;
+use zomarrd\ghostly\lobby\player\language\LangKey;
 
 final class ItemManager extends IPlayer
 {
-    public const SERVER_SELECTOR = 'server-selector';
-    public const COSMETICS_SELECTOR = 'cosmetics-selector';
-    public const LOBBY_SELECTOR = 'lobby-selector';
-    public const VISIBILITY_ALL = 'visibility-all';
-    public const VISIBILITY_STAFF = 'visibility-staff';
-    public const VISIBILITY_NOBODY = 'visibility-nobody';
-    public const PERSONAL_SETTINGS = 'personal-settings';
-    public const QUEUE_EXIT = 'queue-exit';
-
     public const ALL_ITEMS = [
-        self::SERVER_SELECTOR,
-        self::COSMETICS_SELECTOR,
-        self::LOBBY_SELECTOR,
-        self::VISIBILITY_ALL,
-        self::VISIBILITY_STAFF,
-        self::VISIBILITY_NOBODY,
-        self::PERSONAL_SETTINGS,
-        self::QUEUE_EXIT
+        LangKey::ITEM_COSMETICS_SELECTOR,
+        LangKey::ITEM_SERVER_SELECTOR,
+        LangKey::ITEM_LOBBY_SELECTOR,
+        LangKey::ITEM_VISIBILITY_ALL,
+        LangKey::ITEM_VISIBILITY_STAFF,
+        LangKey::ITEM_VISIBILITY_NONE,
+        LangKey::ITEM_VISIBILITY_FRIENDS,
+        LangKey::ITEM_QUEUE_EXIT,
+        LangKey::ITEM_PLAYER_SETTINGS
     ];
 
     /** @noinspection PhpDeprecationInspection */
     public function get(#[ExpectedValues(self::ALL_ITEMS)] string $name): Item
     {
         return match ($name) {
-            self::SERVER_SELECTOR => $this->getFormatted($name, VanillaItems::COMPASS()),
-            self::COSMETICS_SELECTOR => $this->getFormatted($name, ItemFactory::getInstance()->get(ItemIds::ENDER_CHEST)),
-            self::VISIBILITY_ALL => $this->getFormatted($name, VanillaItems::LIME_DYE()),
-            self::VISIBILITY_STAFF => $this->getFormatted($name, VanillaItems::PINK_DYE()),
-            self::VISIBILITY_NOBODY => $this->getFormatted($name, VanillaItems::GRAY_DYE()),
-            self::LOBBY_SELECTOR => $this->getFormatted($name, VanillaItems::NETHER_STAR()),
-            self::PERSONAL_SETTINGS => $this->getFormatted($name, ItemFactory::getInstance()->get(ItemIds::COMPARATOR)),
-            self::QUEUE_EXIT => $this->getFormatted($name, VanillaItems::REDSTONE_DUST()),
+            LangKey::ITEM_SERVER_SELECTOR => $this->getFormatted($name, VanillaItems::COMPASS()),
+            LangKey::ITEM_COSMETICS_SELECTOR => $this->getFormatted($name, ItemFactory::getInstance()->get(ItemIds::ENDER_CHEST)),
+            LangKey::ITEM_VISIBILITY_ALL => $this->getFormatted($name, VanillaItems::LIME_DYE()),
+            LangKey::ITEM_VISIBILITY_STAFF => $this->getFormatted($name, VanillaItems::PINK_DYE()),
+            LangKey::ITEM_VISIBILITY_NONE => $this->getFormatted($name, VanillaItems::GRAY_DYE()),
+            LangKey::ITEM_LOBBY_SELECTOR => $this->getFormatted($name, VanillaItems::NETHER_STAR()),
+            LangKey::ITEM_PLAYER_SETTINGS => $this->getFormatted($name, ItemFactory::getInstance()->get(ItemIds::COMPARATOR)),
+            LangKey::ITEM_QUEUE_EXIT => $this->getFormatted($name, VanillaItems::REDSTONE_DUST()),
             default => ItemFactory::air()
         };
     }
 
     public function getFormatted(string $id, Item $item): Item
     {
-        return $item->setNamedTag((new CompoundTag())->setString('ItemID', $id))->setCustomName($this->getPlayer()->getLang()->getItemNames($id));
+        return $item->setNamedTag((new CompoundTag())->setString('ItemID', $id))->setCustomName($this->getPlayer()->getLang()->getStrings($id));
     }
 }

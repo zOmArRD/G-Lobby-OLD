@@ -23,12 +23,12 @@ use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionData;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
+use zomarrd\ghostly\lobby\database\mysql\queries\UpdateRowQuery;
 use zomarrd\ghostly\lobby\entity\events\HumanInteractEvent;
 use zomarrd\ghostly\lobby\entity\type\HumanType;
 use zomarrd\ghostly\lobby\Ghostly;
 use zomarrd\ghostly\lobby\menu\Menu;
 use zomarrd\ghostly\lobby\player\GhostlyPlayer;
-use zomarrd\ghostly\lobby\player\item\ItemManager;
 use zomarrd\ghostly\lobby\player\language\LangKey;
 use zomarrd\ghostly\lobby\utils\VISIBILITY;
 
@@ -71,22 +71,22 @@ final class ItemInteractListener implements Listener
 
                         if (!$interactEvent->isCancelled()) {
                             $interactEvent->call();
+                            $player->setCooldown();
                         }
-
-                        $player->setCooldown();
                     }
                 }
             }
         }
     }
 
+    /** @noinspection DuplicatedCode */
     public function handleInteract(GhostlyPlayer $player, Item $item): void
     {
         $itemId = $item->getNamedTag()->getString('ItemID', '');
         $inventory = $player->getInventory();
 
         switch ($itemId) {
-            case ItemManager::LOBBY_SELECTOR:
+            case LangKey::ITEM_LOBBY_SELECTOR:
                 if ($player->hasClassicProfile()) {
                     Menu::LOBBY_SELECTOR()->sendType($player);
                 } else {
@@ -95,7 +95,7 @@ final class ItemInteractListener implements Listener
 
                 $player->sendSound(LevelSoundEvent::DROP_SLOT);
                 break;
-            case ItemManager::SERVER_SELECTOR:
+            case LangKey::ITEM_SERVER_SELECTOR:
                 if ($player->hasClassicProfile()) {
                     Menu::SERVER_SELECTOR()->sendType($player);
                 } else {
@@ -104,40 +104,51 @@ final class ItemInteractListener implements Listener
 
                 $player->sendSound(LevelSoundEvent::DROP_SLOT);
                 break;
-            case ItemManager::QUEUE_EXIT:
+            case LangKey::ITEM_QUEUE_EXIT:
+                $player->sendTranslated(LangKey::QUEUE_EXITED, ['{SERVER-NAME}' => $player->getQueue()?->getServer()]);
                 Ghostly::getQueueManager()->remove($player, $player->getQueue()?->getServer());
                 $player->getLobbyItems();
-                $player->sendTranslated(LangKey::QUEUE_PLAYER_LEFT);
                 break;
-            case ItemManager::VISIBILITY_ALL: // change to staff.
+            case LangKey::ITEM_VISIBILITY_ALL: // change to staff.
                 $inventory->setItem(6, VanillaItems::air());
 
-                MySQL::run(sprintf("UPDATE `ghostly_playerdata` SET `visibilityMode` = '%s' WHERE `xuid` = %s", VISIBILITY::STAFF, $player->getXuid()), function() use ($player, $inventory) {
-                    $player->setVisibilityMode(VISIBILITY::STAFF);
-                    $inventory->setItem(6, $player->getItemManager()->get(ItemManager::VISIBILITY_STAFF));
-
-                });
+                MySQL::runAsync(new UpdateRowQuery([
+                    'visibilityMode' => VISIBILITY::STAFF,
+                ], 'xuid', $player->getXuid(), 'ghostly_playerdata'),
+                    static function() use ($player, $inventory): void {
+                        $player->setVisibilityMode(VISIBILITY::STAFF);
+                        $inventory->setItem(6, $player->getItemManager()->get(LangKey::ITEM_VISIBILITY_STAFF));
+                    }
+                );
                 break;
-            case ItemManager::VISIBILITY_STAFF: // change to nobody.
+            case LangKey::ITEM_VISIBILITY_STAFF: // change to nobody.
                 $inventory->setItem(6, VanillaItems::air());
 
-                MySQL::run(sprintf("UPDATE `ghostly_playerdata` SET `visibilityMode` = '%s' WHERE `xuid` = %s", VISIBILITY::NOBODY, $player->getXuid()), function() use ($player, $inventory) {
-                    $player->setVisibilityMode(VISIBILITY::NOBODY);
-                    $inventory->setItem(6, $player->getItemManager()->get(ItemManager::VISIBILITY_NOBODY));
-                });
+                MySQL::runAsync(new UpdateRowQuery([
+                    'visibilityMode' => VISIBILITY::NOBODY,
+                ], 'xuid', $player->getXuid(), 'ghostly_playerdata'),
+                    static function() use ($player, $inventory): void {
+                        $player->setVisibilityMode(VISIBILITY::NOBODY);
+                        $inventory->setItem(6, $player->getItemManager()->get(LangKey::ITEM_VISIBILITY_NONE));
+                    }
+                );
                 break;
-            case ItemManager::VISIBILITY_NOBODY: // change to all.
+            case LangKey::ITEM_VISIBILITY_NONE: // change to all.
                 $inventory->setItem(6, VanillaItems::air());
 
-                MySQL::run(sprintf("UPDATE `ghostly_playerdata` SET `visibilityMode` = '%s' WHERE `xuid` = %s", VISIBILITY::ALL, $player->getXuid()), function() use ($player, $inventory) {
-                    $player->setVisibilityMode(VISIBILITY::ALL);
-                    $inventory->setItem(6, $player->getItemManager()->get(ItemManager::VISIBILITY_ALL));
-                });
+                MySQL::runAsync(new UpdateRowQuery([
+                    'visibilityMode' => VISIBILITY::ALL,
+                ], 'xuid', $player->getXuid(), 'ghostly_playerdata'),
+                    static function() use ($player, $inventory): void {
+                        $player->setVisibilityMode(VISIBILITY::ALL);
+                        $inventory->setItem(6, $player->getItemManager()->get(LangKey::ITEM_VISIBILITY_ALL));
+                    }
+                );
                 break;
         }
     }
 
-    public function slot_change(InventoryTransactionEvent $event): void
+    public function onInventoryTransaction(InventoryTransactionEvent $event): void
     {
         $player = $event->getTransaction()->getSource();
 

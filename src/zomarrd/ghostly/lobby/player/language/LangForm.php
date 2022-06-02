@@ -34,31 +34,35 @@ final class LangForm
 
                 if ($data === 'predetermined') {
                     $player->setLanguage($player->getLocale());
-                    $player->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $player->getLang()->getLocale()]);
+                    $player->sendTranslated(LangKey::LANGUAGE_APPLIED, ['LANGUAGE}' => $player->getLang()->getLocale()]);
                     return;
                 }
 
                 $lang = explode('-', $data);
                 if ($player->getLang()->getLocale() === $lang[0]) {
-                    $player->sendTranslated(LangKey::LANG_APPLIED_FAIL);
+                    $player->sendTranslated(LangKey::LANGUAGE_APPLY_FAILED);
                     return;
                 }
 
-                $player->setLanguage($lang[0]);
-                $player->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $lang[1]]);
-                MySQL::runAsync(new UpdateRowQuery(serialize(['lang' => $lang[0]]), 'player', $player->getName(), 'ghostly_playerdata'));
-                $player->getLobbyItems();
+                MySQL::runAsync(new UpdateRowQuery(['lang' => $lang[0]], 'player', $player->getName(), 'ghostly_playerdata'),
+                    static function()  use ($player, $lang): void {
+                    $player->setLanguage($lang[0]);
+                    $player->getLobbyItems();
+                    $player->sendTranslated(LangKey::LANGUAGE_APPLIED, ['{LANGUAGE}' => $lang[1]]);
+                });
+
             }
         });
-        $form->setTitle($player->getTranslation(LangKey::SET_LANGUAGE));
-        $form->setContent($player->getTranslation(LangKey::AVAILABLE_LANGUAGE));
 
-        foreach ($player->getLangHandler()->getLanguages() as $lang) {
+        $form->setTitle($player->getTranslation(LangKey::LANGUAGE_SELECT));
+        $form->setContent($player->getTranslation(LangKey::LANGUAGE_SELECT_DESC));
+
+        foreach (getLanguages() as $lang) {
             $form->addButton('§9' . $lang->getName(), $form::IMAGE_TYPE_NULL, '', $lang->getLocale() . "-{$lang->getName()}");
         }
 
-        $form->addButton($player->getTranslation(LangKey::FORM_BUTTON_PREDETERMINED) . "\n §7(§a{$player->getLocale()}§7)", $form::IMAGE_TYPE_NULL, '', 'predetermined');
-        $form->addButton($player->getTranslation(LangKey::FORM_BUTTON_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
+        $form->addButton($player->getTranslation(LangKey::FORM_DEFAULT) . "\n §7(§a{$player->getLocale()}§7)", $form::IMAGE_TYPE_NULL, '', 'predetermined');
+        $form->addButton($player->getTranslation(LangKey::FORM_CLOSE), $form::IMAGE_TYPE_NULL, '', 'close');
 
         $player->sendForm($form);
     }

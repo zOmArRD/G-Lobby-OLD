@@ -39,10 +39,10 @@ final class HumanListener implements Listener
                 Server::getInstance()->broadcastPackets(Server::getInstance()->getOnlinePlayers(), [$packet]);*/
                 break;
             case Entity::STORE:
-                $player->sendTranslated(LangKey::STORE_LINK_MESSAGE);
+                $player->sendTranslated(LangKey::STORE_LINK);
                 break;
             case Entity::DISCORD:
-                $player->sendTranslated(LangKey::DISCORD_INVITATION_MESSAGE);
+                $player->sendTranslated(LangKey::DISCORD_INVITE);
                 break;
             default:
                 if ($npcId === '') {
@@ -52,9 +52,10 @@ final class HumanListener implements Listener
 
                 $server = ServerManager::getInstance()->getServerByName($npcId);
                 if (is_null($server)) {
+                    $player->sendTranslated(LangKey::SERVER_TRANSFER_FAILED, ['{SERVER-NAME}' => $npcId]);
                     $player->knockBack(($player->getLocation()->x - ($entity->getLocation()->x)), ($player->getLocation()->z - ($entity->getLocation()->z)), (20 / 0xa));
                     $player->sendSound(LevelSoundEvent::EXPLODE);
-                    $player->sendTranslated(LangKey::SERVER_CONNECT_ERROR_3);
+                    $player->sendTranslated(LangKey::SERVER_NOT_AVAILABLE);
                     return;
                 }
 

@@ -11,7 +11,7 @@
     "ext-mysqli": "*",
     "ext-mbstring": "*",
     "ghostlymc/database-api": "dev-main",
-    "ghostlymc/gcoins-api": "1.2.3",
+    "ghostlymc/gcoins-api": "dev-main",
     "ghostlymc/formapi": ">=1.0.0",
     "cortexpe/commando": "dev-master"
   },

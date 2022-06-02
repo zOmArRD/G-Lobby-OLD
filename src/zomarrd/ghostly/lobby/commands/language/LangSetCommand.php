@@ -32,17 +32,17 @@ final class LangSetCommand extends BaseSubCommand
             if (!$sender instanceof GhostlyPlayer) {
                 $sender->sendMessage(PREFIX . '§c' . 'This command must be executed in-game.');
             } else {
-                foreach (LangHandler::getInstance()->getLanguages() as $language) {
+                foreach (getLanguages() as $language) {
                     if ($language->getLocale() !== $target) {
-                        $sender->sendTranslated(LangKey::COMMAND_LANG_LIST);
+                        $sender->sendTranslated(LangKey::LANGUAGE_AVAILABLE_LANGUAGES);
                         return;
                     }
 
                     MySQL::runAsync(
-                        new UpdateRowQuery(serialize(['lang' => $target]), 'player', $sender->getName(), 'player_config'),
+                        new UpdateRowQuery(['lang' => $target], 'player', $sender->getName(), 'player_config'),
                         static function() use ($sender, $target) {
                             $sender->setLanguage($target);
-                            $sender->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $target]);
+                            $sender->sendTranslated(LangKey::LANGUAGE_APPLIED, ['{LANGUAGE}' => $target]);
                             $sender->getLobbyItems();
                         }
                     );
@@ -65,7 +65,7 @@ final class LangSetCommand extends BaseSubCommand
 
         if (!$sender->hasPermission(PermissionKey::GHOSTLY_COMMAND_LANG_SET_OTHER)) {
             if ($sender instanceof GhostlyPlayer) {
-                $sender->sendTranslated(LangKey::NOT_PERMISSION);
+                $sender->sendTranslated(LangKey::PLAYER_NO_PERM);
             }
 
             return;
@@ -73,7 +73,7 @@ final class LangSetCommand extends BaseSubCommand
 
         if (!$isPlayer instanceof GhostlyPlayer || !$isPlayer->isOnline()) {
             if ($sender instanceof GhostlyPlayer) {
-                $sender->sendTranslated(LangKey::PLAYER_NOT_ONLINE, ['{PLAYER-NAME}' => $target]);
+                $sender->sendTranslated(LangKey::PLAYER_NOT_ONLINE, ['{PLAYER}' => $target]);
             } else {
                 $sender->sendMessage(PREFIX . "Player $target is not connected.");
             }
@@ -81,10 +81,10 @@ final class LangSetCommand extends BaseSubCommand
             return;
         }
 
-        foreach (LangHandler::getInstance()->getLanguages() as $language) {
+        foreach (getLanguages() as $language) {
             if ($language->getLocale() !== $newLang) {
                 if ($sender instanceof GhostlyPlayer) {
-                    $sender->sendTranslated(LangKey::COMMAND_LANG_LIST);
+                    $sender->sendTranslated(LangKey::LANGUAGE_COMMAND_LIST);
                 } else {
                     $sender->sendMessage(PREFIX . 'Use </lang list> to see the list of available languages');
                 }
@@ -92,11 +92,10 @@ final class LangSetCommand extends BaseSubCommand
                 return;
             }
 
-            MySQL::runAsync(
-                new UpdateRowQuery(serialize(['lang' => $newLang]), 'player', $isPlayer->getName(), 'ghostly_playerdata'),
+            MySQL::runAsync(new UpdateRowQuery(['lang' => $newLang], 'player', $isPlayer->getName(), 'ghostly_playerdata'),
                 static function() use ($isPlayer, $newLang) {
                     $isPlayer->setLanguage($newLang);
-                    $isPlayer->sendTranslated(LangKey::LANG_APPLIED_CORRECTLY, ['{NEW-LANG}' => $newLang]);
+                    $isPlayer->sendTranslated(LangKey::LANGUAGE_APPLIED, ['{LANGUAGE}' => $newLang]);
                     $isPlayer->getLobbyItems();
                 }
             );

@@ -16,12 +16,15 @@ use mysqli;
 
 class UpdateRowQuery extends Query
 {
+    private string $updates;
+
     public function __construct(
-        private string $updates,
+        array         $updates,
         private string $conditionKey,
         private string $conditionValue,
         private string $table
     ) {
+        $this->updates = serialize($updates);
         parent::__construct();
     }
 
